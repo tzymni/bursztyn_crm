@@ -1,0 +1,21 @@
+/* You can add global styles to this file, and also import other style files */
+/*@import "~ngx-smart-modal/ngx-smart-modal";
+*/
+@import "app/app.component";
+@import '~bootstrap/dist/css/bootstrap.min.css';
+@import "~angular-notifier/styles";
+@import '../node_modules/tui-calendar/dist/tui-calendar.min.css';
+
+/* modal animation */
+.modal-content{
+  animation-name: example;
+  animation-duration: 0.3s;
+  /*width: 50%;*/
+  /*margin-left: 30%;*/
+}
+
+@keyframes example {
+  0%   {transform: scale(0.5)}
+  75%  {transform: scale(1.1)}
+  100% {transform: scale(1)}
+}

@@ -1,0 +1,34 @@
+
+  <button class="btn btn-success btn-circle pull-right" 
+          (click)="add()"     
+          title="Add Customer">
+    <i class="fas fa-plus-circle"></i>
+  </button>
+    <h3>{{errorMessage}}</h3>
+
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Email</th>
+            <th>Imie</th>
+            <th>Nazwisko</th>
+            <th>Operacje</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let cust of users">
+            <td>{{cust.email}}</td>
+            <td>{{cust.first_name}}</td>
+            <td>{{cust.last_name}}</td>
+            <td style="width: 70px;">
+                <i class="fas fa-user-edit" style="cursor: pointer"
+                   (click)="edit(cust.email)" title="Edit"></i>
+                <i class="fas fa-trash-alt" style="cursor: pointer"    
+                    (click)="delete(cust.email)" title="Delete"></i>
+
+            </td>
+        </tr>
+    </tbody>
+</table>
+    
