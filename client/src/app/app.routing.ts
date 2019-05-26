@@ -7,6 +7,7 @@ import {ItemsListComponent} from './items-list/items-list.component';
 import {UsersComponent} from './users/users.component';
 import {UserComponent} from './user/user.component';
 import {CalendarComponent} from './calendar/calendar.component';
+import {CottagesComponent} from './cottages/cottages.component';
 
 
 const appRoutes: Routes = [
@@ -14,8 +15,9 @@ const appRoutes: Routes = [
     {
         path: '', canActivate: [AuthGuard], children: [
 
-            {path: "home", component: ItemsListComponent},
+            {path: "home", component: CalendarComponent},
             {path: "users", component: UsersComponent},
+            {path: "cottages", component: CottagesComponent},
             {path: "calendar", component: CalendarComponent},
             {path: "customers", component: ItemsListComponent},
             {path: "customers/add", component: ItemComponent},

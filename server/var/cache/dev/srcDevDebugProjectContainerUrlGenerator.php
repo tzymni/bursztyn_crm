@@ -21,6 +21,11 @@ class srcDevDebugProjectContainerUrlGenerator extends Symfony\Component\Routing\
         if (null === self::$declaredRoutes) {
             self::$declaredRoutes = array(
         'app_auth_issuejwttoken' => array(array(), array('_controller' => 'App\\Controller\\AuthController::issueJWTToken'), array(), array(array('text', '/api/authenticate')), array(), array()),
+        'cottages_index' => array(array(), array('_controller' => 'App\\Controller\\CottagesController::index'), array(), array(array('text', '/cottages/')), array(), array()),
+        'cottages_new' => array(array(), array('_controller' => 'App\\Controller\\CottagesController::add'), array(), array(array('text', '/cottages/new')), array(), array()),
+        'app_cottages_show' => array(array(), array('_controller' => 'App\\Controller\\CottagesController::show'), array(), array(array('text', '/cottages/api/cottages')), array(), array()),
+        'cottages_edit' => array(array('id'), array('_controller' => 'App\\Controller\\CottagesController::edit'), array(), array(array('text', '/edit'), array('variable', '/', '[^/]++', 'id'), array('text', '/cottages')), array(), array()),
+        'cottages_delete' => array(array('id'), array('_controller' => 'App\\Controller\\CottagesController::delete'), array(), array(array('variable', '/', '[^/]++', 'id'), array('text', '/cottages')), array(), array()),
         'app_footballleague_createleague' => array(array(), array('_controller' => 'App\\Controller\\FootballLeagueController::createLeague'), array(), array(array('text', '/api/leagues')), array(), array()),
         'app_footballleague_getleagueteams' => array(array('id'), array('_controller' => 'App\\Controller\\FootballLeagueController::getLeagueTeams'), array(), array(array('text', '/teams'), array('variable', '/', '[^/]++', 'id'), array('text', '/api/leagues')), array(), array()),
         'app_footballleague_deleteleague' => array(array('id'), array('_controller' => 'App\\Controller\\FootballLeagueController::deleteLeague'), array(), array(array('variable', '/', '[^/]++', 'id'), array('text', '/api/leagues')), array(), array()),

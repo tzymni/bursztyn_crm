@@ -417,6 +417,9 @@
     <service id="App\Controller\AuthController" class="App\Controller\AuthController" public="true" autowire="true" autoconfigure="true">
       <tag name="controller.service_arguments"/>
     </service>
+    <service id="App\Controller\CottagesController" class="App\Controller\CottagesController" public="true" autowire="true" autoconfigure="true">
+      <tag name="controller.service_arguments"/>
+    </service>
     <service id="App\Controller\FootballLeagueController" class="App\Controller\FootballLeagueController" public="true" autowire="true" autoconfigure="true">
       <tag name="controller.service_arguments"/>
     </service>
@@ -1983,14 +1986,6 @@
       </call>
       <call method="addListener">
         <argument>kernel.request</argument>
-        <argument type="collection">
-          <argument type="service" id="debug.debug_handlers_listener"/>
-          <argument>configure</argument>
-        </argument>
-        <argument>2048</argument>
-      </call>
-      <call method="addListener">
-        <argument>console.command</argument>
         <argument type="collection">
           <argument type="service" id="debug.debug_handlers_listener"/>
           <argument>configure</argument>
@@ -4262,6 +4257,8 @@
       <argument>%nelmio_cors.map%</argument>
       <argument>%nelmio_cors.defaults%</argument>
     </service>
+    <service id=".instanceof.Symfony\Bundle\FrameworkBundle\Controller\Controller.0.App\Controller\CottagesController" class="App\Controller\CottagesController" public="false" autowire="true" abstract="true"/>
+    <service id=".abstract.instanceof.App\Controller\CottagesController" class="App\Controller\CottagesController" public="false" autowire="true" autoconfigure="true" abstract="true"/>
     <service id=".instanceof.Symfony\Bundle\FrameworkBundle\Controller\Controller.0.App\Controller\FootballLeagueController" class="App\Controller\FootballLeagueController" public="false" autowire="true" abstract="true"/>
     <service id=".abstract.instanceof.App\Controller\FootballLeagueController" class="App\Controller\FootballLeagueController" public="false" autowire="true" autoconfigure="true" abstract="true"/>
     <service id=".instanceof.Symfony\Bundle\FrameworkBundle\Controller\Controller.0.App\Controller\FootballTeamController" class="App\Controller\FootballTeamController" public="false" autowire="true" abstract="true"/>
@@ -4421,6 +4418,24 @@
         <argument key="userService" type="service" id="App\Service\UserService"/>
       </argument>
     </service>
+    <service id=".service_locator.DmztIAk" class="Symfony\Component\DependencyInjection\ServiceLocator" public="false">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="cottagesRepository" type="service" id="App\Repository\CottagesRepository"/>
+      </argument>
+    </service>
+    <service id=".service_locator.1hjP8Jh" class="Symfony\Component\DependencyInjection\ServiceLocator" public="false">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="errorDecorator" type="service" id="App\Service\ResponseErrorDecoratorService"/>
+      </argument>
+    </service>
+    <service id=".service_locator.MCvyW6t" class="Symfony\Component\DependencyInjection\ServiceLocator" public="false">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="cottage" type="service" id=".errored..service_locator.MCvyW6t.App\Entity\Cottages"/>
+      </argument>
+    </service>
     <service id=".service_locator.UPvaeps" class="Symfony\Component\DependencyInjection\ServiceLocator" public="false">
       <tag name="container.service_locator"/>
       <argument type="collection">
@@ -4465,12 +4480,6 @@
         <argument key="userService" type="service" id="App\Service\UserService"/>
       </argument>
     </service>
-    <service id=".service_locator.1hjP8Jh" class="Symfony\Component\DependencyInjection\ServiceLocator" public="false">
-      <tag name="container.service_locator"/>
-      <argument type="collection">
-        <argument key="errorDecorator" type="service" id="App\Service\ResponseErrorDecoratorService"/>
-      </argument>
-    </service>
     <service id=".service_locator.p9rr06T" class="Symfony\Component\DependencyInjection\ServiceLocator" public="false">
       <tag name="container.service_locator"/>
       <argument type="collection">
@@ -4479,10 +4488,14 @@
         <argument key="userService" type="service" id="App\Service\UserService"/>
       </argument>
     </service>
-    <service id=".service_locator.YPrQTkB" class="Symfony\Component\DependencyInjection\ServiceLocator" public="false">
+    <service id=".service_locator.5i27poW" class="Symfony\Component\DependencyInjection\ServiceLocator" public="false">
       <tag name="container.service_locator"/>
       <argument type="collection">
         <argument key="App\Controller\AuthController::issueJWTToken" type="service" id=".service_locator.HWqWiuO"/>
+        <argument key="App\Controller\CottagesController::delete" type="service" id=".service_locator.MCvyW6t"/>
+        <argument key="App\Controller\CottagesController::edit" type="service" id=".service_locator.MCvyW6t"/>
+        <argument key="App\Controller\CottagesController::index" type="service" id=".service_locator.DmztIAk"/>
+        <argument key="App\Controller\CottagesController::show" type="service" id=".service_locator.1hjP8Jh"/>
         <argument key="App\Controller\FootballLeagueController::createLeague" type="service" id=".service_locator.UPvaeps"/>
         <argument key="App\Controller\FootballLeagueController::deleteLeague" type="service" id=".service_locator.x.rKWMX"/>
         <argument key="App\Controller\FootballLeagueController::getLeagueTeams" type="service" id=".service_locator.BchDU7b"/>
@@ -4495,6 +4508,10 @@
         <argument key="App\Controller\UserController::getUserList" type="service" id=".service_locator.1hjP8Jh"/>
         <argument key="App\Controller\UserController::updateUser" type="service" id=".service_locator.p9rr06T"/>
         <argument key="App\Controller\AuthController:issueJWTToken" type="service" id=".service_locator.HWqWiuO"/>
+        <argument key="App\Controller\CottagesController:delete" type="service" id=".service_locator.MCvyW6t"/>
+        <argument key="App\Controller\CottagesController:edit" type="service" id=".service_locator.MCvyW6t"/>
+        <argument key="App\Controller\CottagesController:index" type="service" id=".service_locator.DmztIAk"/>
+        <argument key="App\Controller\CottagesController:show" type="service" id=".service_locator.1hjP8Jh"/>
         <argument key="App\Controller\FootballLeagueController:createLeague" type="service" id=".service_locator.UPvaeps"/>
         <argument key="App\Controller\FootballLeagueController:deleteLeague" type="service" id=".service_locator.x.rKWMX"/>
         <argument key="App\Controller\FootballLeagueController:getLeagueTeams" type="service" id=".service_locator.BchDU7b"/>
@@ -4746,7 +4763,7 @@
       <argument type="service" id="security.token_storage"/>
     </service>
     <service id="debug.argument_resolver.service.inner" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\ServiceValueResolver" public="false">
-      <argument type="service" id=".service_locator.YPrQTkB"/>
+      <argument type="service" id=".service_locator.5i27poW"/>
     </service>
     <service id="debug.argument_resolver.default.inner" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\DefaultValueResolver" public="false"/>
     <service id="debug.argument_resolver.variadic.inner" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\VariadicValueResolver" public="false"/>
@@ -4799,6 +4816,7 @@
       <argument type="service" id="service_container"/>
       <factory service=".service_locator.UEpceA5" method="withContext"/>
     </service>
+    <service id=".errored..service_locator.MCvyW6t.App\Entity\Cottages" class="App\Entity\Cottages"/>
     <service id=".errored..service_locator.BchDU7b.App\Entity\FootballLeague" class="App\Entity\FootballLeague"/>
     <service id=".errored..service_locator.x.rKWMX.App\Entity\FootballLeague" class="App\Entity\FootballLeague"/>
     <service id=".errored..service_locator.Q8Slo_c.App\Entity\FootballTeam" class="App\Entity\FootballTeam"/>
@@ -5124,7 +5142,7 @@
     <service id="Psr\Log\LoggerInterface" alias="monolog.logger" public="false"/>
     <service id="sensio_framework_extra.converter.doctrine.orm.expression_language" alias="sensio_framework_extra.converter.doctrine.orm.expression_language.default" public="false"/>
     <service id="sensio_framework_extra.security.expression_language" alias="sensio_framework_extra.security.expression_language.default" public="false"/>
-    <service id="argument_resolver.controller_locator" alias=".service_locator.YPrQTkB"/>
+    <service id="argument_resolver.controller_locator" alias=".service_locator.5i27poW"/>
     <service id="twig.loader.filesystem" alias="twig.loader.native_filesystem" public="false"/>
     <service id="twig.loader" alias="twig.loader.native_filesystem"/>
     <service id=".service_locator.AoifO_3" alias=".2_ServiceLocator~ZfmyB9o" public="false"/>
