@@ -1,3 +1,27 @@
-<p>
-  cottages works!
-</p>
+
+  <button class="btn btn-success btn-circle pull-right" 
+          (click)="add()"     
+          title="Add Customer">
+    <i class="fas fa-plus-circle"></i>
+  </button>
+    <h3>{{errorMessage}}</h3>
+
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Nazwa</th>
+            <th>Info</th>
+            <th>Ilość pokoi</th>
+            
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let house of cottages">
+            <td>{{house.name}}</td>
+            <td>{{house.extra_info}}</td>
+            <td>{{house.rooms}}</td>
+
+    </tbody>
+</table>
+    

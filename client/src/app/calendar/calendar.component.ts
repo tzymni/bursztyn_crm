@@ -1,128 +1,196 @@
-import {Component, ElementRef, OnInit, ViewChild, OnChanges, SimpleChanges, Input, Output, EventEmitter} from '@angular/core';
-import {NgxTuiCalendarComponent, TuiCalendarOptions} from 'ngx-tui-calendar';
-import {TuiCalendarDefaults} from 'ngx-tui-calendar';
-import {AfterRenderScheduleEvent, BeforeCreateScheduleEvent, BeforeDeleteScheduleEvent, BeforeUpdateScheduleEvent, ClickDaynameEvent, ClickScheduleEvent} from 'ngx-tui-calendar/lib/Models/Events';
-import {Schedule} from 'ngx-tui-calendar/lib/Models/Schedule';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  ViewChild,
+  TemplateRef
+} from '@angular/core';
+import {
+  startOfDay,
+  endOfDay,
+  subDays,
+  addDays,
+  endOfMonth,
+  isSameDay,
+  isSameMonth,
+  addHours
+} from 'date-fns';
+import { Subject } from 'rxjs';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import {
+  CalendarEvent,
+  CalendarEventAction,
+  CalendarEventTimesChangedEvent,
+  CalendarView
+} from 'angular-calendar';
 
+
+const colors: any = {
+  red: {
+    primary: '#ad2121',
+    secondary: '#FAE3E3'
+  },
+  blue: {
+    primary: '#1e90ff',
+    secondary: '#D1E8FF'
+  },
+  yellow: {
+    primary: '#e3bc08',
+    secondary: '#FDF1BA'
+  }
+};
 @Component({
     selector: 'app-calendar',
     templateUrl: './calendar.component.html',
     styleUrls: ['./calendar.component.css']
 })
-export class CalendarComponent implements OnChanges, TuiCalendarOptions {
+
+export class CalendarComponent  {
+
+ @ViewChild('modalContent') modalContent: TemplateRef<any>;
 
 
-  @Input() defaultView: string;
-  @Input() taskView: boolean;
-  @Input() scheduleView: boolean;
-  @Input() template: object;
-  @Input() month: object;
-  @Input() week: object;
-  @Input() schedules: Schedule[];
+  view: CalendarView = CalendarView.Month;
+
+  CalendarView = CalendarView;
+    
+  viewDate: Date = new Date();
+
+  locale: string = 'pl';
+
+  modalData: {
+    action: string;
+    event: CalendarEvent;
+  };
+
+  actions: CalendarEventAction[] = [
+    {
+      label: '<i class="fa fa-fw fa-pencil"></i>',
+      onClick: ({ event }: { event: CalendarEvent }): void => {
+        this.handleEvent('Edited', event);
+      }
+    },
+    {
+      label: '<i class="fa fa-fw fa-times"></i>',
+      onClick: ({ event }: { event: CalendarEvent }): void => {
+        this.events = this.events.filter(iEvent => iEvent !== event);
+        this.handleEvent('Deleted', event);
+      }
+    }
+  ];
 
 
-//    @Output() beforeCreateSchedule: EventEmitter<BeforeCreateScheduleEvent> = new EventEmitter();
-//    @Output() beforeDeleteSchedule: EventEmitter<BeforeDeleteScheduleEvent> = new EventEmitter();
-//    @Output() afterRenderSchedule: EventEmitter<AfterRenderScheduleEvent> = new EventEmitter();
-    @Output() tuiCalendarCreated: EventEmitter<{tuiCalendar: any}> = new EventEmitter();
-//    @Output() dayNameClicked: EventEmitter<ClickDaynameEvent> = new EventEmitter();
-//    @Output() timeClicked: EventEmitter<Date> = new EventEmitter();
-    @Output() scheduleClicked: EventEmitter<ClickScheduleEvent> = new EventEmitter();
-//    @Output() beforeUpdateSchedule: EventEmitter<BeforeUpdateScheduleEvent> = new EventEmitter();
 
-        @ViewChild('exampleCalendar') exampleCalendar: NgxTuiCalendarComponent;
+  refresh: Subject<any> = new Subject();
 
-    private tuiCalendar: any;
-    constructor(private elm: ElementRef, private defaults: TuiCalendarDefaults) {
+  events: CalendarEvent[] = [
+    {
+      start: subDays(startOfDay(new Date()), 1),
+      end: addDays(new Date(), 1),
+      title: 'A 333 day event',
+      color: colors.red,
+      actions: this.actions,
+      allDay: true,
+      resizable: {
+        beforeStart: true,
+        afterEnd: true
+      },
+      draggable: true
+    },
+    {
+      start: startOfDay(new Date()),
+      title: 'An event with no end date',
+      color: colors.yellow,
+      actions: this.actions
+    },
+    {
+      start: subDays(endOfMonth(new Date()), 3),
+      end: addDays(endOfMonth(new Date()), 3),
+      title: 'A long event that spans 2 months',
+      color: colors.blue,
+      allDay: true
+    },
+    {
+      start: addHours(startOfDay(new Date()), 2),
+      end: new Date(),
+      title: 'A draggable and resizable event',
+      color: colors.yellow,
+      actions: this.actions,
+      resizable: {
+        beforeStart: true,
+        afterEnd: true
+      },
+      draggable: true
+    }
+  ];
 
-        const options: TuiCalendarOptions = {
-            defaultView: this.defaultView,
-            taskView: this.taskView,
-            scheduleView: this.scheduleView,
-            template: this.template,
-            month: this.month,
-            week: this.week
+  activeDayIsOpen: boolean = true;
+
+  constructor(private modal: NgbModal) {}
+
+  dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }): void {
+    if (isSameMonth(date, this.viewDate)) {
+      this.viewDate = date;
+      if (
+        (isSameDay(this.viewDate, date) && this.activeDayIsOpen === true) ||
+        events.length === 0
+      ) {
+        this.activeDayIsOpen = false;
+      } else {
+        this.activeDayIsOpen = true;
+      }
+    }
+  }
+
+  eventTimesChanged({
+    event,
+    newStart,
+    newEnd
+  }: CalendarEventTimesChangedEvent): void {
+    this.events = this.events.map(iEvent => {
+      if (iEvent === event) {
+        return {
+          ...event,
+          start: newStart,
+          end: newEnd
         };
-//
-//        Object.keys(this.defaults).forEach(optionKey => {
-//            if (typeof options[optionKey] === 'undefined') {
-//                options[optionKey] = this.defaults[optionKey];
-//            }
-//        });
-//
-//        Object.keys(options).forEach(optionKey => {
-//            if (typeof options[optionKey] === 'undefined') {
-//                delete options[optionKey];
-//            }
-//        });
-//
-//
-//        this.tuiCalendar = new NgxTuiCalendarComponent(this.elm.nativeElement, defaults);;
-//        this.tuiCalendarCreated.emit({tuiCalendar: this.tuiCalendar});
+      }
+      return iEvent;
+    });
+    this.handleEvent('Dropped or resized', event);
+  }
 
-    }
+  handleEvent(action: string, event: CalendarEvent): void {
+    this.modalData = { event, action };
+    this.modal.open(this.modalContent, { size: 'lg' });
+  }
 
-        onTuiCalendarCreate($event) {
-            //            this.exampleCalendar.setOptions({month: {visibleWeeksCount: 2, workweek: true}}, true);
-            console.log("ALLELUJJ23");
-            this.exampleCalendar.changeView('month');
-            
-//            this.exampleCalendar.
-            //        var calendarOptions = this.
-    
-            const options: TuiCalendarOptions = {
-                month: {startDayOfWeek: 1}
-    
-            }
-            
-//            this.scheduleClicked.emit(Schedule);
-
-//                    ClickScheduleEvent => {
-//    }
-//                this.exampleCalendar.scheduleClicked(event: ClickScheduleEvent => {
-//    });
-//            this.exampleCalendar.scheduleClicked(clickScheduleEvent) => {
-//      this.scheduleClicked.emit(event);
-//    });
-            
-//            this.exampleCalendar.next();
-    
-            /* at this point the calendar has been created and it's methods are available via the ViewChild defined above, so for example you can do: */
-            this.exampleCalendar.createSchedules([
-    
-                {
-                    id: '1',
-                    calendarId: '1',
-                    title: 'Domek1',
-                    category: 'time',
-                    dueDateClass: '',
-                    start: new Date(),
-                    end: '2019-05-28T17:31:00+09:00'
-                },
-                {
-                    id: '2',
-                    calendarId: '2',
-                    title: 'Domek 2',
-                    category: 'time',
-                    dueDateClass: '',
-                    start: new Date(),
-                    end: '2019-05-28T17:31:00+09:00',
-                    isReadOnly: true    // schedule is read-only
-                }
-    
-            ]);
+  addEvent(): void {
+    this.events = [
+      ...this.events,
+      {
+        title: 'Ne2312312w event',
+        start: startOfDay(new Date()),
+        end: endOfDay(new Date()),
+        color: colors.red,
+        draggable: true,
+        resizable: {
+          beforeStart: true,
+          afterEnd: true
         }
+      }
+    ];
+  }
 
+  deleteEvent(eventToDelete: CalendarEvent) {
+    this.events = this.events.filter(event => event !== eventToDelete);
+  }
 
-    ngOnChanges(changes: SimpleChanges): void {
+  setView(view: CalendarView) {
+    this.view = view;
+  }
 
-    }
-
-    ngOnInit() {
-
-
-                this.onTuiCalendarCreate('test');
-
-    }
+  closeOpenMonthViewDay() {
+    this.activeDayIsOpen = false;
+  }
 
 }
