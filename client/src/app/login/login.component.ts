@@ -37,7 +37,7 @@ export class LoginComponent implements OnInit {
         this.authenticationService.login(this.model.username, this.model.password)
             .subscribe(
                 data => {
-                    this.router.navigate([this.returnUrl]);
+                    this.router.navigate([this.returnUrl], { skipLocationChange: true });
                     
 //                    this.notifier.notify('success', 'Zalogowano do systemu' );
                 },
