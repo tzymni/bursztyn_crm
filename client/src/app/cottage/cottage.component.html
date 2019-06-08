@@ -22,8 +22,10 @@
     <div class="form-group row">
         <label for="" class="col-md-12">Kolor</label>
         <div class="col-md-6">
-            <input type="text" class="form-control"
-                   formControlName="color">
+            <input [(colorPicker)]="color" [style.background]="color" class="form-control"
+                   formControlName="color" [value]="color" />
+            
+       
                    
         </div>
 
