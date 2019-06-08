@@ -3,7 +3,7 @@ import {Router} from '@angular/router';
 import {UsersService} from './service/users.service';
 import {NgbActiveModal, NgbModal, NgbModalOptions} from '@ng-bootstrap/ng-bootstrap';
 import {UserComponent} from '../user/user.component';
-import { NgxTuiCalendarComponent } from 'ngx-tui-calendar';
+import {NgxTuiCalendarComponent} from 'ngx-tui-calendar';
 @Component({
     selector: 'app-users',
     templateUrl: './users.component.html',
@@ -11,7 +11,7 @@ import { NgxTuiCalendarComponent } from 'ngx-tui-calendar';
 
 
 export class UsersComponent implements OnInit {
-@ViewChild('exampleCalendar') exampleCalendar: NgxTuiCalendarComponent;
+    @ViewChild('exampleCalendar') exampleCalendar: NgxTuiCalendarComponent;
     constructor(private _usersService: UsersService,
         private _router: Router,
         private modalService: NgbModal
@@ -19,7 +19,7 @@ export class UsersComponent implements OnInit {
     ) {}
     users: Array<any> = [];
     errorMessage: any;
-  id : any;
+    id: any;
     getUsers() {
         this._usersService.getUsers().subscribe(
             data => this.users = data,
@@ -32,27 +32,24 @@ export class UsersComponent implements OnInit {
 
 
     add() {
-        
-        
-        
+
+
+
         this.modalService.open(UserComponent).result.then((data) => {
             this.refreshData();
         });
     }
-    
-    
+
+
     edit(email) {
 
-        console.log(email);
-        
-        
-        const modal =this.modalService.open(UserComponent, { size: 'lg' } ) ;
-modal.componentInstance.id = email;
-        
+        const modal = this.modalService.open(UserComponent, {size: 'lg'});
+        modal.componentInstance.id = email;
+
         modal.result.then((data) => {
             this.refreshData();
         });
-        
+
     }
 
     delete(email) {
@@ -60,7 +57,7 @@ modal.componentInstance.id = email;
         this._usersService.deleteUser(email).subscribe(
             data => {
                 this.refreshData();
-                
+
             },
             error => this.errorMessage = error
 

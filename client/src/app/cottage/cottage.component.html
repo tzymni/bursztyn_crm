@@ -1,0 +1,50 @@
+        <form [formGroup]="cottageForm" (ngSubmit)="save()" novalidate>
+    <div class="modal-header">
+      <h3 class="modal-title">
+      {{title}}
+      </h3>
+      <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+        
+    <div class="form-group row">
+        <label for="" class="col-md-12">Nazwa</label>
+        <div class="col-md-6">
+            <input type="text" class="form-control"
+                   formControlName="name" ngModel [name]="true">
+                   
+        </div>
+
+    </div>
+        
+    <div class="form-group row">
+        <label for="" class="col-md-12">Kolor</label>
+        <div class="col-md-6">
+            <input type="text" class="form-control"
+                   formControlName="color">
+                   
+        </div>
+
+    </div>
+        
+    <div class="form-group row">
+        <label for="" class="col-md-12">Uwagi</label>
+        <div class="col-md-6">
+            <input type="text" class="form-control"
+                   formControlName="extra_info">
+                   
+        </div>
+
+    </div>
+        
+
+    </div>
+    <div class="modal-footer">
+                 <input type="submit" 
+                class="btn btn-primary" 
+                value="Zapisz" />
+      <button type="button" class="btn btn-outline-dark" (click)="activeModal.close('Close click')">Wyjdź</button>
+    </div>
+</form>

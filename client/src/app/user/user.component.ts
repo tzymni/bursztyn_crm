@@ -2,7 +2,6 @@ import {Component, OnInit} from '@angular/core';
 import {NgbActiveModal, NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ActivatedRoute} from '@angular/router';
-import {ItemServiceService} from '../items-list/service/item-service.service';
 import {UsersService} from '../users/service/users.service';
 import {Router} from '@angular/router';
 import {NotificationsService} from '../_notifications/notifications.service';
@@ -21,7 +20,6 @@ export class UserComponent {
         public activeModal: NgbActiveModal,
         private _fb: FormBuilder,
         private _avRoute: ActivatedRoute,
-        private _customerService: ItemServiceService,
         private _userService: UsersService,
         private _router: Router,
         private notification: NotificationsService,

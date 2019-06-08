@@ -6,6 +6,7 @@ import {AuthGuard} from './_guards/index';
 import {ItemsListComponent} from './items-list/items-list.component';
 import {UsersComponent} from './users/users.component';
 import {UserComponent} from './user/user.component';
+import {CottageComponent} from './cottage/cottage.component';
 import {CalendarComponent} from './calendar/calendar.component';
 import {CottagesComponent} from './cottages/cottages.component';
 
@@ -22,6 +23,7 @@ const appRoutes: Routes = [
             {path: "customers", component: ItemsListComponent},
             {path: "customers/add", component: ItemComponent},
             {path: "user/add", component: UserComponent},
+            {path: "cottage/add", component: CottageComponent},
             {path: "customers/edit/:id", component: ItemComponent},
 
 
