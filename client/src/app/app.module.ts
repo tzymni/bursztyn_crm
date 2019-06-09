@@ -30,7 +30,6 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {CalendarModule, DateAdapter} from 'angular-calendar';
 import {adapterFactory} from 'angular-calendar/date-adapters/date-fns';
 import {CottageComponent} from './cottage/cottage.component';
-import { ColorPickerModule } from 'ngx-color-picker';
 
 registerLocaleData(localeFr);
 
@@ -101,7 +100,6 @@ const customNotifierOptions: NotifierOptions = {
         NotifierModule.withConfig(customNotifierOptions),
         NgxSmartModalModule.forRoot(),
         BrowserAnimationsModule,
-        ColorPickerModule,
         CalendarModule.forRoot({
             provide: DateAdapter,
             useFactory: adapterFactory

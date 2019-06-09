@@ -43,7 +43,7 @@ export class AuthenticationService {
 
                     if (token) {
                         // store user details and jwt token in local storage to keep user logged in between page refreshes
-                        localStorage.setItem('token', token);
+                        sessionStorage.setItem('token', token);
                         return user;
                     }
 
@@ -71,6 +71,6 @@ export class AuthenticationService {
 
     logout() {
         // remove user from local storage to log user out
-        localStorage.removeItem('token');
+        sessionStorage.removeItem('token');
     }
 }

@@ -14,7 +14,7 @@ export class RestService {
 
     constructor(private _http: HttpClient) {
 
-        var token = localStorage.getItem('token');
+        var token = sessionStorage.getItem('token');
 
         this.headers = new HttpHeaders({
             'Content-Type': 'application/json',

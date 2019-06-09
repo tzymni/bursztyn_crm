@@ -41,15 +41,9 @@ class UserController extends Controller implements TokenAuthenticatedController 
         }
 
 
-//        $user = $userService->getUser($data['email']);
-//        
-//        if(is_null($user))
-//        {
+
         $result = $userService->createUser($data);
-//        }
-//        else{
-//            $result = $user;
-//        }
+
 
         if ($result instanceof User) {
             $status = JsonResponse::HTTP_CREATED;

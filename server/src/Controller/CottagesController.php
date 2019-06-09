@@ -2,12 +2,11 @@
 
 namespace App\Controller;
 
+
+
 use App\Entity\Cottages;
-use App\Form\CottagesType;
-use App\Repository\CottagesRepository;
-
-
 use App\Service\ResponseErrorDecoratorService;
+use App\Service\CottageService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -15,38 +14,51 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 
-/**
- * @Route("/cottages")
- */
-class CottagesController extends Controller {
+class CottagesController extends Controller  {
+
+
 
     /**
-     * @Route("/", name="cottages_index", methods="GET")
+     * Creates new user by given data
+     *
+     * @Route("/cottage/new")
+     * @Method("POST")
+     * @param Request $request
+     * @param CottageService $cottageService
+     * @param ResponseErrorDecoratorService $errorDecorator
+     * @return JsonResponse
      */
-    public function index(CottagesRepository $cottagesRepository): Response {
-        return $this->render('cottages/index.html.twig', ['cottages' => $cottagesRepository->findAll()]);
-    }
+    public function addCottage(Request $request, CottageService $cottageService, ResponseErrorDecoratorService $errorDecorator) {
+        $body = $request->getContent();
+        $data = json_decode($body, true);
 
-    /**
-     * @Route("/new", name="cottages_new", methods="GET|POST")
-     */
-    public function add(Request $request): Response {
-        $cottage = new Cottages();
-        $form = $this->createForm(CottagesType::class, $cottage);
-        $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($cottage);
-            $em->flush();
 
-            return $this->redirectToRoute('cottages_index');
+        if (is_null($data) || !isset($data['name']) || !isset($data['color'])) {
+            $status = JsonResponse::HTTP_BAD_REQUEST;
+            $data = $errorDecorator->decorateError(
+                    JsonResponse::HTTP_BAD_REQUEST, "Test"
+            );
+
+            return new JsonResponse($data, $status);
         }
 
-        return $this->render('cottages/new.html.twig', [
-                    'cottage' => $cottage,
-                    'form' => $form->createView(),
-        ]);
+        $result = $cottageService->createCottage($data);
+
+
+        if ($result instanceof Cottages) {
+            $status = JsonResponse::HTTP_CREATED;
+            $data = [
+                'data' => [
+                    'id' => $result->getId()
+                ]
+            ];
+        } else {
+            $status = JsonResponse::HTTP_BAD_REQUEST;
+            $data = $errorDecorator->decorateError($status, $result);
+        }
+
+        return new JsonResponse($data, $status);
     }
 
     /**

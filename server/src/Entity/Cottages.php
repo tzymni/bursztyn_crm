@@ -22,7 +22,7 @@ class Cottages
     private $name;
 
     /**
-     * @ORM\Column(type="string", length=6, nullable=true)
+     * @ORM\Column(type="string", length=8, nullable=true)
      */
     private $color;
 

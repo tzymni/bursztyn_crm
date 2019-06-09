@@ -13,7 +13,7 @@ export class MenuComponent implements OnInit {
 
     logout() {
         // remove user from local storage to log user out
-        localStorage.removeItem('token');
+        sessionStorage.removeItem('token');
         this.router.navigate(['/login'], { skipLocationChange: true });
         return false;
     }
