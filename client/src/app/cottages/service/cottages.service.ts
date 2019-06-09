@@ -16,12 +16,12 @@ export class CottagesService {
     ) {}
 
     getCottages(): Observable<any> {
-        var get = this._rest.getMethod('api/users', null);
+        var get = this._rest.getMethod('api/cottages', null);
         return get;
     }
 
-    getCottage(email): Observable<any> {
-        var get = this._rest.getMethod('api/user', email);
+    getCottage(id): Observable<any> {
+        var get = this._rest.getMethod('api/cottage', id);
         return get;
     }
 

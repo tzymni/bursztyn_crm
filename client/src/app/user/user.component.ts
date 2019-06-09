@@ -43,12 +43,12 @@ export class UserComponent {
     }
 
 
-
-    get email() {
-        return this.customerForm.get('email');
-    }
-    // similarly for address and phone
-    get password() {return this.customerForm.get('password');}
+//
+//    get email() {
+//        return this.customerForm.get('email');
+//    }
+//    // similarly for address and phone
+//    get password() {return this.customerForm.get('password');}
 
 
     cancel() {

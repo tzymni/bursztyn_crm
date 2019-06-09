@@ -62,5 +62,17 @@ class CottageService {
             return "Nie udało się stworzyć domku ".$ex->getMessage();
         }
     }
+    
+    
+        public function getCottage($id) {
+        $cottage = $this->em->getRepository('App:Cottages')
+                ->findOneBy(['id' => $id]);
+
+        if ($cottage) {
+            return $cottage;
+        } else {
+            return "Nie ma takiego domku";
+        }
+    }
 
 }

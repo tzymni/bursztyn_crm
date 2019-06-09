@@ -22,7 +22,8 @@ class srcDevDebugProjectContainerUrlGenerator extends Symfony\Component\Routing\
             self::$declaredRoutes = array(
         'app_auth_issuejwttoken' => array(array(), array('_controller' => 'App\\Controller\\AuthController::issueJWTToken'), array(), array(array('text', '/api/authenticate')), array(), array()),
         'app_cottages_addcottage' => array(array(), array('_controller' => 'App\\Controller\\CottagesController::addCottage'), array(), array(array('text', '/cottage/new')), array(), array()),
-        'app_cottages_show' => array(array(), array('_controller' => 'App\\Controller\\CottagesController::show'), array(), array(array('text', '/api/cottages')), array(), array()),
+        'app_cottages_getcottageslist' => array(array(), array('_controller' => 'App\\Controller\\CottagesController::getCottagesList'), array(), array(array('text', '/api/cottages')), array(), array()),
+        'app_cottages_getcottage' => array(array('id'), array('_controller' => 'App\\Controller\\CottagesController::getCottage'), array(), array(array('variable', '/', '[^/]++', 'id'), array('text', '/api/cottage')), array(), array()),
         'cottages_edit' => array(array('id'), array('_controller' => 'App\\Controller\\CottagesController::edit'), array(), array(array('text', '/edit'), array('variable', '/', '[^/]++', 'id')), array(), array()),
         'cottages_delete' => array(array('id'), array('_controller' => 'App\\Controller\\CottagesController::delete'), array(), array(array('variable', '/', '[^/]++', 'id')), array(), array()),
         'app_footballleague_createleague' => array(array(), array('_controller' => 'App\\Controller\\FootballLeagueController::createLeague'), array(), array(array('text', '/api/leagues')), array(), array()),

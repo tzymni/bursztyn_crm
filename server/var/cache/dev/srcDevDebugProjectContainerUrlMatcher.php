@@ -66,7 +66,7 @@ class srcDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
                 $routes = array(
                     '/api/authenticate' => array(array('_route' => 'app_auth_issuejwttoken', '_controller' => 'App\\Controller\\AuthController::issueJWTToken'), null, array('POST' => 0), null),
                     '/cottage/new' => array(array('_route' => 'app_cottages_addcottage', '_controller' => 'App\\Controller\\CottagesController::addCottage'), null, array('POST' => 0), null),
-                    '/api/cottages' => array(array('_route' => 'app_cottages_show', '_controller' => 'App\\Controller\\CottagesController::show'), null, array('GET' => 0), null),
+                    '/api/cottages' => array(array('_route' => 'app_cottages_getcottageslist', '_controller' => 'App\\Controller\\CottagesController::getCottagesList'), null, array('GET' => 0), null),
                     '/api/leagues' => array(array('_route' => 'app_footballleague_createleague', '_controller' => 'App\\Controller\\FootballLeagueController::createLeague'), null, array('POST' => 0), null),
                     '/api/teams' => array(array('_route' => 'app_footballteam_createteam', '_controller' => 'App\\Controller\\FootballTeamController::createTeam'), null, array('POST' => 0), null),
                     '/users/create' => array(array('_route' => 'app_user_createuser', '_controller' => 'App\\Controller\\UserController::createUser'), null, array('POST' => 0), null),
@@ -101,35 +101,36 @@ class srcDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
         $matchedPathinfo = $pathinfo;
         $regexList = array(
             0 => '{^(?'
+                    .'|/api/cottage/([^/]++)(*:28)'
                     .'|/([^/]++)(?'
-                        .'|/edit(*:24)'
-                        .'|(*:31)'
+                        .'|/edit(*:52)'
+                        .'|(*:59)'
                     .')'
                     .'|/api/(?'
                         .'|leagues/([^/]++)(?'
-                            .'|/teams(*:72)'
-                            .'|(*:79)'
+                            .'|/teams(*:100)'
+                            .'|(*:108)'
                         .')'
                         .'|teams/([^/]++)(?'
-                            .'|(*:104)'
+                            .'|(*:134)'
                         .')'
                         .'|user/([^/]++)(?'
-                            .'|(*:129)'
+                            .'|(*:159)'
                         .')'
                     .')'
                     .'|/_(?'
-                        .'|error/(\\d+)(?:\\.([^/]++))?(*:170)'
-                        .'|wdt/([^/]++)(*:190)'
+                        .'|error/(\\d+)(?:\\.([^/]++))?(*:200)'
+                        .'|wdt/([^/]++)(*:220)'
                         .'|profiler/([^/]++)(?'
                             .'|/(?'
-                                .'|search/results(*:236)'
-                                .'|router(*:250)'
+                                .'|search/results(*:266)'
+                                .'|router(*:280)'
                                 .'|exception(?'
-                                    .'|(*:270)'
-                                    .'|\\.css(*:283)'
+                                    .'|(*:300)'
+                                    .'|\\.css(*:313)'
                                 .')'
                             .')'
-                            .'|(*:293)'
+                            .'|(*:323)'
                         .')'
                     .')'
                 .')$}sD',
@@ -138,7 +139,7 @@ class srcDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
         foreach ($regexList as $offset => $regex) {
             while (preg_match($regex, $matchedPathinfo, $matches)) {
                 switch ($m = (int) $matches['MARK']) {
-                    case 104:
+                    case 134:
                         $matches = array('id' => $matches[1] ?? null);
 
                         // app_footballteam_updateteam
@@ -162,7 +163,7 @@ class srcDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
                         not_app_footballteam_deleteteam:
 
                         break;
-                    case 129:
+                    case 159:
                         $matches = array('email' => $matches[1] ?? null);
 
                         // app_user_getuserbymail
@@ -198,17 +199,18 @@ class srcDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
                         break;
                     default:
                         $routes = array(
-                            24 => array(array('_route' => 'cottages_edit', '_controller' => 'App\\Controller\\CottagesController::edit'), array('id'), array('GET' => 0, 'POST' => 1), null),
-                            31 => array(array('_route' => 'cottages_delete', '_controller' => 'App\\Controller\\CottagesController::delete'), array('id'), array('DELETE' => 0), null),
-                            72 => array(array('_route' => 'app_footballleague_getleagueteams', '_controller' => 'App\\Controller\\FootballLeagueController::getLeagueTeams'), array('id'), array('GET' => 0), null),
-                            79 => array(array('_route' => 'app_footballleague_deleteleague', '_controller' => 'App\\Controller\\FootballLeagueController::deleteLeague'), array('id'), array('DELETE' => 0), null),
-                            170 => array(array('_route' => '_twig_error_test', '_controller' => 'twig.controller.preview_error::previewErrorPageAction', '_format' => 'html'), array('code', '_format'), null, null),
-                            190 => array(array('_route' => '_wdt', '_controller' => 'web_profiler.controller.profiler::toolbarAction'), array('token'), null, null),
-                            236 => array(array('_route' => '_profiler_search_results', '_controller' => 'web_profiler.controller.profiler::searchResultsAction'), array('token'), null, null),
-                            250 => array(array('_route' => '_profiler_router', '_controller' => 'web_profiler.controller.router::panelAction'), array('token'), null, null),
-                            270 => array(array('_route' => '_profiler_exception', '_controller' => 'web_profiler.controller.exception::showAction'), array('token'), null, null),
-                            283 => array(array('_route' => '_profiler_exception_css', '_controller' => 'web_profiler.controller.exception::cssAction'), array('token'), null, null),
-                            293 => array(array('_route' => '_profiler', '_controller' => 'web_profiler.controller.profiler::panelAction'), array('token'), null, null),
+                            28 => array(array('_route' => 'app_cottages_getcottage', '_controller' => 'App\\Controller\\CottagesController::getCottage'), array('id'), array('GET' => 0), null),
+                            52 => array(array('_route' => 'cottages_edit', '_controller' => 'App\\Controller\\CottagesController::edit'), array('id'), array('GET' => 0, 'POST' => 1), null),
+                            59 => array(array('_route' => 'cottages_delete', '_controller' => 'App\\Controller\\CottagesController::delete'), array('id'), array('DELETE' => 0), null),
+                            100 => array(array('_route' => 'app_footballleague_getleagueteams', '_controller' => 'App\\Controller\\FootballLeagueController::getLeagueTeams'), array('id'), array('GET' => 0), null),
+                            108 => array(array('_route' => 'app_footballleague_deleteleague', '_controller' => 'App\\Controller\\FootballLeagueController::deleteLeague'), array('id'), array('DELETE' => 0), null),
+                            200 => array(array('_route' => '_twig_error_test', '_controller' => 'twig.controller.preview_error::previewErrorPageAction', '_format' => 'html'), array('code', '_format'), null, null),
+                            220 => array(array('_route' => '_wdt', '_controller' => 'web_profiler.controller.profiler::toolbarAction'), array('token'), null, null),
+                            266 => array(array('_route' => '_profiler_search_results', '_controller' => 'web_profiler.controller.profiler::searchResultsAction'), array('token'), null, null),
+                            280 => array(array('_route' => '_profiler_router', '_controller' => 'web_profiler.controller.router::panelAction'), array('token'), null, null),
+                            300 => array(array('_route' => '_profiler_exception', '_controller' => 'web_profiler.controller.exception::showAction'), array('token'), null, null),
+                            313 => array(array('_route' => '_profiler_exception_css', '_controller' => 'web_profiler.controller.exception::cssAction'), array('token'), null, null),
+                            323 => array(array('_route' => '_profiler', '_controller' => 'web_profiler.controller.profiler::panelAction'), array('token'), null, null),
                         );
 
                         list($ret, $vars, $requiredMethods, $requiredSchemes) = $routes[$m];
@@ -234,7 +236,7 @@ class srcDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
                         return $ret;
                 }
 
-                if (293 === $m) {
+                if (323 === $m) {
                     break;
                 }
                 $regex = substr_replace($regex, 'F', $m - $offset, 1 + strlen($m));

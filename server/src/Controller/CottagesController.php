@@ -66,14 +66,50 @@ class CottagesController extends Controller  {
      * @Method("GET")
      * @param ResponseErrorDecoratorService $errorDecorator
      */
-    public function show(ResponseErrorDecoratorService $errorDecorator) {
-//        $users = $this->getDoctrine()->getRepository(User::class)->findAllActiveWithoutPassword();
+    public function getCottagesList(
+    ResponseErrorDecoratorService $errorDecorator
+    ) {
+
+        $users = $this->getDoctrine()->getRepository(Cottages::class)->findAllActive();
         $status = JsonResponse::HTTP_OK;
 
 
         return new JsonResponse($users, $status);
     }
 
+        /**
+     * @Route("/api/cottage/{id}")
+     * @Method("GET")
+     * @param ResponseErrorDecoratorService $errorDecorator
+     */
+    public function getCottage(Request $request, CottageService $cottageService, ResponseErrorDecoratorService $errorDecorator) {
+        $id = $request->get('id');
+
+
+        if (!empty($id)) {
+            $cottage = $cottageService->getCottage($id);
+        }
+
+
+
+        if ($cottage instanceof Cottages) {
+            $status = JsonResponse::HTTP_CREATED;
+            $data = [
+                'id' => $cottage->getId(),
+                'name' => $cottage->getName(),
+                'color' => $cottage->getColor(),
+                'extra_info' => $cottage->getExtraInfo()
+            ];
+        } else {
+            $status = JsonResponse::HTTP_BAD_REQUEST;
+            $data = $errorDecorator->decorateError($status);
+        }
+
+
+        return new JsonResponse($data, $status);
+    }
+    
+    
     /**
      * @Route("/{id}/edit", name="cottages_edit", methods="GET|POST")
      */

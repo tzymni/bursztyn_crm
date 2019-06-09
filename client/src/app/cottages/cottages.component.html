@@ -15,8 +15,8 @@
         <tr>
             <th>Nazwa</th>
             <th>Info</th>
-            <th>Ilość pokoi</th>
             <th>Kolor</th>
+            <th>Operacje</th>
             
         </tr>
     </thead>
@@ -24,8 +24,15 @@
         <tr *ngFor="let house of cottages">
             <td>{{house.name}}</td>
             <td>{{house.extra_info}}</td>
-            <td>{{house.rooms}}</td>
-            <td>{{house.color}}</td>
+            <td style="background-color: {{house.color}}">
+                {{house.color}}</td>
+            <td>
+                                <i class="fas fa-user-edit" style="cursor: pointer"
+                   (click)="edit(house.id)" title="Edit"></i>
+                <i class="fas fa-trash-alt" style="cursor: pointer"    
+                    (click)="delete(house.id)" title="Delete"></i>
+            </td>
+        </tr>
 
     </tbody>
 </table>

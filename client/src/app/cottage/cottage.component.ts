@@ -23,7 +23,6 @@ export class CottageComponent implements OnInit {
         public activeModal: NgbActiveModal,
         private _fb: FormBuilder,
         private _avRoute: ActivatedRoute,
-        //        private _customerService: ItemServiceService,
         private _cottagesService: CottagesService,
         private _router: Router,
         private notification: NotificationsService,
@@ -31,7 +30,6 @@ export class CottageComponent implements OnInit {
 
         if (this._avRoute.snapshot.params["id"]) {
             this.id = (this._avRoute.snapshot.params["id"]);
-            console.log(this.id);
         }
 
         this.cottageForm = this._fb.group({
@@ -39,15 +37,12 @@ export class CottageComponent implements OnInit {
             Validators.minLength(3),
             Validators.maxLength(30)]],
             color: ['', [Validators.required]],
-            extra_info: ['', [Validators.required]]
+            extra_info: ['', [Validators.required]],
+            id: ['',[]]
         })
 
     }
 
-
-    test(event) {
-        console.log(event);
-    }
 
     save() {
         console.log("Zapis");
@@ -90,6 +85,12 @@ export class CottageComponent implements OnInit {
 
 
     ngOnInit() {
+        if (this.id) {
+            this.title = 'Edytuj domek '+this.id;
+            this._cottagesService.getCottage(this.id)
+                .subscribe(resp => this.cottageForm.setValue(resp)
+                    , error => this.errorMessage = error);
+        }
     }
 
 }

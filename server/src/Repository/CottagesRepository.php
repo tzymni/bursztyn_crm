@@ -18,6 +18,27 @@ class CottagesRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Cottages::class);
     }
+    
+    
+        /**
+     * 
+     * @return Cottages[]
+     */
+    public function findAllActive(): array
+    {
+        // automatically knows to select Products
+        // the "p" is an alias you'll use in the rest of the query
+        $qb = $this->createQueryBuilder('p')
+            ->select('p.name, p.color, p.extra_info, p.id')
+            ->andWhere('p.is_active = :active')
+            ->setParameter('active', 1)
+            ->getQuery();
+
+        return $qb->execute();
+
+        // to get just one result:
+        // $product = $qb->setMaxResults(1)->getOneOrNullResult();
+    }
 
 //    /**
 //     * @return Cottages[] Returns an array of Cottages objects
