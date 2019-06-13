@@ -48,8 +48,6 @@ export class RestService {
 
     postMethod(url: string, data) {
 
-
-
         return this._http.post(this.baseUrl + url, data, {headers: this.headers}).pipe(
             map((response: Response) => {
                 return response;
@@ -66,7 +64,6 @@ export class RestService {
 
     putMethod(url: string, data) {
 
-
         return this._http.put(this.baseUrl + url, data, {headers: this.headers}).pipe(
             map((response: Response) => {
                 return response;
@@ -77,6 +74,8 @@ export class RestService {
             })
 
         )
+
+
 
     }
 

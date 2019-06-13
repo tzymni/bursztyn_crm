@@ -24,7 +24,7 @@
         <tr *ngFor="let house of cottages">
             <td>{{house.name}}</td>
             <td>{{house.extra_info}}</td>
-            <td style="background-color: {{house.color}}">
+            <td [ngStyle]="{'background': house.color}">
                 {{house.color}}</td>
             <td>
                                 <i class="fas fa-user-edit" style="cursor: pointer"

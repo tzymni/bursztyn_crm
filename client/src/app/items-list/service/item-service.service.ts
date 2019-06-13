@@ -19,7 +19,6 @@ export class ItemServiceService {
         ).pipe(
             // eg. "map" without a dot before
             map(data => {
-                console.log(data.json());
                 return data.json();
             }),
             // "catchError" instead "catch"
@@ -47,7 +46,6 @@ export class ItemServiceService {
 
     _errorHandler(error: Response) {
         debugger;
-        console.log(error);
         return _throw(error || "Internal server error");
     }
 }

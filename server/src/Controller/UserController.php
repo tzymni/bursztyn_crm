@@ -154,8 +154,6 @@ class UserController extends Controller implements TokenAuthenticatedController 
     public function updateUser(User $user, Request $request, UserService $userService, ResponseErrorDecoratorService $errorDecorator) {
    
 
-
-        error_log("BOBOBOBO");
 //
         $body = $request->getContent();
         $data = json_decode($body, true);

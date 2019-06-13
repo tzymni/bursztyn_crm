@@ -4434,6 +4434,14 @@
         <argument key="errorDecorator" type="service" id="App\Service\ResponseErrorDecoratorService"/>
       </argument>
     </service>
+    <service id=".service_locator..4C5IY8" class="Symfony\Component\DependencyInjection\ServiceLocator" public="false">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="cottage" type="service" id=".errored..service_locator..4C5IY8.App\Entity\Cottages"/>
+        <argument key="cottageService" type="service" id="App\Service\CottageService"/>
+        <argument key="errorDecorator" type="service" id="App\Service\ResponseErrorDecoratorService"/>
+      </argument>
+    </service>
     <service id=".service_locator.MCvyW6t" class="Symfony\Component\DependencyInjection\ServiceLocator" public="false">
       <tag name="container.service_locator"/>
       <argument type="collection">
@@ -4492,15 +4500,15 @@
         <argument key="userService" type="service" id="App\Service\UserService"/>
       </argument>
     </service>
-    <service id=".service_locator.qm5HRJ0" class="Symfony\Component\DependencyInjection\ServiceLocator" public="false">
+    <service id=".service_locator.YTJOM1k" class="Symfony\Component\DependencyInjection\ServiceLocator" public="false">
       <tag name="container.service_locator"/>
       <argument type="collection">
         <argument key="App\Controller\AuthController::issueJWTToken" type="service" id=".service_locator.HWqWiuO"/>
         <argument key="App\Controller\CottagesController::addCottage" type="service" id=".service_locator.gIgc1Xm"/>
         <argument key="App\Controller\CottagesController::delete" type="service" id=".service_locator.MCvyW6t"/>
-        <argument key="App\Controller\CottagesController::edit" type="service" id=".service_locator.MCvyW6t"/>
         <argument key="App\Controller\CottagesController::getCottage" type="service" id=".service_locator.gIgc1Xm"/>
         <argument key="App\Controller\CottagesController::getCottagesList" type="service" id=".service_locator.1hjP8Jh"/>
+        <argument key="App\Controller\CottagesController::updateCottage" type="service" id=".service_locator..4C5IY8"/>
         <argument key="App\Controller\FootballLeagueController::createLeague" type="service" id=".service_locator.UPvaeps"/>
         <argument key="App\Controller\FootballLeagueController::deleteLeague" type="service" id=".service_locator.x.rKWMX"/>
         <argument key="App\Controller\FootballLeagueController::getLeagueTeams" type="service" id=".service_locator.BchDU7b"/>
@@ -4515,9 +4523,9 @@
         <argument key="App\Controller\AuthController:issueJWTToken" type="service" id=".service_locator.HWqWiuO"/>
         <argument key="App\Controller\CottagesController:addCottage" type="service" id=".service_locator.gIgc1Xm"/>
         <argument key="App\Controller\CottagesController:delete" type="service" id=".service_locator.MCvyW6t"/>
-        <argument key="App\Controller\CottagesController:edit" type="service" id=".service_locator.MCvyW6t"/>
         <argument key="App\Controller\CottagesController:getCottage" type="service" id=".service_locator.gIgc1Xm"/>
         <argument key="App\Controller\CottagesController:getCottagesList" type="service" id=".service_locator.1hjP8Jh"/>
+        <argument key="App\Controller\CottagesController:updateCottage" type="service" id=".service_locator..4C5IY8"/>
         <argument key="App\Controller\FootballLeagueController:createLeague" type="service" id=".service_locator.UPvaeps"/>
         <argument key="App\Controller\FootballLeagueController:deleteLeague" type="service" id=".service_locator.x.rKWMX"/>
         <argument key="App\Controller\FootballLeagueController:getLeagueTeams" type="service" id=".service_locator.BchDU7b"/>
@@ -4769,7 +4777,7 @@
       <argument type="service" id="security.token_storage"/>
     </service>
     <service id="debug.argument_resolver.service.inner" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\ServiceValueResolver" public="false">
-      <argument type="service" id=".service_locator.qm5HRJ0"/>
+      <argument type="service" id=".service_locator.YTJOM1k"/>
     </service>
     <service id="debug.argument_resolver.default.inner" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\DefaultValueResolver" public="false"/>
     <service id="debug.argument_resolver.variadic.inner" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\VariadicValueResolver" public="false"/>
@@ -4822,6 +4830,7 @@
       <argument type="service" id="service_container"/>
       <factory service=".service_locator.UEpceA5" method="withContext"/>
     </service>
+    <service id=".errored..service_locator..4C5IY8.App\Entity\Cottages" class="App\Entity\Cottages"/>
     <service id=".errored..service_locator.MCvyW6t.App\Entity\Cottages" class="App\Entity\Cottages"/>
     <service id=".errored..service_locator.BchDU7b.App\Entity\FootballLeague" class="App\Entity\FootballLeague"/>
     <service id=".errored..service_locator.x.rKWMX.App\Entity\FootballLeague" class="App\Entity\FootballLeague"/>
@@ -5148,7 +5157,7 @@
     <service id="Psr\Log\LoggerInterface" alias="monolog.logger" public="false"/>
     <service id="sensio_framework_extra.converter.doctrine.orm.expression_language" alias="sensio_framework_extra.converter.doctrine.orm.expression_language.default" public="false"/>
     <service id="sensio_framework_extra.security.expression_language" alias="sensio_framework_extra.security.expression_language.default" public="false"/>
-    <service id="argument_resolver.controller_locator" alias=".service_locator.qm5HRJ0"/>
+    <service id="argument_resolver.controller_locator" alias=".service_locator.YTJOM1k"/>
     <service id="twig.loader.filesystem" alias="twig.loader.native_filesystem" public="false"/>
     <service id="twig.loader" alias="twig.loader.native_filesystem"/>
     <service id=".service_locator.AoifO_3" alias=".2_ServiceLocator~ZfmyB9o" public="false"/>

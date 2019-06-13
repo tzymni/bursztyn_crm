@@ -27,7 +27,6 @@ export class UserComponent {
         // Check if id is passed and read it
         if (this._avRoute.snapshot.params["id"]) {
             this.id = (this._avRoute.snapshot.params["id"]);
-            console.log(this.id);
         }
 
         this.customerForm = this._fb.group({
@@ -63,11 +62,9 @@ export class UserComponent {
         }
 
         if (this.id) {
-            console.log('update');
             var method = this._userService.updateUser(this.customerForm.value, this.id);
         }
         else {
-            console.log('cos nwoego');
             var method = this._userService.saveUser(this.customerForm.value);
         }
 

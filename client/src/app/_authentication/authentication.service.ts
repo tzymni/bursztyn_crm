@@ -51,7 +51,7 @@ export class AuthenticationService {
 
                 }
                 else {
-                    return 'gowno';
+                    return 'test';
                 }
 
             }

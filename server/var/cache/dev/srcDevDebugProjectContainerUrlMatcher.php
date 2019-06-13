@@ -101,36 +101,35 @@ class srcDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
         $matchedPathinfo = $pathinfo;
         $regexList = array(
             0 => '{^(?'
-                    .'|/api/cottage/([^/]++)(*:28)'
-                    .'|/([^/]++)(?'
-                        .'|/edit(*:52)'
-                        .'|(*:59)'
+                    .'|/api/cottage/([^/]++)(?'
+                        .'|(*:31)'
                     .')'
+                    .'|/([^/]++)(*:48)'
                     .'|/api/(?'
                         .'|leagues/([^/]++)(?'
-                            .'|/teams(*:100)'
-                            .'|(*:108)'
+                            .'|/teams(*:88)'
+                            .'|(*:95)'
                         .')'
                         .'|teams/([^/]++)(?'
-                            .'|(*:134)'
+                            .'|(*:120)'
                         .')'
                         .'|user/([^/]++)(?'
-                            .'|(*:159)'
+                            .'|(*:145)'
                         .')'
                     .')'
                     .'|/_(?'
-                        .'|error/(\\d+)(?:\\.([^/]++))?(*:200)'
-                        .'|wdt/([^/]++)(*:220)'
+                        .'|error/(\\d+)(?:\\.([^/]++))?(*:186)'
+                        .'|wdt/([^/]++)(*:206)'
                         .'|profiler/([^/]++)(?'
                             .'|/(?'
-                                .'|search/results(*:266)'
-                                .'|router(*:280)'
+                                .'|search/results(*:252)'
+                                .'|router(*:266)'
                                 .'|exception(?'
-                                    .'|(*:300)'
-                                    .'|\\.css(*:313)'
+                                    .'|(*:286)'
+                                    .'|\\.css(*:299)'
                                 .')'
                             .')'
-                            .'|(*:323)'
+                            .'|(*:309)'
                         .')'
                     .')'
                 .')$}sD',
@@ -139,7 +138,31 @@ class srcDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
         foreach ($regexList as $offset => $regex) {
             while (preg_match($regex, $matchedPathinfo, $matches)) {
                 switch ($m = (int) $matches['MARK']) {
-                    case 134:
+                    case 31:
+                        $matches = array('id' => $matches[1] ?? null);
+
+                        // app_cottages_getcottage
+                        $ret = $this->mergeDefaults(array('_route' => 'app_cottages_getcottage') + $matches, array('_controller' => 'App\\Controller\\CottagesController::getCottage'));
+                        if (!isset(($a = array('GET' => 0))[$canonicalMethod])) {
+                            $allow += $a;
+                            goto not_app_cottages_getcottage;
+                        }
+
+                        return $ret;
+                        not_app_cottages_getcottage:
+
+                        // app_cottages_updatecottage
+                        $ret = $this->mergeDefaults(array('_route' => 'app_cottages_updatecottage') + $matches, array('_controller' => 'App\\Controller\\CottagesController::updateCottage'));
+                        if (!isset(($a = array('PUT' => 0))[$requestMethod])) {
+                            $allow += $a;
+                            goto not_app_cottages_updatecottage;
+                        }
+
+                        return $ret;
+                        not_app_cottages_updatecottage:
+
+                        break;
+                    case 120:
                         $matches = array('id' => $matches[1] ?? null);
 
                         // app_footballteam_updateteam
@@ -163,7 +186,7 @@ class srcDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
                         not_app_footballteam_deleteteam:
 
                         break;
-                    case 159:
+                    case 145:
                         $matches = array('email' => $matches[1] ?? null);
 
                         // app_user_getuserbymail
@@ -199,18 +222,16 @@ class srcDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
                         break;
                     default:
                         $routes = array(
-                            28 => array(array('_route' => 'app_cottages_getcottage', '_controller' => 'App\\Controller\\CottagesController::getCottage'), array('id'), array('GET' => 0), null),
-                            52 => array(array('_route' => 'cottages_edit', '_controller' => 'App\\Controller\\CottagesController::edit'), array('id'), array('GET' => 0, 'POST' => 1), null),
-                            59 => array(array('_route' => 'cottages_delete', '_controller' => 'App\\Controller\\CottagesController::delete'), array('id'), array('DELETE' => 0), null),
-                            100 => array(array('_route' => 'app_footballleague_getleagueteams', '_controller' => 'App\\Controller\\FootballLeagueController::getLeagueTeams'), array('id'), array('GET' => 0), null),
-                            108 => array(array('_route' => 'app_footballleague_deleteleague', '_controller' => 'App\\Controller\\FootballLeagueController::deleteLeague'), array('id'), array('DELETE' => 0), null),
-                            200 => array(array('_route' => '_twig_error_test', '_controller' => 'twig.controller.preview_error::previewErrorPageAction', '_format' => 'html'), array('code', '_format'), null, null),
-                            220 => array(array('_route' => '_wdt', '_controller' => 'web_profiler.controller.profiler::toolbarAction'), array('token'), null, null),
-                            266 => array(array('_route' => '_profiler_search_results', '_controller' => 'web_profiler.controller.profiler::searchResultsAction'), array('token'), null, null),
-                            280 => array(array('_route' => '_profiler_router', '_controller' => 'web_profiler.controller.router::panelAction'), array('token'), null, null),
-                            300 => array(array('_route' => '_profiler_exception', '_controller' => 'web_profiler.controller.exception::showAction'), array('token'), null, null),
-                            313 => array(array('_route' => '_profiler_exception_css', '_controller' => 'web_profiler.controller.exception::cssAction'), array('token'), null, null),
-                            323 => array(array('_route' => '_profiler', '_controller' => 'web_profiler.controller.profiler::panelAction'), array('token'), null, null),
+                            48 => array(array('_route' => 'cottages_delete', '_controller' => 'App\\Controller\\CottagesController::delete'), array('id'), array('DELETE' => 0), null),
+                            88 => array(array('_route' => 'app_footballleague_getleagueteams', '_controller' => 'App\\Controller\\FootballLeagueController::getLeagueTeams'), array('id'), array('GET' => 0), null),
+                            95 => array(array('_route' => 'app_footballleague_deleteleague', '_controller' => 'App\\Controller\\FootballLeagueController::deleteLeague'), array('id'), array('DELETE' => 0), null),
+                            186 => array(array('_route' => '_twig_error_test', '_controller' => 'twig.controller.preview_error::previewErrorPageAction', '_format' => 'html'), array('code', '_format'), null, null),
+                            206 => array(array('_route' => '_wdt', '_controller' => 'web_profiler.controller.profiler::toolbarAction'), array('token'), null, null),
+                            252 => array(array('_route' => '_profiler_search_results', '_controller' => 'web_profiler.controller.profiler::searchResultsAction'), array('token'), null, null),
+                            266 => array(array('_route' => '_profiler_router', '_controller' => 'web_profiler.controller.router::panelAction'), array('token'), null, null),
+                            286 => array(array('_route' => '_profiler_exception', '_controller' => 'web_profiler.controller.exception::showAction'), array('token'), null, null),
+                            299 => array(array('_route' => '_profiler_exception_css', '_controller' => 'web_profiler.controller.exception::cssAction'), array('token'), null, null),
+                            309 => array(array('_route' => '_profiler', '_controller' => 'web_profiler.controller.profiler::panelAction'), array('token'), null, null),
                         );
 
                         list($ret, $vars, $requiredMethods, $requiredSchemes) = $routes[$m];
@@ -236,7 +257,7 @@ class srcDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
                         return $ret;
                 }
 
-                if (323 === $m) {
+                if (309 === $m) {
                     break;
                 }
                 $regex = substr_replace($regex, 'F', $m - $offset, 1 + strlen($m));

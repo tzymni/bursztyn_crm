@@ -24,7 +24,6 @@ export class ItemComponent implements OnInit {
         // Check if id is passed and read it
         if (this._avRoute.snapshot.params["id"]) {
             this.id = parseInt(this._avRoute.snapshot.params["id"]);
-            console.log(this.id);
         }
 
 

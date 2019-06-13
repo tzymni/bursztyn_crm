@@ -52,19 +52,18 @@ class CottageService {
 
         try {
             $this->em->persist($cottage);
-            
+
             $this->em->flush();
 
 
             return $cottage;
-        }  catch (\Exception $ex) {
-            
-            return "Nie udało się stworzyć domku ".$ex->getMessage();
+        } catch (\Exception $ex) {
+
+            return "Nie udało się stworzyć domku " . $ex->getMessage();
         }
     }
-    
-    
-        public function getCottage($id) {
+
+    public function getCottage($id) {
         $cottage = $this->em->getRepository('App:Cottages')
                 ->findOneBy(['id' => $id]);
 
@@ -72,6 +71,30 @@ class CottageService {
             return $cottage;
         } else {
             return "Nie ma takiego domku";
+        }
+    }
+
+    public function updateCottage(Cottages $cottage, array $data) {
+
+        try {
+            if (isset($data['name'])) {
+                $cottage->setName($data['name']);
+            }
+
+            if (isset($data['color'])) {
+                $cottage->setColor($data['color']);
+            }
+
+            if (isset($data['extra_info'])) {
+                $cottage->setExtraInfo($data['extra_info']);
+            }
+
+            $this->em->persist($cottage);
+            $this->em->flush();
+
+            return $cottage;
+        } catch (\Exception $ex) {
+            return "Unable to update cottage ".$ex->getMessage();
         }
     }
 

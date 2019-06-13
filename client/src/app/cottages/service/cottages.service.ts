@@ -39,8 +39,8 @@ export class CottagesService {
 
 
 
-    updateCottage(customer, email): Observable<any> {
-        var save = this._rest.putMethod('api/user/' + email, customer);
+    updateCottage(cottage, id): Observable<any> {
+        var save = this._rest.putMethod('api/cottage/' + id, cottage);
         return save;
     }
 

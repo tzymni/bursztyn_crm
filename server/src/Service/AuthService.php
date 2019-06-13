@@ -18,7 +18,7 @@ class AuthService
     }
 
     const JWT_ALG = 'HS256';
-    const SECONDS_VALID = 60 * 60;
+    const SECONDS_VALID = 60 * 60 * 24;
 
     /**
      * Generate JWT token based on given user-data

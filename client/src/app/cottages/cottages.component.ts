@@ -42,7 +42,6 @@ export class CottagesComponent implements OnInit {
     }
 
     edit(id) {
-    console.log(id);
         const modal = this.modalService.open(CottageComponent, {size: 'lg'});
         modal.componentInstance.id = id;
 

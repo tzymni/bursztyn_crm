@@ -110,24 +110,53 @@ class CottagesController extends Controller  {
     }
     
     
-    /**
-     * @Route("/{id}/edit", name="cottages_edit", methods="GET|POST")
+    
+    
+        /**
+     * @Route("/api/cottage/{id}")
+     * @Method("PUT")
      */
-    public function edit(Request $request, Cottages $cottage): Response {
-        $form = $this->createForm(CottagesType::class, $cottage);
-        $form->handleRequest($request);
+    public function updateCottage(Cottages $cottage, Request $request, CottageService $cottageService, ResponseErrorDecoratorService $errorDecorator) {
+   
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+//
+        $body = $request->getContent();
+        $data = json_decode($body, true);
 
-            return $this->redirectToRoute('cottages_edit', ['id' => $cottage->getId()]);
+        if (is_null($data)) {
+            $status = JsonResponse::HTTP_BAD_REQUEST;
+            $data = $errorDecorator->decorateError(
+                JsonResponse::HTTP_BAD_REQUEST, "Invalid JSON format"
+            );
+
+            return new JsonResponse($data, $status);
         }
 
-        return $this->render('cottages/edit.html.twig', [
-                    'cottage' => $cottage,
-                    'form' => $form->createView(),
-        ]);
+        $result = $cottageService->updateCottage($cottage, $data);
+        if ($result instanceof Cottages) {
+            $status = JsonResponse::HTTP_OK;
+            $data = [
+                'data' => [
+                    'id' => $result->getId(),
+                    'name' => $result->getName(),
+                    'color' => $result->getColor(),
+                    'extra_info' => $result->getExtraInfo(),
+                ]
+            ];
+        } else {
+            $status = JsonResponse::HTTP_BAD_REQUEST;
+            $data = $errorDecorator->decorateError($status, $result);
+        }
+
+        return new JsonResponse($data, $status);
+//        
+//
     }
+    
+    
+    
+    
+
 
     /**
      * @Route("/{id}", name="cottages_delete", methods="DELETE")

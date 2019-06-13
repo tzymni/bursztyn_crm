@@ -38,15 +38,13 @@ export class CottageComponent implements OnInit {
             Validators.maxLength(30)]],
             color: ['', [Validators.required]],
             extra_info: ['', [Validators.required]],
-            id: ['',[]]
+            id: ['', []]
         })
 
     }
 
 
     save() {
-        console.log("Zapis");
-        console.log(this.cottageForm.value);
 
 
         if (!this.cottageForm.valid) {
@@ -54,26 +52,27 @@ export class CottageComponent implements OnInit {
         }
 
         if (this.id) {
-            console.log('update');
-            //            var method = this._userService.updateUser(this.customerForm.value, this.id);
+            var method = this._cottagesService.updateCottage(this.cottageForm.value, this.id);
         }
         else {
-            console.log('cos nwoego');
-            console.log(this.cottageForm.value);
             var method = this._cottagesService.saveCottage(this.cottageForm.value);
 
-            method
-                .subscribe(response => {
-                    this.notification.notifier.notify('success', 'Zapisano!');
-                    this.activeModal.close();
-                    this._router.navigate(['users'], {skipLocationChange: true});
 
 
-                }, error => {
-                    this.notification.notifier.notify('error', error);
-                })
+
 
         }
+
+        method
+            .subscribe(response => {
+                this.notification.notifier.notify('success', 'Zapisano!');
+                this.activeModal.close();
+                this._router.navigate(['cottages'], {skipLocationChange: true});
+
+
+            }, error => {
+                this.notification.notifier.notify('error', error);
+            })
 
 
     }
@@ -86,7 +85,7 @@ export class CottageComponent implements OnInit {
 
     ngOnInit() {
         if (this.id) {
-            this.title = 'Edytuj domek '+this.id;
+            this.title = 'Edytuj domek ' + this.id;
             this._cottagesService.getCottage(this.id)
                 .subscribe(resp => this.cottageForm.setValue(resp)
                     , error => this.errorMessage = error);
