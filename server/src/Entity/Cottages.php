@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -35,6 +37,16 @@ class Cottages
      * @ORM\Column(type="text", nullable=true)
      */
     private $extra_info;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Reservations", mappedBy="cottage_id")
+     */
+    private $reservations;
+
+    public function __construct()
+    {
+        $this->reservations = new ArrayCollection();
+    }
 
     public function getId()
     {
@@ -85,6 +97,37 @@ class Cottages
     public function setExtraInfo(string $extra_info): self
     {
         $this->extra_info = $extra_info;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Reservations[]
+     */
+    public function getReservations(): Collection
+    {
+        return $this->reservations;
+    }
+
+    public function addReservation(Reservations $reservation): self
+    {
+        if (!$this->reservations->contains($reservation)) {
+            $this->reservations[] = $reservation;
+            $reservation->setCottageId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReservation(Reservations $reservation): self
+    {
+        if ($this->reservations->contains($reservation)) {
+            $this->reservations->removeElement($reservation);
+            // set the owning side to null (unless already changed)
+            if ($reservation->getCottageId() === $this) {
+                $reservation->setCottageId(null);
+            }
+        }
 
         return $this;
     }

@@ -117,19 +117,20 @@ class srcDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
                             .'|(*:145)'
                         .')'
                     .')'
+                    .'|/reservations(*:168)'
                     .'|/_(?'
-                        .'|error/(\\d+)(?:\\.([^/]++))?(*:186)'
-                        .'|wdt/([^/]++)(*:206)'
+                        .'|error/(\\d+)(?:\\.([^/]++))?(*:207)'
+                        .'|wdt/([^/]++)(*:227)'
                         .'|profiler/([^/]++)(?'
                             .'|/(?'
-                                .'|search/results(*:252)'
-                                .'|router(*:266)'
+                                .'|search/results(*:273)'
+                                .'|router(*:287)'
                                 .'|exception(?'
-                                    .'|(*:286)'
-                                    .'|\\.css(*:299)'
+                                    .'|(*:307)'
+                                    .'|\\.css(*:320)'
                                 .')'
                             .')'
-                            .'|(*:309)'
+                            .'|(*:330)'
                         .')'
                     .')'
                 .')$}sD',
@@ -225,13 +226,14 @@ class srcDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
                             48 => array(array('_route' => 'cottages_delete', '_controller' => 'App\\Controller\\CottagesController::delete'), array('id'), array('DELETE' => 0), null),
                             88 => array(array('_route' => 'app_footballleague_getleagueteams', '_controller' => 'App\\Controller\\FootballLeagueController::getLeagueTeams'), array('id'), array('GET' => 0), null),
                             95 => array(array('_route' => 'app_footballleague_deleteleague', '_controller' => 'App\\Controller\\FootballLeagueController::deleteLeague'), array('id'), array('DELETE' => 0), null),
-                            186 => array(array('_route' => '_twig_error_test', '_controller' => 'twig.controller.preview_error::previewErrorPageAction', '_format' => 'html'), array('code', '_format'), null, null),
-                            206 => array(array('_route' => '_wdt', '_controller' => 'web_profiler.controller.profiler::toolbarAction'), array('token'), null, null),
-                            252 => array(array('_route' => '_profiler_search_results', '_controller' => 'web_profiler.controller.profiler::searchResultsAction'), array('token'), null, null),
-                            266 => array(array('_route' => '_profiler_router', '_controller' => 'web_profiler.controller.router::panelAction'), array('token'), null, null),
-                            286 => array(array('_route' => '_profiler_exception', '_controller' => 'web_profiler.controller.exception::showAction'), array('token'), null, null),
-                            299 => array(array('_route' => '_profiler_exception_css', '_controller' => 'web_profiler.controller.exception::cssAction'), array('token'), null, null),
-                            309 => array(array('_route' => '_profiler', '_controller' => 'web_profiler.controller.profiler::panelAction'), array('token'), null, null),
+                            168 => array(array('_route' => 'reservations', '_controller' => 'App\\Controller\\ReservationsController::index'), array(), null, null),
+                            207 => array(array('_route' => '_twig_error_test', '_controller' => 'twig.controller.preview_error::previewErrorPageAction', '_format' => 'html'), array('code', '_format'), null, null),
+                            227 => array(array('_route' => '_wdt', '_controller' => 'web_profiler.controller.profiler::toolbarAction'), array('token'), null, null),
+                            273 => array(array('_route' => '_profiler_search_results', '_controller' => 'web_profiler.controller.profiler::searchResultsAction'), array('token'), null, null),
+                            287 => array(array('_route' => '_profiler_router', '_controller' => 'web_profiler.controller.router::panelAction'), array('token'), null, null),
+                            307 => array(array('_route' => '_profiler_exception', '_controller' => 'web_profiler.controller.exception::showAction'), array('token'), null, null),
+                            320 => array(array('_route' => '_profiler_exception_css', '_controller' => 'web_profiler.controller.exception::cssAction'), array('token'), null, null),
+                            330 => array(array('_route' => '_profiler', '_controller' => 'web_profiler.controller.profiler::panelAction'), array('token'), null, null),
                         );
 
                         list($ret, $vars, $requiredMethods, $requiredSchemes) = $routes[$m];
@@ -257,7 +259,7 @@ class srcDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
                         return $ret;
                 }
 
-                if (309 === $m) {
+                if (330 === $m) {
                     break;
                 }
                 $regex = substr_replace($regex, 'F', $m - $offset, 1 + strlen($m));

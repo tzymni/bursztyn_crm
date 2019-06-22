@@ -32,6 +32,7 @@ class srcDevDebugProjectContainerUrlGenerator extends Symfony\Component\Routing\
         'app_footballteam_createteam' => array(array(), array('_controller' => 'App\\Controller\\FootballTeamController::createTeam'), array(), array(array('text', '/api/teams')), array(), array()),
         'app_footballteam_updateteam' => array(array('id'), array('_controller' => 'App\\Controller\\FootballTeamController::updateTeam'), array(), array(array('variable', '/', '[^/]++', 'id'), array('text', '/api/teams')), array(), array()),
         'app_footballteam_deleteteam' => array(array('id'), array('_controller' => 'App\\Controller\\FootballTeamController::deleteTeam'), array(), array(array('variable', '/', '[^/]++', 'id'), array('text', '/api/teams')), array(), array()),
+        'reservations' => array(array(), array('_controller' => 'App\\Controller\\ReservationsController::index'), array(), array(array('text', '/reservations')), array(), array()),
         'app_user_createuser' => array(array(), array('_controller' => 'App\\Controller\\UserController::createUser'), array(), array(array('text', '/users/create')), array(), array()),
         'app_user_getuserlist' => array(array(), array('_controller' => 'App\\Controller\\UserController::getUserList'), array(), array(array('text', '/api/users')), array(), array()),
         'app_user_getuserbymail' => array(array('email'), array('_controller' => 'App\\Controller\\UserController::getUserByMail'), array(), array(array('variable', '/', '[^/]++', 'email'), array('text', '/api/user')), array(), array()),
