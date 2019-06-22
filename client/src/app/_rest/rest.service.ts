@@ -9,8 +9,8 @@ import {HttpClient, HttpErrorResponse, HttpHeaders, HttpParams} from '@angular/c
 })
 export class RestService {
 
-    private headers;
-    private baseUrl = 'http://127.0.0.1:8000/';
+    public headers;
+    public baseUrl = 'http://127.0.0.1:8000/';
 
     constructor(private _http: HttpClient) {
 
@@ -30,7 +30,8 @@ export class RestService {
 
 
         var parameters = (typeof data == 'undefined' || data == null) ? '' : '/' + data;
-
+        
+        console.log(this.baseUrl + url + parameters);
         return this._http.get(this.baseUrl + url + parameters, {headers: this.headers}
         ).pipe(
             // eg. "map" without a dot before
@@ -39,6 +40,7 @@ export class RestService {
             }),
             // "catchError" instead "catch"
             catchError(error => {
+                console.log("cos");
                 return _throw('Blad');
             })
         );

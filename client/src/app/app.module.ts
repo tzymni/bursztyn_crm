@@ -103,7 +103,11 @@ const customNotifierOptions: NotifierOptions = {
         CalendarModule.forRoot({
             provide: DateAdapter,
             useFactory: adapterFactory
-        })
+        }),
+        
+    ],
+    exports: [
+      CalendarComponent  
     ],
     providers: [AuthGuard, ItemServiceService, AuthenticationService, NotificationsService, UsersService, RestService],
     bootstrap: [AppComponent]

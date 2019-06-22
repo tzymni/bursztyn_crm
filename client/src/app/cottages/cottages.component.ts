@@ -21,17 +21,23 @@ export class CottagesComponent implements OnInit {
     cottages: Array<any> = [];
     errorMessage: any;
     id: any;
+    
+    
     getCottages() {
+        
+        
         this._cottagesService.getCottages().subscribe(
             data => this.cottages = data,
             error => this.errorMessage = error
         )
+        
     }
 
 
 
     ngOnInit() {
         this.getCottages();
+       
     }
 
 

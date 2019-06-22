@@ -4511,7 +4511,7 @@
         <argument key="userService" type="service" id="App\Service\UserService"/>
       </argument>
     </service>
-    <service id=".service_locator.YTJOM1k" class="Symfony\Component\DependencyInjection\ServiceLocator" public="false">
+    <service id=".service_locator.THD0xqZ" class="Symfony\Component\DependencyInjection\ServiceLocator" public="false">
       <tag name="container.service_locator"/>
       <argument type="collection">
         <argument key="App\Controller\AuthController::issueJWTToken" type="service" id=".service_locator.HWqWiuO"/>
@@ -4526,6 +4526,7 @@
         <argument key="App\Controller\FootballTeamController::createTeam" type="service" id=".service_locator.I4mNHqH"/>
         <argument key="App\Controller\FootballTeamController::deleteTeam" type="service" id=".service_locator.Q8Slo_c"/>
         <argument key="App\Controller\FootballTeamController::updateTeam" type="service" id=".service_locator.Q8Slo_c"/>
+        <argument key="App\Controller\ReservationsController::getActiveEvents" type="service" id=".service_locator.1hjP8Jh"/>
         <argument key="App\Controller\UserController::createUser" type="service" id=".service_locator.10EawuH"/>
         <argument key="App\Controller\UserController::deleteUser" type="service" id=".service_locator.10EawuH"/>
         <argument key="App\Controller\UserController::getUserByMail" type="service" id=".service_locator.10EawuH"/>
@@ -4543,6 +4544,7 @@
         <argument key="App\Controller\FootballTeamController:createTeam" type="service" id=".service_locator.I4mNHqH"/>
         <argument key="App\Controller\FootballTeamController:deleteTeam" type="service" id=".service_locator.Q8Slo_c"/>
         <argument key="App\Controller\FootballTeamController:updateTeam" type="service" id=".service_locator.Q8Slo_c"/>
+        <argument key="App\Controller\ReservationsController:getActiveEvents" type="service" id=".service_locator.1hjP8Jh"/>
         <argument key="App\Controller\UserController:createUser" type="service" id=".service_locator.10EawuH"/>
         <argument key="App\Controller\UserController:deleteUser" type="service" id=".service_locator.10EawuH"/>
         <argument key="App\Controller\UserController:getUserByMail" type="service" id=".service_locator.10EawuH"/>
@@ -4789,7 +4791,7 @@
       <argument type="service" id="security.token_storage"/>
     </service>
     <service id="debug.argument_resolver.service.inner" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\ServiceValueResolver" public="false">
-      <argument type="service" id=".service_locator.YTJOM1k"/>
+      <argument type="service" id=".service_locator.THD0xqZ"/>
     </service>
     <service id="debug.argument_resolver.default.inner" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\DefaultValueResolver" public="false"/>
     <service id="debug.argument_resolver.variadic.inner" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\VariadicValueResolver" public="false"/>
@@ -5169,7 +5171,7 @@
     <service id="Psr\Log\LoggerInterface" alias="monolog.logger" public="false"/>
     <service id="sensio_framework_extra.converter.doctrine.orm.expression_language" alias="sensio_framework_extra.converter.doctrine.orm.expression_language.default" public="false"/>
     <service id="sensio_framework_extra.security.expression_language" alias="sensio_framework_extra.security.expression_language.default" public="false"/>
-    <service id="argument_resolver.controller_locator" alias=".service_locator.YTJOM1k"/>
+    <service id="argument_resolver.controller_locator" alias=".service_locator.THD0xqZ"/>
     <service id="twig.loader.filesystem" alias="twig.loader.native_filesystem" public="false"/>
     <service id="twig.loader" alias="twig.loader.native_filesystem"/>
     <service id=".service_locator.AoifO_3" alias=".2_ServiceLocator~ZfmyB9o" public="false"/>

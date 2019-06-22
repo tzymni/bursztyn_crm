@@ -69,6 +69,7 @@ class srcDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
                     '/api/cottages' => array(array('_route' => 'app_cottages_getcottageslist', '_controller' => 'App\\Controller\\CottagesController::getCottagesList'), null, array('GET' => 0), null),
                     '/api/leagues' => array(array('_route' => 'app_footballleague_createleague', '_controller' => 'App\\Controller\\FootballLeagueController::createLeague'), null, array('POST' => 0), null),
                     '/api/teams' => array(array('_route' => 'app_footballteam_createteam', '_controller' => 'App\\Controller\\FootballTeamController::createTeam'), null, array('POST' => 0), null),
+                    '/api/events' => array(array('_route' => 'app_reservations_getactiveevents', '_controller' => 'App\\Controller\\ReservationsController::getActiveEvents'), null, array('GET' => 0), null),
                     '/users/create' => array(array('_route' => 'app_user_createuser', '_controller' => 'App\\Controller\\UserController::createUser'), null, array('POST' => 0), null),
                     '/api/users' => array(array('_route' => 'app_user_getuserlist', '_controller' => 'App\\Controller\\UserController::getUserList'), null, array('GET' => 0), null),
                     '/_profiler/' => array(array('_route' => '_profiler_home', '_controller' => 'web_profiler.controller.profiler::homeAction'), null, null, null),
