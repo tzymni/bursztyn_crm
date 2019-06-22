@@ -15,20 +15,9 @@ import {
     format
 } from 'date-fns';
 import {Observable} from 'rxjs';
-const colors: any = {
-    red: {
-        primary: '#ad2121',
-        secondary: '#FAE3E3'
-    },
-    blue: {
-        primary: '#1e90ff',
-        secondary: '#D1E8FF'
-    },
-    yellow: {
-        primary: '#e3bc08',
-        secondary: '#FDF1BA'
-    }
-};
+import {CalendarService} from '../calendar/service/calendar.service';
+
+
 interface Event {
     id: number;
     title: string;
@@ -65,66 +54,19 @@ export class CalendarComponent implements OnInit {
 
     activeDayIsOpen: boolean = false;
 
-    constructor(private http: HttpClient) {}
+    constructor(private http: HttpClient,
+    private _calendarService: CalendarService
+    ) {}
 
     ngOnInit(): void {
         this.fetchEvents();
     }
 
     fetchEvents(): void {
-        const getStart: any = {
-            month: startOfMonth,
-            week: startOfWeek,
-            day: startOfDay
-        }[this.view];
+        
 
-        const getEnd: any = {
-            month: endOfMonth,
-            week: endOfWeek,
-            day: endOfDay
-        }[this.view];
+        this.events$ = this._calendarService.getEvents();
 
-        const params = new HttpParams()
-            .set(
-                'primary_release_date.gte',
-                format(getStart(this.viewDate), 'YYYY-MM-DD')
-            )
-            .set(
-                'primary_release_date.lte',
-                format(getEnd(this.viewDate), 'YYYY-MM-DD')
-            )
-            .set('api_key', '0ec33936a68018857d727958dca1424f');
-
-
-        var url = 'https://api.themoviedb.org/3/discover/movie';
-
-        var url = 'http://127.0.0.1:8000/api/events';
-
-        this.events$ = this.http
-            .get(url, {params})
-            .pipe(
-                map(({results}: {results: Event[]}) => {
-                    return results.map((event: Event) => {
-                        return {
-                            title: event.title,
-                            start: new Date(
-                                event.start_date + getTimezoneOffsetString(this.viewDate)
-                            ),
-                            end: new Date(
-                                event.end_date + getTimezoneOffsetString(this.viewDate)
-                            ),
-                            color: {
-                                primary: event.color,
-                                secondary: event.color
-                            },
-                            allDay: true,
-                            meta: {
-                                event
-                            }
-                        };
-                    });
-                })
-            );
     }
 
     dayClicked({
@@ -148,10 +90,12 @@ export class CalendarComponent implements OnInit {
     }
 
     eventClicked(event: CalendarEvent<{event: Event}>): void {
-        window.open(
-            `https://www.themoviedb.org/movie/${event.meta.event.id}`,
-            '_blank'
-        );
+        
+        alert("Klikniety " + event.meta.event.title);
+//        window.open(
+//            `https://www.themoviedb.org/movie/${event.meta.event.id}`,
+//            '_blank'
+//        );
     }
 
 

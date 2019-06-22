@@ -31,7 +31,7 @@ export class RestService {
 
         var parameters = (typeof data == 'undefined' || data == null) ? '' : '/' + data;
         
-        console.log(this.baseUrl + url + parameters);
+ 
         return this._http.get(this.baseUrl + url + parameters, {headers: this.headers}
         ).pipe(
             // eg. "map" without a dot before
@@ -40,7 +40,6 @@ export class RestService {
             }),
             // "catchError" instead "catch"
             catchError(error => {
-                console.log("cos");
                 return _throw('Blad');
             })
         );
