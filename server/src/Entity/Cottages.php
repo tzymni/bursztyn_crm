@@ -38,10 +38,7 @@ class Cottages
      */
     private $extra_info;
 
-    /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Reservations", mappedBy="cottage_id")
-     */
-    private $reservations;
+
 
     public function __construct()
     {
@@ -101,34 +98,6 @@ class Cottages
         return $this;
     }
 
-    /**
-     * @return Collection|Reservations[]
-     */
-    public function getReservations(): Collection
-    {
-        return $this->reservations;
-    }
 
-    public function addReservation(Reservations $reservation): self
-    {
-        if (!$this->reservations->contains($reservation)) {
-            $this->reservations[] = $reservation;
-            $reservation->setCottageId($this);
-        }
 
-        return $this;
-    }
-
-    public function removeReservation(Reservations $reservation): self
-    {
-        if ($this->reservations->contains($reservation)) {
-            $this->reservations->removeElement($reservation);
-            // set the owning side to null (unless already changed)
-            if ($reservation->getCottageId() === $this) {
-                $reservation->setCottageId(null);
-            }
-        }
-
-        return $this;
-    }
 }

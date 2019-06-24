@@ -472,6 +472,7 @@
     <service id="App\Service\FootballTeamService" class="App\Service\FootballTeamService" public="false" autowire="true" autoconfigure="true">
       <argument type="service" id="doctrine.orm.default_entity_manager"/>
     </service>
+    <service id="App\Service\ReservationService" class="App\Service\ReservationService" public="false" autowire="true" autoconfigure="true"/>
     <service id="App\Service\ResponseErrorDecoratorService" class="App\Service\ResponseErrorDecoratorService" public="false" autowire="true" autoconfigure="true"/>
     <service id="App\Service\UserService" class="App\Service\UserService" public="false" autowire="true" autoconfigure="true">
       <argument type="service" id="doctrine.orm.default_entity_manager"/>
@@ -1996,6 +1997,14 @@
       </call>
       <call method="addListener">
         <argument>kernel.request</argument>
+        <argument type="collection">
+          <argument type="service" id="debug.debug_handlers_listener"/>
+          <argument>configure</argument>
+        </argument>
+        <argument>2048</argument>
+      </call>
+      <call method="addListener">
+        <argument>console.command</argument>
         <argument type="collection">
           <argument type="service" id="debug.debug_handlers_listener"/>
           <argument>configure</argument>
@@ -4496,6 +4505,13 @@
         <argument key="teamService" type="service" id="App\Service\FootballTeamService"/>
       </argument>
     </service>
+    <service id=".service_locator.JzUZMlh" class="Symfony\Component\DependencyInjection\ServiceLocator" public="false">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="errorDecorator" type="service" id="App\Service\ResponseErrorDecoratorService"/>
+        <argument key="reservationService" type="service" id="App\Service\ReservationService"/>
+      </argument>
+    </service>
     <service id=".service_locator.10EawuH" class="Symfony\Component\DependencyInjection\ServiceLocator" public="false">
       <tag name="container.service_locator"/>
       <argument type="collection">
@@ -4511,7 +4527,7 @@
         <argument key="userService" type="service" id="App\Service\UserService"/>
       </argument>
     </service>
-    <service id=".service_locator.THD0xqZ" class="Symfony\Component\DependencyInjection\ServiceLocator" public="false">
+    <service id=".service_locator.kJri3T_" class="Symfony\Component\DependencyInjection\ServiceLocator" public="false">
       <tag name="container.service_locator"/>
       <argument type="collection">
         <argument key="App\Controller\AuthController::issueJWTToken" type="service" id=".service_locator.HWqWiuO"/>
@@ -4526,7 +4542,7 @@
         <argument key="App\Controller\FootballTeamController::createTeam" type="service" id=".service_locator.I4mNHqH"/>
         <argument key="App\Controller\FootballTeamController::deleteTeam" type="service" id=".service_locator.Q8Slo_c"/>
         <argument key="App\Controller\FootballTeamController::updateTeam" type="service" id=".service_locator.Q8Slo_c"/>
-        <argument key="App\Controller\ReservationsController::getActiveEvents" type="service" id=".service_locator.1hjP8Jh"/>
+        <argument key="App\Controller\ReservationsController::getActiveEvents" type="service" id=".service_locator.JzUZMlh"/>
         <argument key="App\Controller\UserController::createUser" type="service" id=".service_locator.10EawuH"/>
         <argument key="App\Controller\UserController::deleteUser" type="service" id=".service_locator.10EawuH"/>
         <argument key="App\Controller\UserController::getUserByMail" type="service" id=".service_locator.10EawuH"/>
@@ -4544,7 +4560,7 @@
         <argument key="App\Controller\FootballTeamController:createTeam" type="service" id=".service_locator.I4mNHqH"/>
         <argument key="App\Controller\FootballTeamController:deleteTeam" type="service" id=".service_locator.Q8Slo_c"/>
         <argument key="App\Controller\FootballTeamController:updateTeam" type="service" id=".service_locator.Q8Slo_c"/>
-        <argument key="App\Controller\ReservationsController:getActiveEvents" type="service" id=".service_locator.1hjP8Jh"/>
+        <argument key="App\Controller\ReservationsController:getActiveEvents" type="service" id=".service_locator.JzUZMlh"/>
         <argument key="App\Controller\UserController:createUser" type="service" id=".service_locator.10EawuH"/>
         <argument key="App\Controller\UserController:deleteUser" type="service" id=".service_locator.10EawuH"/>
         <argument key="App\Controller\UserController:getUserByMail" type="service" id=".service_locator.10EawuH"/>
@@ -4791,7 +4807,7 @@
       <argument type="service" id="security.token_storage"/>
     </service>
     <service id="debug.argument_resolver.service.inner" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\ServiceValueResolver" public="false">
-      <argument type="service" id=".service_locator.THD0xqZ"/>
+      <argument type="service" id=".service_locator.kJri3T_"/>
     </service>
     <service id="debug.argument_resolver.default.inner" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\DefaultValueResolver" public="false"/>
     <service id="debug.argument_resolver.variadic.inner" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\VariadicValueResolver" public="false"/>
@@ -5171,7 +5187,7 @@
     <service id="Psr\Log\LoggerInterface" alias="monolog.logger" public="false"/>
     <service id="sensio_framework_extra.converter.doctrine.orm.expression_language" alias="sensio_framework_extra.converter.doctrine.orm.expression_language.default" public="false"/>
     <service id="sensio_framework_extra.security.expression_language" alias="sensio_framework_extra.security.expression_language.default" public="false"/>
-    <service id="argument_resolver.controller_locator" alias=".service_locator.THD0xqZ"/>
+    <service id="argument_resolver.controller_locator" alias=".service_locator.kJri3T_"/>
     <service id="twig.loader.filesystem" alias="twig.loader.native_filesystem" public="false"/>
     <service id="twig.loader" alias="twig.loader.native_filesystem"/>
     <service id=".service_locator.AoifO_3" alias=".2_ServiceLocator~ZfmyB9o" public="false"/>

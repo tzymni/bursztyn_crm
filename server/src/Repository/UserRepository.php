@@ -21,8 +21,7 @@ class UserRepository extends ServiceEntityRepository
      */
     public function findAllActiveWithoutPassword(): array
     {
-        // automatically knows to select Products
-        // the "p" is an alias you'll use in the rest of the query
+
         $qb = $this->createQueryBuilder('p')
             ->select('p.email, p.first_name, p.last_name')
             ->andWhere('p.is_active = :active')
@@ -31,8 +30,7 @@ class UserRepository extends ServiceEntityRepository
 
         return $qb->execute();
 
-        // to get just one result:
-        // $product = $qb->setMaxResults(1)->getOneOrNullResult();
+
     }
     
     

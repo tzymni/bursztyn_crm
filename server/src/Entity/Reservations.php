@@ -16,10 +16,6 @@ class Reservations
      */
     private $id;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Cottages", inversedBy="reservations")
-     */
-    private $cottage_id;
 
     /**
      * @ORM\Column(type="date")
@@ -41,22 +37,27 @@ class Reservations
      */
     private $type;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Cottages")
+     */
+    private $cottage;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $tourist_name;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $tourist_num;
+
     public function getId()
     {
         return $this->id;
     }
 
-    public function getCottageId(): Cottages
-    {
-        return $this->cottage_id;
-    }
 
-    public function setCottageId(Cottages $cottage_id): self
-    {
-        $this->cottage_id = $cottage_id;
-
-        return $this;
-    }
 
     public function getDateFrom(): \DateTimeInterface
     {
@@ -102,6 +103,42 @@ class Reservations
     public function setType(string $type): self
     {
         $this->type = $type;
+
+        return $this;
+    }
+
+    public function getCottage(): Cottages
+    {
+        return $this->cottage;
+    }
+
+    public function setCottage(Cottages $cottage): self
+    {
+        $this->cottage = $cottage;
+
+        return $this;
+    }
+
+    public function getTouristName(): string
+    {
+        return $this->tourist_name;
+    }
+
+    public function setTouristName(string $tourist_name): self
+    {
+        $this->tourist_name = $tourist_name;
+
+        return $this;
+    }
+
+    public function getTouristNum(): int
+    {
+        return $this->tourist_num;
+    }
+
+    public function setTouristNum(int $tourist_num): self
+    {
+        $this->tourist_num = $tourist_num;
 
         return $this;
     }
