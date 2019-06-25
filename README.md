@@ -7,7 +7,7 @@ BursztynCRM abilities:
 - CRUD cottages
 - CRUD users 
 - display reservations in calendar 
-
+- 
 
 
 
