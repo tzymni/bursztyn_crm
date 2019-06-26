@@ -1,0 +1,77 @@
+        <form [formGroup]="reservationForm" (ngSubmit)="save()" novalidate>
+    <div class="modal-header">
+      <h3 class="modal-title">
+      {{title}}
+      </h3>
+      <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+        
+    <div class="form-group row">
+        <label for="" class="col-md-12">Turysta zamawiający</label>
+        <div class="col-md-6">
+            <input type="text" class="form-control"
+                   formControlName="tourist_name" ngModel [name]="true">
+                   
+        </div>
+
+    </div>
+        
+    <div class="form-group row">
+        <label for="" class="col-md-12">Data od</label>
+        <div class="col-md-6">
+                   <input type="date" formControlName="date_from" class="form-control">
+        </div>
+
+    </div>
+        
+    <div class="form-group row">
+        <label for="" class="col-md-12">Data do</label>
+        <div class="col-md-6">
+                   <input type="date"  formControlName="date_to" class="form-control">
+                   
+        </div>
+
+    </div>
+        
+        
+        
+    <div class="form-group row">
+        <label for="" class="col-md-12">Liczba turystów</label>
+        <div class="col-md-6">
+                   <input type="number" formControlName="tourist_num" class="form-control">
+        </div>
+
+    </div>
+        
+    <div class="form-group row">
+        <label for="" class="col-md-12">Domek</label>
+        <div class="col-md-6">
+                   <select ng-model="cottage_id" formControlName="cottage_id" class="form-control">
+  <option *ngFor="let house of cottages" value="{{house.id}}">{{house.name}}</option>
+</select>
+                   
+                   
+        </div>
+
+    </div>
+
+        
+
+    </div>
+    <div class="modal-footer">
+                 <input type="submit" 
+                class="btn btn-primary" 
+                value="Zapisz" />
+      <button type="button" class="btn btn-outline-dark" (click)="activeModal.close('Close click')">Wyjdź</button>
+    </div>
+</form>
+
+
+<div>
+
+    
+    
+</div>

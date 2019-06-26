@@ -30,6 +30,7 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {CalendarModule, DateAdapter} from 'angular-calendar';
 import {adapterFactory} from 'angular-calendar/date-adapters/date-fns';
 import {CottageComponent} from './cottage/cottage.component';
+import {ReservationComponent} from './reservation/reservation.component';
 
 registerLocaleData(localeFr);
 
@@ -85,7 +86,8 @@ const customNotifierOptions: NotifierOptions = {
         UserComponent,
         CalendarComponent,
         CottagesComponent,
-        CottageComponent
+        CottageComponent,
+        ReservationComponent
     ],
     imports: [
         BrowserModule,

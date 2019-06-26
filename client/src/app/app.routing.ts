@@ -9,6 +9,7 @@ import {UserComponent} from './user/user.component';
 import {CottageComponent} from './cottage/cottage.component';
 import {CalendarComponent} from './calendar/calendar.component';
 import {CottagesComponent} from './cottages/cottages.component';
+import {ReservationComponent} from './reservation/reservation.component';
 
 
 const appRoutes: Routes = [
@@ -22,9 +23,10 @@ const appRoutes: Routes = [
             {path: "calendar", component: CalendarComponent},
             {path: "customers", component: ItemsListComponent},
             {path: "customers/add", component: ItemComponent},
+            {path: "customers/edit/:id", component: ItemComponent},
             {path: "user/add", component: UserComponent},
             {path: "cottage/add", component: CottageComponent},
-            {path: "customers/edit/:id", component: ItemComponent},
+            {path: "reservation/add", component: ReservationComponent},
 
 
         ]

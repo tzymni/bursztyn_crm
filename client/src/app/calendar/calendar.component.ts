@@ -2,6 +2,7 @@ import {Component, ChangeDetectionStrategy, OnInit} from '@angular/core';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {map} from 'rxjs/operators';
 import {CalendarEvent, CalendarView} from 'angular-calendar';
+import {ReservationComponent} from '../reservation/reservation.component';
 import {
     isSameMonth,
     isSameDay,
@@ -16,7 +17,7 @@ import {
 } from 'date-fns';
 import {Observable} from 'rxjs';
 import {CalendarService} from '../calendar/service/calendar.service';
-
+import {NgbActiveModal, NgbModal, NgbModalOptions} from '@ng-bootstrap/ng-bootstrap'
 
 interface Event {
     id: number;
@@ -54,8 +55,9 @@ export class CalendarComponent implements OnInit {
 
     activeDayIsOpen: boolean = false;
 
-    constructor(private http: HttpClient,
-    private _calendarService: CalendarService
+    constructor(
+    private _calendarService: CalendarService,
+            private modalService: NgbModal
     ) {}
 
     ngOnInit(): void {
@@ -98,6 +100,12 @@ export class CalendarComponent implements OnInit {
 //        );
     }
 
+
+    add() {
+        this.modalService.open(ReservationComponent).result.then((data) => {
+            this.fetchEvents();
+        });
+    }
 
     setView(view: CalendarView) {
         this.view = view;
