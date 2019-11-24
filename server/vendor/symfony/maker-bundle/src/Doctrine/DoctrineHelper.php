@@ -11,10 +11,14 @@
 
 namespace Symfony\Bundle\MakerBundle\Doctrine;
 
+use Doctrine\Common\Persistence\Mapping\AbstractClassMetadataFactory;
+use Doctrine\Common\Persistence\Mapping\ClassMetadata;
+use Doctrine\Common\Persistence\Mapping\Driver\AnnotationDriver;
 use Doctrine\Common\Persistence\Mapping\Driver\MappingDriver;
 use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
+use Doctrine\Common\Persistence\Mapping\MappingException as PersistenceMappingException;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\Common\Persistence\Mapping\ClassMetadata;
+use Doctrine\ORM\Mapping\MappingException as ORMMappingException;
 use Doctrine\ORM\Tools\DisconnectedClassMetadataFactory;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Bundle\MakerBundle\Util\ClassNameDetails;
@@ -125,11 +129,36 @@ final class DoctrineHelper
 
         /** @var EntityManagerInterface $em */
         foreach ($this->getRegistry()->getManagers() as $em) {
+            $cmf = $em->getMetadataFactory();
+
             if ($disconnected) {
+                try {
+                    $loaded = $cmf->getAllMetadata();
+                } catch (ORMMappingException $e) {
+                    $loaded = $cmf instanceof AbstractClassMetadataFactory ? $cmf->getLoadedMetadata() : [];
+                } catch (PersistenceMappingException $e) {
+                    $loaded = $cmf instanceof AbstractClassMetadataFactory ? $cmf->getLoadedMetadata() : [];
+                }
+
                 $cmf = new DisconnectedClassMetadataFactory();
                 $cmf->setEntityManager($em);
-            } else {
-                $cmf = $em->getMetadataFactory();
+
+                foreach ($loaded as $m) {
+                    $cmf->setMetadataFor($m->getName(), $m);
+                }
+
+                // Invalidating the cached AnnotationDriver::$classNames to find new Entity classes
+                $metadataDriver = $em->getConfiguration()->getMetadataDriverImpl();
+                if ($metadataDriver instanceof MappingDriverChain) {
+                    foreach ($metadataDriver->getDrivers() as $driver) {
+                        if ($driver instanceof AnnotationDriver) {
+                            $classNames = (new \ReflectionObject($driver))->getProperty('classNames');
+                            $classNames->setAccessible(true);
+                            $classNames->setValue($driver, null);
+                            $classNames->setAccessible(false);
+                        }
+                    }
+                }
             }
 
             foreach ($cmf->getAllMetadata() as $m) {
@@ -164,5 +193,14 @@ final class DoctrineHelper
         }
 
         return null;
+    }
+
+    public function isClassAMappedEntity(string $className): bool
+    {
+        if (!$this->isDoctrineInstalled()) {
+            return false;
+        }
+
+        return (bool) $this->getMetadata($className);
     }
 }

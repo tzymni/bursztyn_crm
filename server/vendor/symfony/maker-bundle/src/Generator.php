@@ -11,6 +11,7 @@
 
 namespace Symfony\Bundle\MakerBundle;
 
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\MakerBundle\Exception\RuntimeCommandException;
 use Symfony\Bundle\MakerBundle\Util\ClassNameDetails;
 
@@ -34,8 +35,16 @@ class Generator
 
     /**
      * Generate a new file for a class from a template.
+     *
+     * @param string $className    The fully-qualified class name
+     * @param string $templateName Template name in Resources/skeleton to use
+     * @param array  $variables    Array of variables to pass to the template
+     *
+     * @return string The path where the file will be created
+     *
+     * @throws \Exception
      */
-    public function generateClass(string $className, string $templateName, array $variables): string
+    public function generateClass(string $className, string $templateName, array $variables = []): string
     {
         $targetPath = $this->fileManager->getRelativePathForFutureClass($className);
 
@@ -67,6 +76,29 @@ class Generator
         ]);
 
         $this->addOperation($targetPath, $templateName, $variables);
+    }
+
+    public function dumpFile(string $targetPath, string $contents)
+    {
+        $this->pendingOperations[$targetPath] = [
+            'contents' => $contents,
+        ];
+    }
+
+    public function getFileContentsForPendingOperation(string $targetPath): string
+    {
+        if (!isset($this->pendingOperations[$targetPath])) {
+            throw new RuntimeCommandException(sprintf('File "%s" is not in the Generator\'s pending operations', $targetPath));
+        }
+
+        $templatePath = $this->pendingOperations[$targetPath]['template'];
+        $parameters = $this->pendingOperations[$targetPath]['variables'];
+
+        $templateParameters = array_merge($parameters, [
+            'relative_path' => $this->fileManager->relativizePath($targetPath),
+        ]);
+
+        return $this->fileManager->parseTemplate($templatePath, $templateParameters);
     }
 
     /**
@@ -120,6 +152,11 @@ class Generator
         return new ClassNameDetails($className, $fullNamespacePrefix, $suffix);
     }
 
+    public function getRootDirectory(): string
+    {
+        return $this->fileManager->getRootDirectory();
+    }
+
     private function addOperation(string $targetPath, string $templateName, array $variables)
     {
         if ($this->fileManager->fileExists($targetPath)) {
@@ -157,15 +194,16 @@ class Generator
     public function writeChanges()
     {
         foreach ($this->pendingOperations as $targetPath => $templateData) {
-            $templatePath = $templateData['template'];
-            $parameters = $templateData['variables'];
+            if (isset($templateData['contents'])) {
+                $this->fileManager->dumpFile($targetPath, $templateData['contents']);
 
-            $templateParameters = array_merge($parameters, [
-                'relative_path' => $this->fileManager->relativizePath($targetPath),
-            ]);
+                continue;
+            }
 
-            $fileContents = $this->fileManager->parseTemplate($templatePath, $templateParameters);
-            $this->fileManager->dumpFile($targetPath, $fileContents);
+            $this->fileManager->dumpFile(
+                $targetPath,
+                $this->getFileContentsForPendingOperation($targetPath, $templateData)
+            );
         }
 
         $this->pendingOperations = [];
@@ -174,5 +212,33 @@ class Generator
     public function getRootNamespace(): string
     {
         return $this->namespacePrefix;
+    }
+
+    public function generateController(string $controllerClassName, string $controllerTemplatePath, array $parameters = []): string
+    {
+        return $this->generateClass(
+            $controllerClassName,
+            $controllerTemplatePath,
+            $parameters +
+            [
+                'parent_class_name' => method_exists(AbstractController::class, 'getParameter') ? 'AbstractController' : 'Controller',
+            ]
+        );
+    }
+
+    /**
+     * Generate a template file.
+     *
+     * @param string $targetPath
+     * @param string $templateName
+     * @param array  $variables
+     */
+    public function generateTemplate(string $targetPath, string $templateName, array $variables)
+    {
+        $this->generateFile(
+            $this->fileManager->getPathForTemplate($targetPath),
+            $templateName,
+            $variables
+        );
     }
 }

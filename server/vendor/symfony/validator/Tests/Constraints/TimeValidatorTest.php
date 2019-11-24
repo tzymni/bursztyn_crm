@@ -36,6 +36,10 @@ class TimeValidatorTest extends ConstraintValidatorTestCase
         $this->assertNoViolation();
     }
 
+    /**
+     * @group legacy
+     * @expectedDeprecation Validating a \DateTimeInterface with "Symfony\Component\Validator\Constraints\Time" is deprecated since version 4.2. Use "Symfony\Component\Validator\Constraints\Type" instead or remove the constraint if the underlying model is already type hinted to \DateTimeInterface.
+     */
     public function testDateTimeClassIsValid()
     {
         $this->validator->validate(new \DateTime(), new Time());
@@ -43,11 +47,9 @@ class TimeValidatorTest extends ConstraintValidatorTestCase
         $this->assertNoViolation();
     }
 
-    /**
-     * @expectedException \Symfony\Component\Validator\Exception\UnexpectedTypeException
-     */
     public function testExpectsStringCompatibleType()
     {
+        $this->expectException('Symfony\Component\Validator\Exception\UnexpectedValueException');
         $this->validator->validate(new \stdClass(), new Time());
     }
 
@@ -63,11 +65,11 @@ class TimeValidatorTest extends ConstraintValidatorTestCase
 
     public function getValidTimes()
     {
-        return array(
-            array('01:02:03'),
-            array('00:00:00'),
-            array('23:59:59'),
-        );
+        return [
+            ['01:02:03'],
+            ['00:00:00'],
+            ['23:59:59'],
+        ];
     }
 
     /**
@@ -75,9 +77,9 @@ class TimeValidatorTest extends ConstraintValidatorTestCase
      */
     public function testInvalidTimes($time, $code)
     {
-        $constraint = new Time(array(
+        $constraint = new Time([
             'message' => 'myMessage',
-        ));
+        ]);
 
         $this->validator->validate($time, $constraint);
 
@@ -89,17 +91,21 @@ class TimeValidatorTest extends ConstraintValidatorTestCase
 
     public function getInvalidTimes()
     {
-        return array(
-            array('foobar', Time::INVALID_FORMAT_ERROR),
-            array('foobar 12:34:56', Time::INVALID_FORMAT_ERROR),
-            array('12:34:56 foobar', Time::INVALID_FORMAT_ERROR),
-            array('00:00', Time::INVALID_FORMAT_ERROR),
-            array('24:00:00', Time::INVALID_TIME_ERROR),
-            array('00:60:00', Time::INVALID_TIME_ERROR),
-            array('00:00:60', Time::INVALID_TIME_ERROR),
-        );
+        return [
+            ['foobar', Time::INVALID_FORMAT_ERROR],
+            ['foobar 12:34:56', Time::INVALID_FORMAT_ERROR],
+            ['12:34:56 foobar', Time::INVALID_FORMAT_ERROR],
+            ['00:00', Time::INVALID_FORMAT_ERROR],
+            ['24:00:00', Time::INVALID_TIME_ERROR],
+            ['00:60:00', Time::INVALID_TIME_ERROR],
+            ['00:00:60', Time::INVALID_TIME_ERROR],
+        ];
     }
 
+    /**
+     * @group legacy
+     * @expectedDeprecation Validating a \DateTimeInterface with "Symfony\Component\Validator\Constraints\Time" is deprecated since version 4.2. Use "Symfony\Component\Validator\Constraints\Type" instead or remove the constraint if the underlying model is already type hinted to \DateTimeInterface.
+     */
     public function testDateTimeImmutableIsValid()
     {
         $this->validator->validate(new \DateTimeImmutable(), new Time());

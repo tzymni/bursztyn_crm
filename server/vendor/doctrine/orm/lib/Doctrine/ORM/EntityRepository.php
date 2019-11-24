@@ -19,7 +19,7 @@
 
 namespace Doctrine\ORM;
 
-use Doctrine\Common\Util\Inflector;
+use Doctrine\Common\Inflector\Inflector;
 use Doctrine\ORM\Query\ResultSetMappingBuilder;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\Common\Collections\Selectable;
@@ -57,9 +57,6 @@ class EntityRepository implements ObjectRepository, Selectable
 
     /**
      * Initializes a new <tt>EntityRepository</tt>.
-     *
-     * @param EntityManager         $em    The EntityManager to use.
-     * @param Mapping\ClassMetadata $class The class descriptor.
      */
     public function __construct(EntityManagerInterface $em, Mapping\ClassMetadata $class)
     {

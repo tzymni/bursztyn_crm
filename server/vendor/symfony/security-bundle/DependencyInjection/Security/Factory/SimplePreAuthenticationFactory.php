@@ -18,9 +18,18 @@ use Symfony\Component\DependencyInjection\Reference;
 
 /**
  * @author Jordi Boggiano <j.boggiano@seld.be>
+ *
+ * @deprecated since Symfony 4.2, use Guard instead.
  */
 class SimplePreAuthenticationFactory implements SecurityFactoryInterface
 {
+    public function __construct(bool $triggerDeprecation = true)
+    {
+        if ($triggerDeprecation) {
+            @trigger_error(sprintf('The "%s" class is deprecated since Symfony 4.2, use Guard instead.', __CLASS__), E_USER_DEPRECATED);
+        }
+    }
+
     public function getPosition()
     {
         return 'pre_auth';
@@ -57,8 +66,8 @@ class SimplePreAuthenticationFactory implements SecurityFactoryInterface
         $listener = $container->setDefinition($listenerId, new ChildDefinition('security.authentication.listener.simple_preauth'));
         $listener->replaceArgument(2, $id);
         $listener->replaceArgument(3, new Reference($config['authenticator']));
-        $listener->addMethodCall('setSessionAuthenticationStrategy', array(new Reference('security.authentication.session_strategy.'.$id)));
+        $listener->addMethodCall('setSessionAuthenticationStrategy', [new Reference('security.authentication.session_strategy.'.$id)]);
 
-        return array($provider, $listenerId, null);
+        return [$provider, $listenerId, null];
     }
 }

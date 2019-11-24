@@ -30,7 +30,7 @@ class AbstractControllerTest extends ControllerTraitTest
     public function testSubscribedServices()
     {
         $subscribed = AbstractController::getSubscribedServices();
-        $expectedServices = array(
+        $expectedServices = [
             'router' => '?Symfony\\Component\\Routing\\RouterInterface',
             'request_stack' => '?Symfony\\Component\\HttpFoundation\\RequestStack',
             'http_kernel' => '?Symfony\\Component\\HttpKernel\\HttpKernelInterface',
@@ -43,9 +43,10 @@ class AbstractControllerTest extends ControllerTraitTest
             'form.factory' => '?Symfony\\Component\\Form\\FormFactoryInterface',
             'parameter_bag' => '?Symfony\\Component\\DependencyInjection\\ParameterBag\\ContainerBagInterface',
             'message_bus' => '?Symfony\\Component\\Messenger\\MessageBusInterface',
+            'messenger.default_bus' => '?Symfony\\Component\\Messenger\\MessageBusInterface',
             'security.token_storage' => '?Symfony\\Component\\Security\\Core\\Authentication\\Token\\Storage\\TokenStorageInterface',
             'security.csrf.token_manager' => '?Symfony\\Component\\Security\\Csrf\\CsrfTokenManagerInterface',
-        );
+        ];
 
         $this->assertEquals($expectedServices, $subscribed, 'Subscribed core services in AbstractController have changed');
     }
@@ -56,7 +57,7 @@ class AbstractControllerTest extends ControllerTraitTest
             $this->markTestSkipped('ContainerBag class does not exist');
         }
 
-        $container = new Container(new FrozenParameterBag(array('foo' => 'bar')));
+        $container = new Container(new FrozenParameterBag(['foo' => 'bar']));
         $container->set('parameter_bag', new ContainerBag($container));
 
         $controller = $this->createController();
@@ -65,12 +66,10 @@ class AbstractControllerTest extends ControllerTraitTest
         $this->assertSame('bar', $controller->getParameter('foo'));
     }
 
-    /**
-     * @expectedException \Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException
-     * @expectedExceptionMessage TestAbstractController::getParameter()" method is missing a parameter bag
-     */
     public function testMissingParameterBag()
     {
+        $this->expectException('Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException');
+        $this->expectExceptionMessage('TestAbstractController::getParameter()" method is missing a parameter bag');
         $container = new Container();
 
         $controller = $this->createController();
@@ -82,13 +81,16 @@ class AbstractControllerTest extends ControllerTraitTest
 
 class TestAbstractController extends AbstractController
 {
-    use TestControllerTrait;
-
     private $throwOnUnexpectedService;
 
     public function __construct($throwOnUnexpectedService = true)
     {
         $this->throwOnUnexpectedService = $throwOnUnexpectedService;
+    }
+
+    public function __call(string $method, array $arguments)
+    {
+        return $this->$method(...$arguments);
     }
 
     public function setContainer(ContainerInterface $container)
@@ -113,11 +115,6 @@ class TestAbstractController extends AbstractController
         }
 
         return parent::setContainer($container);
-    }
-
-    public function getParameter(string $name)
-    {
-        return parent::getParameter($name);
     }
 
     public function fooAction()

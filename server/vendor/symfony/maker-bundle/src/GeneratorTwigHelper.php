@@ -31,14 +31,27 @@ final class GeneratorTwigHelper
         $printCode = $entity.'.'.str_replace('_', '', $twigField);
 
         switch ($field['type']) {
+            case 'datetimetz_immutable':
+            case 'datetimetz':
+                $printCode .= ' ? '.$printCode.'|date(\'Y-m-d H:i:s T\') : \'\'';
+                break;
+            case 'datetime_immutable':
             case 'datetime':
                 $printCode .= ' ? '.$printCode.'|date(\'Y-m-d H:i:s\') : \'\'';
                 break;
+            case 'dateinterval':
+                $printCode .= ' ? '.$printCode.'.format(\'%y year(s), %m month(s), %d day(s)\') : \'\'';
+                break;
+            case 'date_immutable':
             case 'date':
                 $printCode .= ' ? '.$printCode.'|date(\'Y-m-d\') : \'\'';
                 break;
+            case 'time_immutable':
             case 'time':
                 $printCode .= ' ? '.$printCode.'|date(\'H:i:s\') : \'\'';
+                break;
+            case 'json':
+                $printCode .= ' ? '.$printCode.'|json_encode : \'\'';
                 break;
             case 'array':
                 $printCode .= ' ? '.$printCode.'|join(\', \') : \'\'';
@@ -53,7 +66,7 @@ final class GeneratorTwigHelper
 
     public function getHeadPrintCode($title): string
     {
-        if ($this->fileManager->fileExists('templates/base.html.twig')) {
+        if ($this->fileManager->fileExists($this->fileManager->getPathForTemplate('base.html.twig'))) {
             return <<<TWIG
 {% extends 'base.html.twig' %}
 
@@ -70,8 +83,10 @@ TWIG;
 HTML;
     }
 
-    public function getFileLink($path): string
+    public function getFileLink($path, $text = null, $line = 0): string
     {
-        return sprintf('<a href="{{ \'%s\'|file_link(0) }}">%1$s</a>', $path);
+        $text = $text ?: $path;
+
+        return "<a href=\"{{ '$path'|file_link($line) }}\">$text</a>";
     }
 }

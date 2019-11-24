@@ -9,6 +9,8 @@
 
 namespace Zend\Code\Generator;
 
+use Zend\Code\DeclareStatement;
+use Zend\Code\Exception\InvalidArgumentException;
 use Zend\Code\Reflection\Exception as ReflectionException;
 use Zend\Code\Reflection\FileReflection;
 
@@ -71,6 +73,11 @@ class FileGenerator extends AbstractGenerator
      * @var string
      */
     protected $body;
+
+    /**
+     * @var DeclareStatement[]
+     */
+    protected $declares = [];
 
     /**
      * Passes $options to {@link setOptions()}.
@@ -155,17 +162,22 @@ class FileGenerator extends AbstractGenerator
             switch (strtolower(str_replace(['.', '-', '_'], '', $name))) {
                 case 'filename':
                     $fileGenerator->setFilename($value);
-                    continue;
+                    break;
                 case 'class':
                     $fileGenerator->setClass(
                         $value instanceof ClassGenerator
                         ? $value
                         : ClassGenerator::fromArray($value)
                     );
-                    continue;
+                    break;
                 case 'requiredfiles':
                     $fileGenerator->setRequiredFiles($value);
-                    continue;
+                    break;
+                case 'declares':
+                    $fileGenerator->setDeclares(array_map(static function ($directive, $value) {
+                        return DeclareStatement::fromArray([$directive => $value]);
+                    }, array_keys($value), $value));
+                    break;
                 default:
                     if (property_exists($fileGenerator, $name)) {
                         $fileGenerator->{$name} = $value;
@@ -408,6 +420,25 @@ class FileGenerator extends AbstractGenerator
         return $this->body;
     }
 
+    public function setDeclares(array $declares)
+    {
+        foreach ($declares as $declare) {
+            if (! $declare instanceof DeclareStatement) {
+                throw new InvalidArgumentException(sprintf(
+                    '%s is expecting an array of %s objects',
+                    __METHOD__,
+                    DeclareStatement::class
+                ));
+            }
+
+            if (! array_key_exists($declare->getDirective(), $this->declares)) {
+                $this->declares[$declare->getDirective()] = $declare;
+            }
+        }
+
+        return $this;
+    }
+
     /**
      * @return bool
      */
@@ -489,6 +520,28 @@ class FileGenerator extends AbstractGenerator
             } else {
                 $output .= $namespace;
             }
+        }
+
+        // declares, if any
+        if ($this->declares) {
+            $declareStatements = '';
+
+            foreach ($this->declares as $declare) {
+                $declareStatements .= $declare->getStatement() . self::LINE_FEED;
+            }
+
+            if (preg_match('#/\* Zend_Code_Generator_FileGenerator-DeclaresMarker \*/#m', $output)) {
+                $output = preg_replace(
+                    '#/\* Zend_Code_Generator_FileGenerator-DeclaresMarker \*/#m',
+                    $declareStatements,
+                    $output,
+                    1
+                );
+            } else {
+                $output .= $declareStatements;
+            }
+
+            $output .= self::LINE_FEED;
         }
 
         // process required files

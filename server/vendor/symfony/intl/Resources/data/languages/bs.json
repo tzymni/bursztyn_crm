@@ -1,5 +1,5 @@
 {
-    "Version": "2.1.41.97",
+    "Version": "36",
     "Names": {
         "aa": "afarski",
         "ab": "abhaski",
@@ -70,6 +70,7 @@
         "car": "karipski",
         "cay": "kajuga",
         "cch": "atsam",
+        "ccp": "čakma",
         "ce": "čečenski",
         "ceb": "cebuano",
         "cgg": "čiga",
@@ -81,7 +82,7 @@
         "chn": "činukski žargon",
         "cho": "čoktav",
         "chp": "čipvijanski",
-        "chr": "čiroki",
+        "chr": "čeroki",
         "chy": "čejenski",
         "ckb": "centralnokurdski",
         "co": "korzikanski",
@@ -99,7 +100,6 @@
         "dar": "dargva",
         "dav": "taita",
         "de": "njemački",
-        "de_CH": "gornjonjemački (Švicarska)",
         "del": "delaver",
         "den": "slave",
         "dgr": "dogrib",
@@ -194,7 +194,7 @@
         "inh": "ingušetski",
         "io": "ido",
         "is": "islandski",
-        "it": "talijanski",
+        "it": "italijanski",
         "iu": "inuktitut",
         "ja": "japanski",
         "jbo": "lojban",
@@ -305,7 +305,6 @@
         "ms": "malajski",
         "mt": "malteški",
         "mua": "mundang",
-        "mul": "više jezika",
         "mus": "kriški",
         "mwl": "mirandeški",
         "mwr": "marvari",
@@ -347,7 +346,7 @@
         "oc": "oksitanski",
         "oj": "ojibva",
         "om": "oromo",
-        "or": "orijski",
+        "or": "odija",
         "os": "osetski",
         "osa": "osage",
         "ota": "osmanski turski",
@@ -475,7 +474,6 @@
         "uga": "ugaritski",
         "uk": "ukrajinski",
         "umb": "umbundu",
-        "und": "nepoznati jezik",
         "ur": "urdu",
         "uz": "uzbečki",
         "vai": "vai",
@@ -511,7 +509,6 @@
         "zh_Hant": "kineski (tradicionalni)",
         "zu": "zulu",
         "zun": "zuni",
-        "zxx": "bez lingvističkog sadržaja",
         "zza": "zaza"
     }
 }

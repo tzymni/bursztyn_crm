@@ -7,6 +7,7 @@
 #/TODO
 # ignoruj wszystkie pliki znajdujące się w katalogu build/
 server/var/*
-server/vendor/*
+server/vendor/
+client/node_modules/
 # ignoruj doc/notatki.txt, ale nie doc/server/arch.txt
 #doc/*.txt

@@ -79,12 +79,11 @@ class SwiftmailerTransportFactoryTest extends \PHPUnit\Framework\TestCase
         $this->assertInstanceOf('Swift_Transport_NullTransport', $transport);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage The fake_encryption encryption is not supported
-     */
     public function testCreateTransportWithWrongEncryption()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('The fake_encryption encryption is not supported');
+
         SwiftmailerTransportFactory::createTransport(
             [
                 'transport' => 'smtp',
@@ -103,12 +102,11 @@ class SwiftmailerTransportFactoryTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage The fake_auth authentication mode is not supported
-     */
     public function testCreateTransportWithWrongAuthMode()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('The fake_auth authentication mode is not supported');
+
         SwiftmailerTransportFactory::createTransport(
             [
                 'transport' => 'smtp',
@@ -159,6 +157,28 @@ class SwiftmailerTransportFactoryTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($authHandler->getUsername(), $options['username']);
         $this->assertSame($authHandler->getPassword(), $options['password']);
         $this->assertSame($authHandler->getAuthMode(), $options['auth_mode']);
+    }
+
+    public function testCreateTransportWithBadURLFormat()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('The Swiftmailer URL "smtp://localhost:25&auth_mode=cra-md5" is not valid.');
+
+        $options = [
+            'url' => 'smtp://localhost:25&auth_mode=cra-md5',
+            'transport' => 'smtp',
+            'username' => null,
+            'password' => null,
+            'host' => 'localhost',
+            'port' => null,
+            'timeout' => 30,
+            'source_ip' => null,
+            'local_domain' => null,
+            'encryption' => null,
+            'auth_mode' => null,
+        ];
+
+        SwiftmailerTransportFactory::createTransport($options, null, new \Swift_Events_SimpleEventDispatcher());
     }
 
     /**

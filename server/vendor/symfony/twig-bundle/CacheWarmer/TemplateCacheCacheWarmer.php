@@ -12,11 +12,10 @@
 namespace Symfony\Bundle\TwigBundle\CacheWarmer;
 
 use Psr\Container\ContainerInterface;
+use Symfony\Bundle\FrameworkBundle\CacheWarmer\TemplateFinderInterface;
 use Symfony\Component\DependencyInjection\ServiceSubscriberInterface;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
-use Symfony\Bundle\FrameworkBundle\CacheWarmer\TemplateFinderInterface;
-use Symfony\Component\Templating\TemplateReference;
 use Twig\Environment;
 use Twig\Error\Error;
 
@@ -37,7 +36,7 @@ class TemplateCacheCacheWarmer implements CacheWarmerInterface, ServiceSubscribe
     /**
      * @param array $paths Additional twig paths to warm
      */
-    public function __construct(ContainerInterface $container, TemplateFinderInterface $finder = null, array $paths = array())
+    public function __construct(ContainerInterface $container, TemplateFinderInterface $finder = null, array $paths = [])
     {
         // We don't inject the Twig environment directly as it depends on the
         // template locator (via the loader) which might be a cached one.
@@ -69,10 +68,6 @@ class TemplateCacheCacheWarmer implements CacheWarmerInterface, ServiceSubscribe
         }
 
         foreach ($templates as $template) {
-            if ('twig' !== $template->get('engine')) {
-                continue;
-            }
-
             try {
                 $twig->loadTemplate($template);
             } catch (Error $e) {
@@ -96,9 +91,9 @@ class TemplateCacheCacheWarmer implements CacheWarmerInterface, ServiceSubscribe
      */
     public static function getSubscribedServices()
     {
-        return array(
+        return [
             'twig' => Environment::class,
-        );
+        ];
     }
 
     /**
@@ -107,23 +102,20 @@ class TemplateCacheCacheWarmer implements CacheWarmerInterface, ServiceSubscribe
      * @param string $namespace The namespace for these templates
      * @param string $dir       The folder where to look for templates
      *
-     * @return array An array of templates of type TemplateReferenceInterface
+     * @return array An array of templates
      */
     private function findTemplatesInFolder($namespace, $dir)
     {
         if (!is_dir($dir)) {
-            return array();
+            return [];
         }
 
-        $templates = array();
+        $templates = [];
         $finder = new Finder();
 
         foreach ($finder->files()->followLinks()->in($dir) as $file) {
             $name = $file->getRelativePathname();
-            $templates[] = new TemplateReference(
-                $namespace ? sprintf('@%s/%s', $namespace, $name) : $name,
-                'twig'
-            );
+            $templates[] = $namespace ? sprintf('@%s/%s', $namespace, $name) : $name;
         }
 
         return $templates;

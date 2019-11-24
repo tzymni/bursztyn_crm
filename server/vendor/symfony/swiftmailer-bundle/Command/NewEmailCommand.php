@@ -11,7 +11,6 @@
 
 namespace Symfony\Bundle\SwiftmailerBundle\Command;
 
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -22,7 +21,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  *
  * @author Gusakov Nikita <dev@nkt.me>
  */
-class NewEmailCommand extends ContainerAwareCommand
+class NewEmailCommand extends AbstractSwiftMailerCommand
 {
     protected static $defaultName = 'swiftmailer:email:send';
 
@@ -68,7 +67,7 @@ EOF
     }
 
     /**
-     * {@inheritdoc}
+     * @return int
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -97,6 +96,8 @@ EOF
         $sentMessages = $mailer->send($message);
 
         $this->io->success(sprintf('%s emails were successfully sent.', $sentMessages));
+
+        return 0;
     }
 
     /**

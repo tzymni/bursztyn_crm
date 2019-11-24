@@ -35,7 +35,7 @@ class YamlFileLoaderTest extends TestCase
      */
     private $metadata;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->loader = new YamlFileLoader(__DIR__.'/../../Fixtures/serialization.yml');
         $this->metadata = new ClassMetadata('Symfony\Component\Serializer\Tests\Fixtures\GroupDummy');
@@ -57,11 +57,9 @@ class YamlFileLoaderTest extends TestCase
         $this->assertFalse($loader->loadClassMetadata($this->metadata));
     }
 
-    /**
-     * @expectedException \Symfony\Component\Serializer\Exception\MappingException
-     */
     public function testLoadClassMetadataReturnsThrowsInvalidMapping()
     {
+        $this->expectException('Symfony\Component\Serializer\Exception\MappingException');
         $loader = new YamlFileLoader(__DIR__.'/../../Fixtures/invalid-mapping.yml');
         $loader->loadClassMetadata($this->metadata);
     }
@@ -98,10 +96,10 @@ class YamlFileLoaderTest extends TestCase
         $classMetadata = new ClassMetadata(AbstractDummy::class);
         $this->loader->loadClassMetadata($classMetadata);
 
-        $expected = new ClassMetadata(AbstractDummy::class, new ClassDiscriminatorMapping('type', array(
+        $expected = new ClassMetadata(AbstractDummy::class, new ClassDiscriminatorMapping('type', [
             'first' => AbstractDummyFirstChild::class,
             'second' => AbstractDummySecondChild::class,
-        )));
+        ]));
 
         $expected->addAttributeMetadata(new AttributeMetadata('foo'));
 

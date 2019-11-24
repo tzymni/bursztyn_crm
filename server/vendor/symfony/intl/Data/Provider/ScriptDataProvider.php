@@ -12,14 +12,13 @@
 namespace Symfony\Component\Intl\Data\Provider;
 
 use Symfony\Component\Intl\Data\Bundle\Reader\BundleEntryReaderInterface;
-use Symfony\Component\Intl\Locale;
 
 /**
  * Data provider for script-related ICU data.
  *
  * @author Bernhard Schussek <bschussek@gmail.com>
  *
- * @internal
+ * @internal to be removed in 5.0.
  */
 class ScriptDataProvider
 {
@@ -40,25 +39,25 @@ class ScriptDataProvider
 
     public function getScripts()
     {
-        return $this->reader->readEntry($this->path, 'meta', array('Scripts'));
+        return $this->reader->readEntry($this->path, 'meta', ['Scripts']);
     }
 
     public function getName($script, $displayLocale = null)
     {
         if (null === $displayLocale) {
-            $displayLocale = Locale::getDefault();
+            $displayLocale = \Locale::getDefault();
         }
 
-        return $this->reader->readEntry($this->path, $displayLocale, array('Names', $script));
+        return $this->reader->readEntry($this->path, $displayLocale, ['Names', $script]);
     }
 
     public function getNames($displayLocale = null)
     {
         if (null === $displayLocale) {
-            $displayLocale = Locale::getDefault();
+            $displayLocale = \Locale::getDefault();
         }
 
-        $names = $this->reader->readEntry($this->path, $displayLocale, array('Names'));
+        $names = $this->reader->readEntry($this->path, $displayLocale, ['Names']);
 
         if ($names instanceof \Traversable) {
             $names = iterator_to_array($names);

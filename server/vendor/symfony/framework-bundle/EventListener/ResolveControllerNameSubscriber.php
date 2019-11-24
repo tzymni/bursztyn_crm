@@ -35,16 +35,18 @@ class ResolveControllerNameSubscriber implements EventSubscriberInterface
     public function onKernelRequest(GetResponseEvent $event)
     {
         $controller = $event->getRequest()->attributes->get('_controller');
-        if (is_string($controller) && false === strpos($controller, '::') && 2 === substr_count($controller, ':')) {
+        if (\is_string($controller) && false === strpos($controller, '::') && 2 === substr_count($controller, ':')) {
             // controller in the a:b:c notation then
-            $event->getRequest()->attributes->set('_controller', $this->parser->parse($controller, false));
+            $event->getRequest()->attributes->set('_controller', $parsedNotation = $this->parser->parse($controller, false));
+
+            @trigger_error(sprintf('Referencing controllers with %s is deprecated since Symfony 4.1, use "%s" instead.', $controller, $parsedNotation), E_USER_DEPRECATED);
         }
     }
 
     public static function getSubscribedEvents()
     {
-        return array(
-            KernelEvents::REQUEST => array('onKernelRequest', 24),
-        );
+        return [
+            KernelEvents::REQUEST => ['onKernelRequest', 24],
+        ];
     }
 }

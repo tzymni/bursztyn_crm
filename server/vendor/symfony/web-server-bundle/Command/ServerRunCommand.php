@@ -15,10 +15,10 @@ use Symfony\Bundle\WebServerBundle\WebServer;
 use Symfony\Bundle\WebServerBundle\WebServerConfig;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\ConsoleOutputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Process\Process;
 
@@ -31,13 +31,15 @@ class ServerRunCommand extends Command
 {
     private $documentRoot;
     private $environment;
+    private $pidFileDirectory;
 
     protected static $defaultName = 'server:run';
 
-    public function __construct(string $documentRoot = null, string $environment = null)
+    public function __construct(string $documentRoot = null, string $environment = null, string $pidFileDirectory = null)
     {
         $this->documentRoot = $documentRoot;
         $this->environment = $environment;
+        $this->pidFileDirectory = $pidFileDirectory;
 
         parent::__construct();
     }
@@ -48,11 +50,11 @@ class ServerRunCommand extends Command
     protected function configure()
     {
         $this
-            ->setDefinition(array(
+            ->setDefinition([
                 new InputArgument('addressport', InputArgument::OPTIONAL, 'The address to listen to (can be address:port, address, or port)'),
                 new InputOption('docroot', 'd', InputOption::VALUE_REQUIRED, 'Document root, usually where your front controllers are stored'),
                 new InputOption('router', 'r', InputOption::VALUE_REQUIRED, 'Path to custom router script'),
-            ))
+            ])
             ->setDescription('Runs a local web server')
             ->setHelp(<<<'EOF'
 <info>%command.name%</info> runs a local web server: By default, the server
@@ -77,7 +79,7 @@ Specify your own router script via the <info>--router</info> option:
 
   <info>%command.full_name% --router=app/config/router.php</info>
 
-See also: http://www.php.net/manual/en/features.commandline.webserver.php
+See also: https://php.net/features.commandline.webserver
 EOF
             )
         ;
@@ -129,10 +131,17 @@ EOF
         }
 
         try {
-            $server = new WebServer();
+            $server = new WebServer($this->pidFileDirectory);
             $config = new WebServerConfig($documentRoot, $env, $input->getArgument('addressport'), $input->getOption('router'));
 
-            $io->success(sprintf('Server listening on http://%s', $config->getAddress()));
+            $message = sprintf('Server listening on http://%s', $config->getAddress());
+            if ('' !== $displayAddress = $config->getDisplayAddress()) {
+                $message = sprintf('Server listening on all interfaces, port %s -- see http://%s', $config->getPort(), $displayAddress);
+            }
+            $io->success($message);
+            if (ini_get('xdebug.profiler_enable_trigger')) {
+                $io->comment('Xdebug profiler trigger enabled.');
+            }
             $io->comment('Quit the server with CONTROL-C.');
 
             $exitCode = $server->run($config, $disableOutput, $callback);

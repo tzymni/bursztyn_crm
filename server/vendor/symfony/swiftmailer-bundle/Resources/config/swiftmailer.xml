@@ -48,13 +48,14 @@
         <service id="swiftmailer.transport.spool.abstract" class="Swift_Transport_SpoolTransport" public="false" abstract="true" />
 
         <service id="swiftmailer.spool.file.abstract" class="Swift_FileSpool" public="false" abstract="true">
-            <argument>%kernel.root_dir%/../data/swiftmailer/spool</argument>
+            <argument />
         </service>
 
         <service id="swiftmailer.spool.memory.abstract" class="Swift_MemorySpool" public="false" abstract="true" />
 
         <service id="swiftmailer.email_sender.listener" class="Symfony\Bundle\SwiftmailerBundle\EventListener\EmailSenderListener">
             <tag name="kernel.event_subscriber" />
+            <tag name="kernel.reset" method="reset" />
             <argument type="service" id="service_container" />
             <argument type="service" id="logger" on-invalid="null" />
         </service>

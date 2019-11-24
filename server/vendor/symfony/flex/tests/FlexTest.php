@@ -12,14 +12,17 @@
 namespace Symfony\Flex\Tests;
 
 use Composer\Composer;
-use Composer\Config;
 use Composer\DependencyResolver\Operation\InstallOperation;
+use Composer\Factory;
 use Composer\Installer\PackageEvent;
-use Composer\Package\Locker;
-use Composer\Package\RootPackageInterface;
-use Composer\Script\Event;
 use Composer\IO\BufferIO;
+use Composer\Package\Link;
+use Composer\Package\Locker;
 use Composer\Package\Package;
+use Composer\Package\RootPackageInterface;
+use Composer\Repository\RepositoryManager;
+use Composer\Repository\WritableRepositoryInterface;
+use Composer\Script\Event;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Flex\Configurator;
@@ -32,52 +35,6 @@ use Symfony\Flex\Response;
 
 class FlexTest extends TestCase
 {
-    /**
-     * @dataProvider getRecordTests
-     */
-    public function testFrameworkBundleRecord(array $actualInstallOperations, $expectedFinalOperators)
-    {
-        $lock = $this->getMockBuilder(Lock::class)->disableOriginalConstructor()->getMock();
-        $lock->expects($this->any())->method('has')->will($this->returnValue(false));
-
-        $flex = \Closure::bind(function () use ($lock) {
-            $flex = new Flex();
-            $flex->lock = $lock;
-
-            return $flex;
-        }, null, Flex::class)->__invoke();
-
-        /** @var InstallOperation[] $actualInstallOperations */
-        foreach ($actualInstallOperations as $operation) {
-            $event = $this->getMockBuilder(PackageEvent::class)->disableOriginalConstructor()->getMock();
-            $event->expects($this->any())->method('getOperation')->willReturn($operation);
-
-            $flex->record($event);
-        }
-
-        $this->assertAttributeEquals($expectedFinalOperators, 'operations', $flex);
-    }
-
-    public function getRecordTests()
-    {
-        $operationFoo = new InstallOperation(new Package('vendor/foo', '1.0.0', '1.0.0'));
-        $operationFB = new InstallOperation(new Package('symfony/framework-bundle', '1.0.0', '1.0.0'));
-        $operationFlex = new InstallOperation(new Package('symfony/flex', '1.0.0', '1.0.0'));
-
-        return [
-            [
-                // install order
-                [$operationFoo, $operationFB, $operationFlex],
-                // expected final order
-                [$operationFlex, $operationFB, $operationFoo],
-            ],
-            [
-                [$operationFoo, $operationFlex, $operationFB],
-                [$operationFlex, $operationFB, $operationFoo],
-            ],
-        ];
-    }
-
     public function testPostInstall()
     {
         $package = new Package('dummy/dummy', '1.0.0', '1.0.0');
@@ -96,7 +53,6 @@ class FlexTest extends TestCase
                     'origin' => 'dummy/dummy:1.0@github.com/symfony/recipes:master',
                 ],
             ],
-            'vulnerabilities' => [],
         ];
 
         $configurator = $this->getMockBuilder(Configurator::class)->disableOriginalConstructor()->getMock();
@@ -104,16 +60,17 @@ class FlexTest extends TestCase
 
         $downloader = $this->getMockBuilder(Downloader::class)->disableOriginalConstructor()->getMock();
         $downloader->expects($this->once())->method('getRecipes')->willReturn($data);
+        $downloader->expects($this->once())->method('isEnabled')->willReturn(true);
 
         $io = new BufferIO('', OutputInterface::VERBOSITY_VERBOSE);
         $locker = $this->getMockBuilder(Locker::class)->disableOriginalConstructor()->getMock();
-        $locker->expects($this->any())->method('getLockData')->will($this->returnValue(['content-hash' => 'random']));
+        $locker->expects($this->any())->method('getLockData')->willReturn(['content-hash' => 'random']);
 
         $package = $this->getMockBuilder(RootPackageInterface::class)->disableOriginalConstructor()->getMock();
-        $package->expects($this->any())->method('getExtra')->will($this->returnValue(['symfony' => ['allow-contrib' => true]]));
+        $package->expects($this->any())->method('getExtra')->willReturn(['symfony' => ['allow-contrib' => true]]);
 
         $lock = $this->getMockBuilder(Lock::class)->disableOriginalConstructor()->getMock();
-        $lock->expects($this->any())->method('has')->will($this->returnValue(false));
+        $lock->expects($this->any())->method('has')->willReturn(false);
 
         $flex = \Closure::bind(function () use ($configurator, $downloader, $io, $locker, $package, $lock) {
             $flex = new Flex();
@@ -160,12 +117,19 @@ EOF
 
     public function testActivateLoadsClasses()
     {
-        $composer = new Composer();
-        $composer->setConfig($this->getMockBuilder(Config::class)->disableOriginalConstructor()->getMock());
-        $package = $this->getMockBuilder(RootPackageInterface::class)->disableOriginalConstructor()->getMock();
-        $package->method('getExtra')->will($this->returnValue(['symfony' => ['allow-contrib' => true]]));
-        $composer->setPackage($package);
         $io = new BufferIO('', OutputInterface::VERBOSITY_VERBOSE);
+        $composer = new Composer();
+        $composer->setConfig(Factory::createConfig($io));
+        $package = $this->getMockBuilder(RootPackageInterface::class)->disableOriginalConstructor()->getMock();
+        $package->method('getExtra')->willReturn(['symfony' => ['allow-contrib' => true]]);
+        $package->method('getRequires')->willReturn([new Link('dummy', 'symfony/flex')]);
+        $composer->setPackage($package);
+        $localRepo = $this->getMockBuilder(WritableRepositoryInterface::class)->disableOriginalConstructor()->getMock();
+        $manager = $this->getMockBuilder(RepositoryManager::class)->disableOriginalConstructor()->getMock();
+        $manager->expects($this->once())
+            ->method('getLocalRepository')
+            ->willReturn($localRepo);
+        $composer->setRepositoryManager($manager);
 
         $flex = new Flex();
         $flex->activate($composer, $io);

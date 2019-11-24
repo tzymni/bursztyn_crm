@@ -35,7 +35,7 @@ class XmlFileLoaderTest extends TestCase
      */
     private $metadata;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->loader = new XmlFileLoader(__DIR__.'/../../Fixtures/serialization.xml');
         $this->metadata = new ClassMetadata('Symfony\Component\Serializer\Tests\Fixtures\GroupDummy');
@@ -83,10 +83,10 @@ class XmlFileLoaderTest extends TestCase
         $classMetadata = new ClassMetadata(AbstractDummy::class);
         $this->loader->loadClassMetadata($classMetadata);
 
-        $expected = new ClassMetadata(AbstractDummy::class, new ClassDiscriminatorMapping('type', array(
+        $expected = new ClassMetadata(AbstractDummy::class, new ClassDiscriminatorMapping('type', [
             'first' => AbstractDummyFirstChild::class,
             'second' => AbstractDummySecondChild::class,
-        )));
+        ]));
 
         $expected->addAttributeMetadata(new AttributeMetadata('foo'));
 

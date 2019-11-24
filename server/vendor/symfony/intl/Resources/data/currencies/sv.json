@@ -1,5 +1,5 @@
 {
-    "Version": "2.1.41.97",
+    "Version": "36",
     "Names": {
         "ADP": [
             "ADP",
@@ -263,7 +263,7 @@
         ],
         "CNH": [
             "CNH",
-            "CNH"
+            "kinesisk yuan (offshore)"
         ],
         "CNX": [
             "CNX",
@@ -971,7 +971,7 @@
         ],
         "TPE": [
             "TPE",
-            "timoriansk escudo"
+            "östtimoresisk escudo"
         ],
         "TRL": [
             "TRL",
@@ -1043,6 +1043,10 @@
         ],
         "VEF": [
             "VEF",
+            "venezuelansk bolívar (2008–2018)"
+        ],
+        "VES": [
+            "VES",
             "venezuelansk bolívar"
         ],
         "VND": [

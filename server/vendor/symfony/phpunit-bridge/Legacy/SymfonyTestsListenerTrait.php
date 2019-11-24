@@ -18,6 +18,7 @@ use PHPUnit\Framework\TestSuite;
 use PHPUnit\Util\Blacklist;
 use Symfony\Bridge\PhpUnit\ClockMock;
 use Symfony\Bridge\PhpUnit\DnsMock;
+use Symfony\Component\Debug\DebugClassLoader;
 
 /**
  * PHP 5.3 compatible trait-like shared implementation.
@@ -52,8 +53,10 @@ class SymfonyTestsListenerTrait
             Blacklist::$blacklistedClassNames['\Symfony\Bridge\PhpUnit\Legacy\SymfonyTestsListenerTrait'] = 2;
         }
 
+        $enableDebugClassLoader = class_exists('Symfony\Component\Debug\DebugClassLoader');
+
         foreach ($mockedNamespaces as $type => $namespaces) {
-            if (!is_array($namespaces)) {
+            if (!\is_array($namespaces)) {
                 $namespaces = array($namespaces);
             }
             if ('time-sensitive' === $type) {
@@ -66,12 +69,28 @@ class SymfonyTestsListenerTrait
                     DnsMock::register($ns.'\DummyClass');
                 }
             }
+            if ('debug-class-loader' === $type) {
+                $enableDebugClassLoader = $namespaces && $namespaces[0];
+            }
+        }
+        if ($enableDebugClassLoader) {
+            DebugClassLoader::enable();
         }
         if (self::$globallyEnabled) {
             $this->state = -2;
         } else {
             self::$globallyEnabled = true;
         }
+    }
+
+    public function __sleep()
+    {
+        throw new \BadMethodCallException('Cannot serialize '.__CLASS__);
+    }
+
+    public function __wakeup()
+    {
+        throw new \BadMethodCallException('Cannot unserialize '.__CLASS__);
     }
 
     public function __destruct()
@@ -98,10 +117,10 @@ class SymfonyTestsListenerTrait
         $this->testsWithWarnings = array();
 
         foreach ($suite->tests() as $test) {
-            if (!($test instanceof \PHPUnit_Framework_TestCase || $test instanceof TestCase)) {
+            if (!($test instanceof \PHPUnit\Framework\TestCase || $test instanceof TestCase)) {
                 continue;
             }
-            if (null === $Test::getPreserveGlobalStateSettings(get_class($test), $test->getName(false))) {
+            if (null === $Test::getPreserveGlobalStateSettings(\get_class($test), $test->getName(false))) {
                 $test->setPreserveGlobalState(false);
             }
         }
@@ -139,10 +158,10 @@ class SymfonyTestsListenerTrait
                             continue;
                         }
                         $groups = $Test::getGroups($test->getName());
-                        if (in_array('time-sensitive', $groups, true)) {
+                        if (\in_array('time-sensitive', $groups, true)) {
                             ClockMock::register($test->getName());
                         }
-                        if (in_array('dns-sensitive', $groups, true)) {
+                        if (\in_array('dns-sensitive', $groups, true)) {
                             DnsMock::register($test->getName());
                         }
                     }
@@ -151,7 +170,7 @@ class SymfonyTestsListenerTrait
         } elseif (2 === $this->state) {
             $skipped = array();
             foreach ($suite->tests() as $test) {
-                if (!($test instanceof \PHPUnit_Framework_TestCase || $test instanceof TestCase)
+                if (!($test instanceof \PHPUnit\Framework\TestCase || $test instanceof TestCase)
                     || isset($this->wasSkipped[$suiteName]['*'])
                     || isset($this->wasSkipped[$suiteName][$test->getName()])) {
                     $skipped[] = $test;
@@ -164,8 +183,8 @@ class SymfonyTestsListenerTrait
     public function addSkippedTest($test, \Exception $e, $time)
     {
         if (0 < $this->state) {
-            if ($test instanceof \PHPUnit_Framework_TestCase || $test instanceof TestCase) {
-                $class = get_class($test);
+            if ($test instanceof \PHPUnit\Framework\TestCase || $test instanceof TestCase) {
+                $class = \get_class($test);
                 $method = $test->getName();
             } else {
                 $class = $test->getName();
@@ -178,7 +197,7 @@ class SymfonyTestsListenerTrait
 
     public function startTest($test)
     {
-        if (-2 < $this->state && ($test instanceof \PHPUnit_Framework_TestCase || $test instanceof TestCase)) {
+        if (-2 < $this->state && ($test instanceof \PHPUnit\Framework\TestCase || $test instanceof TestCase)) {
             if (null !== $test->getTestResultObject()) {
                 $this->reportUselessTests = $test->getTestResultObject()->isStrictAboutTestsThatDoNotTestAnything();
             }
@@ -196,25 +215,25 @@ class SymfonyTestsListenerTrait
                 $Test = 'PHPUnit\Util\Test';
                 $AssertionFailedError = 'PHPUnit\Framework\AssertionFailedError';
             }
-            $groups = $Test::getGroups(get_class($test), $test->getName(false));
+            $groups = $Test::getGroups(\get_class($test), $test->getName(false));
 
             if (!$this->runsInSeparateProcess) {
-                if (in_array('time-sensitive', $groups, true)) {
-                    ClockMock::register(get_class($test));
+                if (\in_array('time-sensitive', $groups, true)) {
+                    ClockMock::register(\get_class($test));
                     ClockMock::withClockMock(true);
                 }
-                if (in_array('dns-sensitive', $groups, true)) {
-                    DnsMock::register(get_class($test));
+                if (\in_array('dns-sensitive', $groups, true)) {
+                    DnsMock::register(\get_class($test));
                 }
             }
 
-            $annotations = $Test::parseTestMethodAnnotations(get_class($test), $test->getName(false));
+            $annotations = $Test::parseTestMethodAnnotations(\get_class($test), $test->getName(false));
 
             if (isset($annotations['class']['expectedDeprecation'])) {
                 $test->getTestResultObject()->addError($test, new $AssertionFailedError('`@expectedDeprecation` annotations are not allowed at the class level.'), 0);
             }
             if (isset($annotations['method']['expectedDeprecation'])) {
-                if (!in_array('legacy', $groups, true)) {
+                if (!\in_array('legacy', $groups, true)) {
                     $this->error = new $AssertionFailedError('Only tests with the `@group legacy` annotation can have `@expectedDeprecation`.');
                 }
 
@@ -228,7 +247,7 @@ class SymfonyTestsListenerTrait
 
     public function addWarning($test, $e, $time)
     {
-        if ($test instanceof \PHPUnit_Framework_TestCase || $test instanceof TestCase) {
+        if ($test instanceof \PHPUnit\Framework\TestCase || $test instanceof TestCase) {
             $this->testsWithWarnings[$test->getName()] = true;
         }
     }
@@ -238,14 +257,11 @@ class SymfonyTestsListenerTrait
         if (class_exists('PHPUnit_Util_Blacklist', false)) {
             $Test = 'PHPUnit_Util_Test';
             $BaseTestRunner = 'PHPUnit_Runner_BaseTestRunner';
-            $Warning = 'PHPUnit_Framework_Warning';
         } else {
             $Test = 'PHPUnit\Util\Test';
             $BaseTestRunner = 'PHPUnit\Runner\BaseTestRunner';
-            $Warning = 'PHPUnit\Framework\Warning';
         }
-        $className = get_class($test);
-        $classGroups = $Test::getGroups($className);
+        $className = \get_class($test);
         $groups = $Test::getGroups($className, $test->getName(false));
 
         if (null !== $this->reportUselessTests) {
@@ -265,6 +281,7 @@ class SymfonyTestsListenerTrait
             foreach ($deprecations ? unserialize($deprecations) : array() as $deprecation) {
                 $error = serialize(array('deprecation' => $deprecation[1], 'class' => $className, 'method' => $test->getName(false), 'triggering_file' => isset($deprecation[2]) ? $deprecation[2] : null));
                 if ($deprecation[0]) {
+                    // unsilenced on purpose
                     trigger_error($error, E_USER_DEPRECATED);
                 } else {
                     @trigger_error($error, E_USER_DEPRECATED);
@@ -274,13 +291,13 @@ class SymfonyTestsListenerTrait
         }
 
         if ($this->expectedDeprecations) {
-            if (!in_array($test->getStatus(), array($BaseTestRunner::STATUS_SKIPPED, $BaseTestRunner::STATUS_INCOMPLETE), true)) {
-                $test->addToAssertionCount(count($this->expectedDeprecations));
+            if (!\in_array($test->getStatus(), array($BaseTestRunner::STATUS_SKIPPED, $BaseTestRunner::STATUS_INCOMPLETE), true)) {
+                $test->addToAssertionCount(\count($this->expectedDeprecations));
             }
 
             restore_error_handler();
 
-            if (!$errored && !in_array($test->getStatus(), array($BaseTestRunner::STATUS_SKIPPED, $BaseTestRunner::STATUS_INCOMPLETE, $BaseTestRunner::STATUS_FAILURE, $BaseTestRunner::STATUS_ERROR), true)) {
+            if (!$errored && !\in_array($test->getStatus(), array($BaseTestRunner::STATUS_SKIPPED, $BaseTestRunner::STATUS_INCOMPLETE, $BaseTestRunner::STATUS_FAILURE, $BaseTestRunner::STATUS_ERROR), true)) {
                 try {
                     $prefix = "@expectedDeprecation:\n";
                     $test->assertStringMatchesFormat($prefix.'%A  '.implode("\n%A  ", $this->expectedDeprecations)."\n%A", $prefix.'  '.implode("\n  ", $this->gatheredDeprecations)."\n");
@@ -294,11 +311,11 @@ class SymfonyTestsListenerTrait
             $this->expectedDeprecations = $this->gatheredDeprecations = array();
             $this->previousErrorHandler = null;
         }
-        if (!$this->runsInSeparateProcess && -2 < $this->state && ($test instanceof \PHPUnit_Framework_TestCase || $test instanceof TestCase)) {
-            if (in_array('time-sensitive', $groups, true)) {
+        if (!$this->runsInSeparateProcess && -2 < $this->state && ($test instanceof \PHPUnit\Framework\TestCase || $test instanceof TestCase)) {
+            if (\in_array('time-sensitive', $groups, true)) {
                 ClockMock::withClockMock(false);
             }
-            if (in_array('dns-sensitive', $groups, true)) {
+            if (\in_array('dns-sensitive', $groups, true)) {
                 DnsMock::withMockedHosts(array());
             }
         }
@@ -314,13 +331,15 @@ class SymfonyTestsListenerTrait
         // If the message is serialized we need to extract the message. This occurs when the error is triggered by
         // by the isolated test path in \Symfony\Bridge\PhpUnit\Legacy\SymfonyTestsListenerTrait::endTest().
         $parsedMsg = @unserialize($msg);
-        if (is_array($parsedMsg)) {
+        if (\is_array($parsedMsg)) {
             $msg = $parsedMsg['deprecation'];
         }
         if (error_reporting()) {
             $msg = 'Unsilenced deprecation: '.$msg;
         }
         $this->gatheredDeprecations[] = $msg;
+
+        return null;
     }
 
     /**

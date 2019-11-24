@@ -11,11 +11,27 @@
 
 namespace Symfony\Component\Intl\Tests;
 
-use Symfony\Component\Intl\Intl;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Intl\Intl;
 
 class IntlTest extends TestCase
 {
+    private $defaultLocale;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->defaultLocale = \Locale::getDefault();
+    }
+
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+
+        \Locale::setDefault($this->defaultLocale);
+    }
+
     /**
      * @requires extension intl
      */
@@ -24,24 +40,36 @@ class IntlTest extends TestCase
         $this->assertTrue(Intl::isExtensionLoaded());
     }
 
+    /**
+     * @group legacy
+     */
     public function testGetCurrencyBundleCreatesTheCurrencyBundle()
     {
         $this->assertInstanceOf('Symfony\Component\Intl\ResourceBundle\CurrencyBundleInterface', Intl::getCurrencyBundle());
     }
 
+    /**
+     * @group legacy
+     */
     public function testGetLanguageBundleCreatesTheLanguageBundle()
     {
         $this->assertInstanceOf('Symfony\Component\Intl\ResourceBundle\LanguageBundleInterface', Intl::getLanguageBundle());
     }
 
+    /**
+     * @group legacy
+     */
     public function testGetLocaleBundleCreatesTheLocaleBundle()
     {
         $this->assertInstanceOf('Symfony\Component\Intl\ResourceBundle\LocaleBundleInterface', Intl::getLocaleBundle());
     }
 
+    /**
+     * @group legacy
+     */
     public function testGetRegionBundleCreatesTheRegionBundle()
     {
-        $this->assertInstanceOf('Symfony\Component\Intl\ResourceBundle\LocaleBundleInterface', Intl::getLocaleBundle());
+        $this->assertInstanceOf('Symfony\Component\Intl\ResourceBundle\RegionBundleInterface', Intl::getRegionBundle());
     }
 
     public function testGetIcuVersionReadsTheVersionOfInstalledIcuLibrary()
@@ -61,10 +89,11 @@ class IntlTest extends TestCase
 
     public function testGetDataDirectoryReturnsThePathToIcuData()
     {
-        $this->assertTrue(is_dir(Intl::getDataDirectory()));
+        $this->assertDirectoryExists(Intl::getDataDirectory());
     }
 
     /**
+     * @group legacy
      * @requires extension intl
      */
     public function testLocaleAliasesAreLoaded()

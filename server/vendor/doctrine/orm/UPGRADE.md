@@ -1,5 +1,12 @@
 # Upgrade to 2.6
 
+## Added `Doctrine\ORM\EntityRepository::count()` method
+
+`Doctrine\ORM\EntityRepository::count()` has been added. This new method has different
+signature than `Countable::count()` (required parameter) and therefore are not compatible.
+If your repository implemented the `Countable` interface, you will have to use
+`$repository->count([])` instead and not implement `Countable` interface anymore.
+
 ## Minor BC BREAK: `Doctrine\ORM\Tools\Console\ConsoleRunner` is now final
 
 Since it's just an utilitarian class and should not be inherited.
@@ -13,13 +20,13 @@ now has a required parameter `$pathExpr`.
 
 Method `Doctrine\ORM\Query\Parser#isInternalFunction()` was removed because
 the distinction between internal function and user defined DQL was removed.
-[#6500](https://github.com/doctrine/doctrine2/pull/6500)
+[#6500](https://github.com/doctrine/orm/pull/6500)
 
 ## Minor BC BREAK: removed `Doctrine\ORM\ORMException#overwriteInternalDQLFunctionNotAllowed()`
 
 Method `Doctrine\ORM\Query\Parser#overwriteInternalDQLFunctionNotAllowed()` was
 removed because of the choice to allow users to overwrite internal functions, ie
-`AVG`, `SUM`, `COUNT`, `MIN` and `MAX`. [#6500](https://github.com/doctrine/doctrine2/pull/6500)
+`AVG`, `SUM`, `COUNT`, `MIN` and `MAX`. [#6500](https://github.com/doctrine/orm/pull/6500)
 
 ## PHP 7.1 is now required
 
@@ -35,7 +42,7 @@ As a consequence, automatic cache setup in Doctrine\ORM\Tools\Setup::create*Conf
 ## Minor BC BREAK: removed `Doctrine\ORM\Query\SqlWalker#walkCaseExpression()`
 
 Method `Doctrine\ORM\Query\SqlWalker#walkCaseExpression()` was unused and part
-of the internal API of the ORM, so it was removed. [#5600](https://github.com/doctrine/doctrine2/pull/5600).
+of the internal API of the ORM, so it was removed. [#5600](https://github.com/doctrine/orm/pull/5600).
 
 ## Minor BC BREAK: removed $className parameter on `AbstractEntityInheritancePersister#getSelectJoinColumnSQL()`
 

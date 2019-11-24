@@ -11,29 +11,32 @@
 
 namespace Symfony\Flex\Tests\Configurator;
 
-require_once __DIR__.'/TmpDirMock.php';
-
-use Symfony\Flex\Configurator\MakefileConfigurator;
-use Symfony\Flex\Options;
+use Composer\Composer;
+use Composer\IO\IOInterface;
 use PHPUnit\Framework\TestCase;
+use Symfony\Flex\Configurator\MakefileConfigurator;
+use Symfony\Flex\Lock;
+use Symfony\Flex\Options;
+use Symfony\Flex\Recipe;
 
 class MakefileConfiguratorTest extends TestCase
 {
     public function testConfigure()
     {
         $configurator = new MakefileConfigurator(
-            $this->getMockBuilder('Composer\Composer')->getMock(),
-            $this->getMockBuilder('Composer\IO\IOInterface')->getMock(),
-            new Options()
+            $this->getMockBuilder(Composer::class)->getMock(),
+            $this->getMockBuilder(IOInterface::class)->getMock(),
+            new Options(['root-dir' => FLEX_TEST_DIR])
         );
+        $lock = $this->getMockBuilder(Lock::class)->disableOriginalConstructor()->getMock();
 
-        $recipe1 = $this->getMockBuilder('Symfony\Flex\Recipe')->disableOriginalConstructor()->getMock();
-        $recipe1->expects($this->any())->method('getName')->will($this->returnValue('FooBundle'));
+        $recipe1 = $this->getMockBuilder(Recipe::class)->disableOriginalConstructor()->getMock();
+        $recipe1->expects($this->any())->method('getName')->willReturn('FooBundle');
 
-        $recipe2 = $this->getMockBuilder('Symfony\Flex\Recipe')->disableOriginalConstructor()->getMock();
-        $recipe2->expects($this->any())->method('getName')->will($this->returnValue('BarBundle'));
+        $recipe2 = $this->getMockBuilder(Recipe::class)->disableOriginalConstructor()->getMock();
+        $recipe2->expects($this->any())->method('getName')->willReturn('BarBundle');
 
-        $makefile = sys_get_temp_dir().'/Makefile';
+        $makefile = FLEX_TEST_DIR.'/Makefile';
         @unlink($makefile);
         touch($makefile);
 
@@ -63,20 +66,63 @@ EOF
         $makefileContents1 = "###> FooBundle ###\n".implode("\n", $makefile1)."\n###< FooBundle ###";
         $makefileContents2 = "###> BarBundle ###\n".implode("\n", $makefile2)."\n###< BarBundle ###";
 
-        $configurator->configure($recipe1, $makefile1);
+        $configurator->configure($recipe1, $makefile1, $lock);
         $this->assertStringEqualsFile($makefile, "\n".$makefileContents1."\n");
 
-        $configurator->configure($recipe2, $makefile2);
+        $configurator->configure($recipe2, $makefile2, $lock);
         $this->assertStringEqualsFile($makefile, "\n".$makefileContents1."\n\n".$makefileContents2."\n");
 
-        $configurator->configure($recipe1, $makefile1);
-        $configurator->configure($recipe2, $makefile2);
+        $configurator->configure($recipe1, $makefile1, $lock);
+        $configurator->configure($recipe2, $makefile2, $lock);
         $this->assertStringEqualsFile($makefile, "\n".$makefileContents1."\n\n".$makefileContents2."\n");
 
-        $configurator->unconfigure($recipe1, $makefile1);
+        $configurator->unconfigure($recipe1, $makefile1, $lock);
         $this->assertStringEqualsFile($makefile, $makefileContents2."\n");
 
-        $configurator->unconfigure($recipe2, $makefile2);
+        $configurator->unconfigure($recipe2, $makefile2, $lock);
         $this->assertFalse(is_file($makefile));
+    }
+
+    public function testConfigureForce()
+    {
+        $configurator = new MakefileConfigurator(
+            $this->getMockBuilder(Composer::class)->getMock(),
+            $this->getMockBuilder(IOInterface::class)->getMock(),
+            new Options(['root-dir' => FLEX_TEST_DIR])
+        );
+
+        $recipe = $this->getMockBuilder(Recipe::class)->disableOriginalConstructor()->getMock();
+        $recipe->expects($this->any())->method('getName')->willReturn('FooBundle');
+
+        $makefile = FLEX_TEST_DIR.'/Makefile';
+        @unlink($makefile);
+        touch($makefile);
+        file_put_contents($makefile, "# preexisting content\n");
+
+        $bundleLinesConfigure = ['foo: bar'];
+        $bundleLinesForce = ['foo: bar zut'];
+
+        $contentConfigure = implode("\n", array_merge(
+            ["# preexisting content\n\n###> FooBundle ###"],
+            $bundleLinesConfigure,
+            ["###< FooBundle ###\n\n# new content"]
+        ));
+
+        $contentForce = implode("\n", array_merge(
+            ["# preexisting content\n\n###> FooBundle ###"],
+            $bundleLinesForce,
+            ["###< FooBundle ###\n\n# new content"]
+        ));
+
+        $lock = $this->getMockBuilder(Lock::class)->disableOriginalConstructor()->getMock();
+
+        $configurator->configure($recipe, $bundleLinesConfigure, $lock);
+        file_put_contents($makefile, "\n# new content", \FILE_APPEND);
+        $this->assertStringEqualsFile($makefile, $contentConfigure);
+
+        $configurator->configure($recipe, $bundleLinesForce, $lock, [
+            'force' => true,
+        ]);
+        $this->assertStringEqualsFile($makefile, $contentForce);
     }
 }

@@ -1,5 +1,5 @@
 {
-    "Version": "2.1.41.97",
+    "Version": "36",
     "Names": {
         "ADP": [
             "ADP",
@@ -187,7 +187,7 @@
         ],
         "BYN": [
             "BYN",
-            "fehérorosz rubel"
+            "belarusz rubel"
         ],
         "BYR": [
             "BYR",
@@ -355,7 +355,7 @@
         ],
         "GBP": [
             "GBP",
-            "brit font"
+            "angol font"
         ],
         "GEK": [
             "GEK",
@@ -867,7 +867,7 @@
         ],
         "SZL": [
             "SZL",
-            "szváziföldi lilangeni"
+            "szvázi lilangeni"
         ],
         "THB": [
             "THB",
@@ -971,11 +971,19 @@
         ],
         "VEF": [
             "VEF",
+            "venezuelai bolivar (2008–2018)"
+        ],
+        "VES": [
+            "VES",
             "venezuelai bolivar"
         ],
         "VND": [
             "VND",
-            "vietnami dong"
+            "vietnámi dong"
+        ],
+        "VNN": [
+            "VNN",
+            "vietnámi dong (1978–1985)"
         ],
         "VUV": [
             "VUV",

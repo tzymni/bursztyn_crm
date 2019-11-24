@@ -16,8 +16,8 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Output\ConsoleOutputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**
@@ -30,17 +30,26 @@ class ServerStatusCommand extends Command
 {
     protected static $defaultName = 'server:status';
 
+    private $pidFileDirectory;
+
+    public function __construct(string $pidFileDirectory = null)
+    {
+        $this->pidFileDirectory = $pidFileDirectory;
+
+        parent::__construct();
+    }
+
     /**
      * {@inheritdoc}
      */
     protected function configure()
     {
         $this
-            ->setDefinition(array(
+            ->setDefinition([
                 new InputOption('pidfile', null, InputOption::VALUE_REQUIRED, 'PID file'),
                 new InputOption('filter', null, InputOption::VALUE_REQUIRED, 'The value to display (one of port, host, or address)'),
-            ))
-            ->setDescription('Outputs the status of the local web server for the given address')
+            ])
+            ->setDescription('Outputs the status of the local web server')
             ->setHelp(<<<'EOF'
 <info>%command.name%</info> shows the details of the given local web
 server, such as the address and port where it is listening to:
@@ -64,7 +73,7 @@ EOF
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $io = new SymfonyStyle($input, $output instanceof ConsoleOutputInterface ? $output->getErrorOutput() : $output);
-        $server = new WebServer();
+        $server = new WebServer($this->pidFileDirectory);
         if ($filter = $input->getOption('filter')) {
             if ($server->isRunning($input->getOption('pidfile'))) {
                 list($host, $port) = explode(':', $address = $server->getAddress($input->getOption('pidfile')));
@@ -89,5 +98,7 @@ EOF
                 return 1;
             }
         }
+
+        return null;
     }
 }

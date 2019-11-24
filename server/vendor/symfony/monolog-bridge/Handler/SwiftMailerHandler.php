@@ -19,6 +19,8 @@ use Symfony\Component\HttpKernel\Event\PostResponseEvent;
  * Extended SwiftMailerHandler that flushes mail queue if necessary.
  *
  * @author Philipp Kräutli <pkraeutli@astina.ch>
+ *
+ * @final since Symfony 4.3
  */
 class SwiftMailerHandler extends BaseSwiftMailerHandler
 {
@@ -57,6 +59,14 @@ class SwiftMailerHandler extends BaseSwiftMailerHandler
         if ($this->instantFlush) {
             $this->flushMemorySpool();
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function reset()
+    {
+        $this->flushMemorySpool();
     }
 
     /**

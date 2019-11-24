@@ -1,5 +1,5 @@
 {
-    "Version": "2.1.41.97",
+    "Version": "36",
     "Names": {
         "ADP": [
             "ADP",
@@ -219,7 +219,7 @@
         ],
         "BYN": [
             "BYN",
-            "bjeloruska rublja"
+            "bjeloruski rubalj"
         ],
         "BYR": [
             "BYR",
@@ -543,7 +543,7 @@
         ],
         "KHR": [
             "KHR",
-            "kambođanski rijal"
+            "kambodžanski rijal"
         ],
         "KMF": [
             "KMF",
@@ -651,7 +651,7 @@
         ],
         "MGA": [
             "MGA",
-            "madagaskarski ariary"
+            "malgaški arijari"
         ],
         "MGF": [
             "MGF",
@@ -683,7 +683,7 @@
         ],
         "MRO": [
             "MRO",
-            "mauritanijska ouguja (1973–2017)"
+            "mauritanijska ouguja (1973. – 2017.)"
         ],
         "MRU": [
             "MRU",
@@ -843,7 +843,7 @@
         ],
         "RUB": [
             "RUB",
-            "ruska rublja"
+            "ruski rubalj"
         ],
         "RUR": [
             "RUR",
@@ -855,7 +855,7 @@
         ],
         "SAR": [
             "SAR",
-            "saudijski rial"
+            "saudijski rijal"
         ],
         "SBD": [
             "SBD",
@@ -1043,6 +1043,10 @@
         ],
         "VEF": [
             "VEF",
+            "venezuelanski bolivar (2008. – 2018.)"
+        ],
+        "VES": [
+            "VES",
             "venezuelanski bolivar"
         ],
         "VND": [
@@ -1099,7 +1103,7 @@
         ],
         "YER": [
             "YER",
-            "jemenski rial"
+            "jemenski rijal"
         ],
         "YUD": [
             "YUD",

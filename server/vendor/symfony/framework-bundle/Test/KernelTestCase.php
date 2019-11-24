@@ -13,8 +13,8 @@ namespace Symfony\Bundle\FrameworkBundle\Test;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\DependencyInjection\ResettableContainerInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
+use Symfony\Contracts\Service\ResetInterface;
 
 /**
  * KernelTestCase is the base class for tests needing a Kernel.
@@ -23,6 +23,8 @@ use Symfony\Component\HttpKernel\KernelInterface;
  */
 abstract class KernelTestCase extends TestCase
 {
+    use ForwardCompatTestTrait;
+
     protected static $class;
 
     /**
@@ -34,6 +36,12 @@ abstract class KernelTestCase extends TestCase
      * @var ContainerInterface
      */
     protected static $container;
+
+    private function doTearDown()
+    {
+        static::ensureKernelShutdown();
+        static::$kernel = null;
+    }
 
     /**
      * @return string The Kernel class name
@@ -59,7 +67,7 @@ abstract class KernelTestCase extends TestCase
      *
      * @return KernelInterface A KernelInterface instance
      */
-    protected static function bootKernel(array $options = array())
+    protected static function bootKernel(array $options = [])
     {
         static::ensureKernelShutdown();
 
@@ -82,7 +90,7 @@ abstract class KernelTestCase extends TestCase
      *
      * @return KernelInterface A KernelInterface instance
      */
-    protected static function createKernel(array $options = array())
+    protected static function createKernel(array $options = [])
     {
         if (null === static::$class) {
             static::$class = static::getKernelClass();
@@ -112,25 +120,17 @@ abstract class KernelTestCase extends TestCase
     }
 
     /**
-     * Shuts the kernel down if it was used in the test.
+     * Shuts the kernel down if it was used in the test - called by the tearDown method by default.
      */
     protected static function ensureKernelShutdown()
     {
         if (null !== static::$kernel) {
             $container = static::$kernel->getContainer();
             static::$kernel->shutdown();
-            if ($container instanceof ResettableContainerInterface) {
+            if ($container instanceof ResetInterface) {
                 $container->reset();
             }
         }
         static::$container = null;
-    }
-
-    /**
-     * Clean up Kernel usage in this test.
-     */
-    protected function tearDown()
-    {
-        static::ensureKernelShutdown();
     }
 }

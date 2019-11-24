@@ -11,9 +11,12 @@
                 <argument type="service" id="filesystem" />
                 <argument type="service" id="maker.autoloader_util" />
                 <argument>%kernel.project_dir%</argument>
+                <argument>%twig.default_path%</argument>
             </service>
 
-            <service id="maker.autoloader_finder" class="Symfony\Bundle\MakerBundle\Util\ComposerAutoloaderFinder" />
+            <service id="maker.autoloader_finder" class="Symfony\Bundle\MakerBundle\Util\ComposerAutoloaderFinder" >
+                <argument /> <!-- root namespace -->
+            </service>
 
             <service id="maker.autoloader_util" class="Symfony\Bundle\MakerBundle\Util\AutoloaderUtil">
                 <argument type="service" id="maker.autoloader_finder" />
@@ -41,6 +44,18 @@
             <service id="maker.generator" class="Symfony\Bundle\MakerBundle\Generator">
                 <argument type="service" id="maker.file_manager" />
                 <argument /> <!-- root namespace -->
+            </service>
+
+            <service id="maker.entity_class_generator" class="Symfony\Bundle\MakerBundle\Doctrine\EntityClassGenerator">
+                <argument type="service" id="maker.generator" />
+            </service>
+
+            <service id="maker.user_class_builder" class="Symfony\Bundle\MakerBundle\Security\UserClassBuilder" />
+
+            <service id="maker.security_config_updater" class="Symfony\Bundle\MakerBundle\Security\SecurityConfigUpdater" />
+
+            <service id="maker.renderer.form_type_renderer" class="Symfony\Bundle\MakerBundle\Renderer\FormTypeRenderer">
+                <argument type="service" id="maker.generator" />
             </service>
         </services>
 </container>

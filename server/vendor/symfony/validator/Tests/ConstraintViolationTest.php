@@ -13,6 +13,7 @@ namespace Symfony\Component\Validator\Tests;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Validator\ConstraintViolation;
+use Symfony\Component\Validator\Tests\Fixtures\CustomArrayObject;
 
 class ConstraintViolationTest extends TestCase
 {
@@ -21,7 +22,7 @@ class ConstraintViolationTest extends TestCase
         $violation = new ConstraintViolation(
             'Array',
             '{{ value }}',
-            array('{{ value }}' => array(1, 2, 3)),
+            ['{{ value }}' => [1, 2, 3]],
             'Root',
             'property.path',
             null
@@ -40,8 +41,8 @@ EOF;
         $violation = new ConstraintViolation(
             '42 cannot be used here',
             'this is the message template',
-            array(),
-            array('some_value' => 42),
+            [],
+            ['some_value' => 42],
             'some_value',
             null
         );
@@ -52,5 +53,102 @@ Array.some_value:
 EOF;
 
         $this->assertSame($expected, (string) $violation);
+    }
+
+    public function testToStringHandlesCodes()
+    {
+        $violation = new ConstraintViolation(
+            '42 cannot be used here',
+            'this is the message template',
+            [],
+            ['some_value' => 42],
+            'some_value',
+            null,
+            null,
+            0
+        );
+
+        $expected = <<<'EOF'
+Array.some_value:
+    42 cannot be used here (code 0)
+EOF;
+
+        $this->assertSame($expected, (string) $violation);
+    }
+
+    public function testToStringOmitsEmptyCodes()
+    {
+        $expected = <<<'EOF'
+Array.some_value:
+    42 cannot be used here
+EOF;
+
+        $violation = new ConstraintViolation(
+            '42 cannot be used here',
+            'this is the message template',
+            [],
+            ['some_value' => 42],
+            'some_value',
+            null,
+            null,
+            null
+        );
+
+        $this->assertSame($expected, (string) $violation);
+
+        $violation = new ConstraintViolation(
+            '42 cannot be used here',
+            'this is the message template',
+            [],
+            ['some_value' => 42],
+            'some_value',
+            null,
+            null,
+            ''
+        );
+
+        $this->assertSame($expected, (string) $violation);
+    }
+
+    public function testMessageCannotBeArray()
+    {
+        $this->expectException(\TypeError::class);
+        new ConstraintViolation(
+            ['cannot be an array'],
+            '',
+            [],
+            'Root',
+            'property.path',
+            null
+        );
+    }
+
+    public function testMessageObjectMustBeStringable()
+    {
+        $this->expectException(\TypeError::class);
+        new ConstraintViolation(
+            new CustomArrayObject(),
+            '',
+            [],
+            'Root',
+            'property.path',
+            null
+        );
+    }
+
+    public function testNonStringCode()
+    {
+        $violation = new ConstraintViolation(
+            '42 cannot be used here',
+            'this is the message template',
+            [],
+            ['some_value' => 42],
+            'some_value',
+            null,
+            null,
+            42
+        );
+
+        self::assertSame(42, $violation->getCode());
     }
 }

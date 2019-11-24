@@ -1,5 +1,5 @@
 {
-    "Version": "2.1.39.37",
+    "Version": "36",
     "Names": {
         "BYN": [
             "BYN",
@@ -12,10 +12,6 @@
         "EUR": [
             "EUR",
             "Euro"
-        ],
-        "PEN": [
-            "PEN",
-            "Peruanischer Neuer Sol"
         ],
         "STN": [
             "STN",

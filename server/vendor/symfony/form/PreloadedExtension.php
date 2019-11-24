@@ -20,8 +20,8 @@ use Symfony\Component\Form\Exception\InvalidArgumentException;
  */
 class PreloadedExtension implements FormExtensionInterface
 {
-    private $types = array();
-    private $typeExtensions = array();
+    private $types = [];
+    private $typeExtensions = [];
     private $typeGuesser;
 
     /**
@@ -33,11 +33,19 @@ class PreloadedExtension implements FormExtensionInterface
      */
     public function __construct(array $types, array $typeExtensions, FormTypeGuesserInterface $typeGuesser = null)
     {
+        foreach ($typeExtensions as $extensions) {
+            foreach ($extensions as $typeExtension) {
+                if (!method_exists($typeExtension, 'getExtendedTypes')) {
+                    @trigger_error(sprintf('Not implementing the "%s::getExtendedTypes()" method in "%s" is deprecated since Symfony 4.2.', FormTypeExtensionInterface::class, \get_class($typeExtension)), E_USER_DEPRECATED);
+                }
+            }
+        }
+
         $this->typeExtensions = $typeExtensions;
         $this->typeGuesser = $typeGuesser;
 
         foreach ($types as $type) {
-            $this->types[get_class($type)] = $type;
+            $this->types[\get_class($type)] = $type;
         }
     }
 
@@ -68,7 +76,7 @@ class PreloadedExtension implements FormExtensionInterface
     {
         return isset($this->typeExtensions[$name])
             ? $this->typeExtensions[$name]
-            : array();
+            : [];
     }
 
     /**

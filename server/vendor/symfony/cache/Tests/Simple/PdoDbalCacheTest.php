@@ -17,6 +17,7 @@ use Symfony\Component\Cache\Tests\Traits\PdoPruneableTrait;
 
 /**
  * @group time-sensitive
+ * @group legacy
  */
 class PdoDbalCacheTest extends CacheTestCase
 {
@@ -24,25 +25,25 @@ class PdoDbalCacheTest extends CacheTestCase
 
     protected static $dbFile;
 
-    public static function setupBeforeClass()
+    public static function setUpBeforeClass(): void
     {
-        if (!extension_loaded('pdo_sqlite')) {
+        if (!\extension_loaded('pdo_sqlite')) {
             self::markTestSkipped('Extension pdo_sqlite required.');
         }
 
         self::$dbFile = tempnam(sys_get_temp_dir(), 'sf_sqlite_cache');
 
-        $pool = new PdoCache(DriverManager::getConnection(array('driver' => 'pdo_sqlite', 'path' => self::$dbFile)));
+        $pool = new PdoCache(DriverManager::getConnection(['driver' => 'pdo_sqlite', 'path' => self::$dbFile]));
         $pool->createTable();
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         @unlink(self::$dbFile);
     }
 
     public function createSimpleCache($defaultLifetime = 0)
     {
-        return new PdoCache(DriverManager::getConnection(array('driver' => 'pdo_sqlite', 'path' => self::$dbFile)), '', $defaultLifetime);
+        return new PdoCache(DriverManager::getConnection(['driver' => 'pdo_sqlite', 'path' => self::$dbFile]), '', $defaultLifetime);
     }
 }

@@ -12,8 +12,8 @@
 namespace Symfony\Bundle\FrameworkBundle\Tests\Controller;
 
 use Composer\Autoload\ClassLoader;
-use Symfony\Bundle\FrameworkBundle\Tests\TestCase;
 use Symfony\Bundle\FrameworkBundle\Controller\ControllerNameParser;
+use Symfony\Bundle\FrameworkBundle\Tests\TestCase;
 use Symfony\Component\HttpKernel\Kernel;
 
 /**
@@ -23,7 +23,7 @@ class ControllerNameParserTest extends TestCase
 {
     protected $loader;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->loader = new ClassLoader();
         $this->loader->add('TestBundle', __DIR__.'/../Fixtures');
@@ -31,7 +31,7 @@ class ControllerNameParserTest extends TestCase
         $this->loader->register();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->loader->unregister();
         $this->loader = null;
@@ -102,13 +102,13 @@ class ControllerNameParserTest extends TestCase
     public function getMissingControllersTest()
     {
         // a normal bundle
-        $bundles = array(
-            array('FooBundle:Fake:index'),
-        );
+        $bundles = [
+            ['FooBundle:Fake:index'],
+        ];
 
         // a bundle with children
         if (Kernel::VERSION_ID < 40000) {
-            $bundles[] = array('SensioFooBundle:Fake:index');
+            $bundles[] = ['SensioFooBundle:Fake:index'];
         }
 
         return $bundles;
@@ -129,50 +129,50 @@ class ControllerNameParserTest extends TestCase
 
             if (false === $suggestedBundleName) {
                 // make sure we don't have a suggestion
-                $this->assertNotContains('Did you mean', $e->getMessage());
+                $this->assertStringNotContainsString('Did you mean', $e->getMessage());
             } else {
-                $this->assertContains(sprintf('Did you mean "%s"', $suggestedBundleName), $e->getMessage());
+                $this->assertStringContainsString(sprintf('Did you mean "%s"', $suggestedBundleName), $e->getMessage());
             }
         }
     }
 
     public function getInvalidBundleNameTests()
     {
-        return array(
-            'Alternative will be found using levenshtein' => array('FoodBundle:Default:index', 'FooBundle:Default:index'),
-            'Bundle does not exist at all' => array('CrazyBundle:Default:index', false),
-        );
+        return [
+            'Alternative will be found using levenshtein' => ['FoodBundle:Default:index', 'FooBundle:Default:index'],
+            'Bundle does not exist at all' => ['CrazyBundle:Default:index', false],
+        ];
     }
 
     private function createParser()
     {
-        $bundles = array(
+        $bundles = [
             'SensioCmsFooBundle' => $this->getBundle('TestBundle\Sensio\Cms\FooBundle', 'SensioCmsFooBundle'),
             'FooBundle' => $this->getBundle('TestBundle\FooBundle', 'FooBundle'),
-        );
+        ];
 
         $kernel = $this->getMockBuilder('Symfony\Component\HttpKernel\KernelInterface')->getMock();
         $kernel
             ->expects($this->any())
             ->method('getBundle')
-            ->will($this->returnCallback(function ($bundle) use ($bundles) {
+            ->willReturnCallback(function ($bundle) use ($bundles) {
                 if (!isset($bundles[$bundle])) {
                     throw new \InvalidArgumentException(sprintf('Invalid bundle name "%s"', $bundle));
                 }
 
                 return $bundles[$bundle];
-            }))
+            })
         ;
 
-        $bundles = array(
+        $bundles = [
             'SensioCmsFooBundle' => $this->getBundle('TestBundle\Sensio\Cms\FooBundle', 'SensioCmsFooBundle'),
             'FoooooBundle' => $this->getBundle('TestBundle\FooBundle', 'FoooooBundle'),
             'FooBundle' => $this->getBundle('TestBundle\FooBundle', 'FooBundle'),
-        );
+        ];
         $kernel
             ->expects($this->any())
             ->method('getBundles')
-            ->will($this->returnValue($bundles))
+            ->willReturn($bundles)
         ;
 
         return new ControllerNameParser($kernel);
@@ -181,8 +181,8 @@ class ControllerNameParserTest extends TestCase
     private function getBundle($namespace, $name)
     {
         $bundle = $this->getMockBuilder('Symfony\Component\HttpKernel\Bundle\BundleInterface')->getMock();
-        $bundle->expects($this->any())->method('getName')->will($this->returnValue($name));
-        $bundle->expects($this->any())->method('getNamespace')->will($this->returnValue($namespace));
+        $bundle->expects($this->any())->method('getName')->willReturn($name);
+        $bundle->expects($this->any())->method('getNamespace')->willReturn($namespace);
 
         return $bundle;
     }

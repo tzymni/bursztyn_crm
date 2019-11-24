@@ -13,17 +13,17 @@ namespace Symfony\Component\Intl\Tests\Data\Provider;
 
 use Symfony\Component\Intl\Data\Provider\RegionDataProvider;
 use Symfony\Component\Intl\Intl;
-use Symfony\Component\Intl\Locale;
 
 /**
  * @author Bernhard Schussek <bschussek@gmail.com>
+ *
+ * @group legacy
  */
 abstract class AbstractRegionDataProviderTest extends AbstractDataProviderTest
 {
     // The below arrays document the state of the ICU data bundled with this package.
 
-    protected static $territories = array(
-        'AC',
+    protected static $territories = [
         'AD',
         'AE',
         'AF',
@@ -57,6 +57,7 @@ abstract class AbstractRegionDataProviderTest extends AbstractDataProviderTest
         'BR',
         'BS',
         'BT',
+        'BV',
         'BW',
         'BY',
         'BZ',
@@ -80,13 +81,11 @@ abstract class AbstractRegionDataProviderTest extends AbstractDataProviderTest
         'CY',
         'CZ',
         'DE',
-        'DG',
         'DJ',
         'DK',
         'DM',
         'DO',
         'DZ',
-        'EA',
         'EC',
         'EE',
         'EG',
@@ -94,7 +93,6 @@ abstract class AbstractRegionDataProviderTest extends AbstractDataProviderTest
         'ER',
         'ES',
         'ET',
-        'EZ',
         'FI',
         'FJ',
         'FK',
@@ -121,11 +119,11 @@ abstract class AbstractRegionDataProviderTest extends AbstractDataProviderTest
         'GW',
         'GY',
         'HK',
+        'HM',
         'HN',
         'HR',
         'HT',
         'HU',
-        'IC',
         'ID',
         'IE',
         'IL',
@@ -239,7 +237,6 @@ abstract class AbstractRegionDataProviderTest extends AbstractDataProviderTest
         'SX',
         'SY',
         'SZ',
-        'TA',
         'TC',
         'TD',
         'TF',
@@ -259,7 +256,6 @@ abstract class AbstractRegionDataProviderTest extends AbstractDataProviderTest
         'UA',
         'UG',
         'UM',
-        'UN',
         'US',
         'UY',
         'UZ',
@@ -272,20 +268,20 @@ abstract class AbstractRegionDataProviderTest extends AbstractDataProviderTest
         'VU',
         'WF',
         'WS',
-        'XK',
         'YE',
         'YT',
         'ZA',
         'ZM',
         'ZW',
-    );
+    ];
 
     /**
      * @var RegionDataProvider
      */
     protected $dataProvider;
+    private $defaultLocale;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -293,6 +289,15 @@ abstract class AbstractRegionDataProviderTest extends AbstractDataProviderTest
             $this->getDataDirectory().'/'.Intl::REGION_DIR,
             $this->createEntryReader()
         );
+
+        $this->defaultLocale = \Locale::getDefault();
+    }
+
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+
+        \Locale::setDefault($this->defaultLocale);
     }
 
     abstract protected function getDataDirectory();
@@ -316,7 +321,7 @@ abstract class AbstractRegionDataProviderTest extends AbstractDataProviderTest
 
     public function testGetNamesDefaultLocale()
     {
-        Locale::setDefault('de_AT');
+        \Locale::setDefault('de_AT');
 
         $this->assertSame(
             $this->dataProvider->getNames('de_AT'),

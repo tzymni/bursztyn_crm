@@ -11,7 +11,6 @@
 
 namespace Symfony\Bundle\SwiftmailerBundle\Command;
 
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -24,7 +23,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  * @author Clément JOBEILI <clement.jobeili@gmail.com>
  * @author Toni Uebernickel <tuebernickel@gmail.com>
  */
-class SendEmailCommand extends ContainerAwareCommand
+class SendEmailCommand extends AbstractSwiftMailerCommand
 {
     protected static $defaultName = 'swiftmailer:spool:send';
 
@@ -52,6 +51,9 @@ EOF
         ;
     }
 
+    /**
+     * @return int
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->io = new SymfonyStyle($input, $output);
@@ -65,6 +67,8 @@ EOF
                 $this->processMailer($name, $input, $output);
             }
         }
+
+        return 0;
     }
 
     private function processMailer($name, InputInterface $input, OutputInterface $output)
@@ -90,7 +94,7 @@ EOF
         }
     }
 
-    private function recoverSpool($name, \Swift_Transport $transport, InputInterface $input, OutputInterface $output)
+    private function recoverSpool($name, \Swift_Transport $transport, InputInterface $input)
     {
         if ($transport instanceof \Swift_Transport_SpoolTransport) {
             $spool = $transport->getSpool();

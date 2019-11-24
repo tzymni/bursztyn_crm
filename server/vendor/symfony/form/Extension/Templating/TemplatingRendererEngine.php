@@ -11,18 +11,22 @@
 
 namespace Symfony\Component\Form\Extension\Templating;
 
+@trigger_error('The '.TemplatingRendererEngine::class.' class is deprecated since version 4.3 and will be removed in 5.0; use Twig instead.', E_USER_DEPRECATED);
+
 use Symfony\Component\Form\AbstractRendererEngine;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Templating\EngineInterface;
 
 /**
  * @author Bernhard Schussek <bschussek@gmail.com>
+ *
+ * @deprecated since version 4.3, to be removed in 5.0; use Twig instead.
  */
 class TemplatingRendererEngine extends AbstractRendererEngine
 {
     private $engine;
 
-    public function __construct(EngineInterface $engine, array $defaultThemes = array())
+    public function __construct(EngineInterface $engine, array $defaultThemes = [])
     {
         parent::__construct($defaultThemes);
 
@@ -32,7 +36,7 @@ class TemplatingRendererEngine extends AbstractRendererEngine
     /**
      * {@inheritdoc}
      */
-    public function renderBlock(FormView $view, $resource, $blockName, array $variables = array())
+    public function renderBlock(FormView $view, $resource, $blockName, array $variables = [])
     {
         return trim($this->engine->render($resource, $variables));
     }
@@ -60,7 +64,7 @@ class TemplatingRendererEngine extends AbstractRendererEngine
 
         // Check each theme whether it contains the searched block
         if (isset($this->themes[$cacheKey])) {
-            for ($i = count($this->themes[$cacheKey]) - 1; $i >= 0; --$i) {
+            for ($i = \count($this->themes[$cacheKey]) - 1; $i >= 0; --$i) {
                 if ($this->loadResourceFromTheme($cacheKey, $blockName, $this->themes[$cacheKey][$i])) {
                     return true;
                 }
@@ -70,7 +74,7 @@ class TemplatingRendererEngine extends AbstractRendererEngine
         // Check the default themes once we reach the root form without success
         if (!$view->parent) {
             if (!isset($this->useDefaultThemes[$cacheKey]) || $this->useDefaultThemes[$cacheKey]) {
-                for ($i = count($this->defaultThemes) - 1; $i >= 0; --$i) {
+                for ($i = \count($this->defaultThemes) - 1; $i >= 0; --$i) {
                     if ($this->loadResourceFromTheme($cacheKey, $blockName, $this->defaultThemes[$i])) {
                         return true;
                     }

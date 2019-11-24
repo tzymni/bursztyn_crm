@@ -12,6 +12,7 @@
 namespace Symfony\Component\Serializer\NameConverter;
 
 use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactoryInterface;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 
 /**
  * @author Fabien Bourigault <bourigaultfabien@gmail.com>
@@ -25,11 +26,11 @@ final class MetadataAwareNameConverter implements AdvancedNameConverterInterface
      */
     private $fallbackNameConverter;
 
-    private static $normalizeCache = array();
+    private static $normalizeCache = [];
 
-    private static $denormalizeCache = array();
+    private static $denormalizeCache = [];
 
-    private static $attributesMetadataCache = array();
+    private static $attributesMetadataCache = [];
 
     public function __construct(ClassMetadataFactoryInterface $metadataFactory, NameConverterInterface $fallbackNameConverter = null)
     {
@@ -40,7 +41,7 @@ final class MetadataAwareNameConverter implements AdvancedNameConverterInterface
     /**
      * {@inheritdoc}
      */
-    public function normalize($propertyName, string $class = null, string $format = null, array $context = array())
+    public function normalize($propertyName, string $class = null, string $format = null, array $context = [])
     {
         if (null === $class) {
             return $this->normalizeFallback($propertyName, $class, $format, $context);
@@ -56,20 +57,21 @@ final class MetadataAwareNameConverter implements AdvancedNameConverterInterface
     /**
      * {@inheritdoc}
      */
-    public function denormalize($propertyName, string $class = null, string $format = null, array $context = array())
+    public function denormalize($propertyName, string $class = null, string $format = null, array $context = [])
     {
         if (null === $class) {
             return $this->denormalizeFallback($propertyName, $class, $format, $context);
         }
 
-        if (!isset(self::$denormalizeCache[$class][$propertyName])) {
-            self::$denormalizeCache[$class][$propertyName] = $this->getCacheValueForDenormalization($propertyName, $class);
+        $cacheKey = $this->getCacheKey($class, $context);
+        if (!isset(self::$denormalizeCache[$cacheKey][$propertyName])) {
+            self::$denormalizeCache[$cacheKey][$propertyName] = $this->getCacheValueForDenormalization($propertyName, $class, $context);
         }
 
-        return self::$denormalizeCache[$class][$propertyName] ?? $this->denormalizeFallback($propertyName, $class, $format, $context);
+        return self::$denormalizeCache[$cacheKey][$propertyName] ?? $this->denormalizeFallback($propertyName, $class, $format, $context);
     }
 
-    private function getCacheValueForNormalization(string $propertyName, string $class): ?string
+    private function getCacheValueForNormalization($propertyName, string $class)
     {
         if (!$this->metadataFactory->hasMetadataFor($class)) {
             return null;
@@ -83,36 +85,45 @@ final class MetadataAwareNameConverter implements AdvancedNameConverterInterface
         return $attributesMetadata[$propertyName]->getSerializedName() ?? null;
     }
 
-    private function normalizeFallback(string $propertyName, string $class = null, string $format = null, array $context = array()): string
+    private function normalizeFallback($propertyName, string $class = null, string $format = null, array $context = [])
     {
         return $this->fallbackNameConverter ? $this->fallbackNameConverter->normalize($propertyName, $class, $format, $context) : $propertyName;
     }
 
-    private function getCacheValueForDenormalization(string $propertyName, string $class): ?string
+    private function getCacheValueForDenormalization($propertyName, string $class, array $context)
     {
-        if (!isset(self::$attributesMetadataCache[$class])) {
-            self::$attributesMetadataCache[$class] = $this->getCacheValueForAttributesMetadata($class);
+        $cacheKey = $this->getCacheKey($class, $context);
+        if (!isset(self::$attributesMetadataCache[$cacheKey])) {
+            self::$attributesMetadataCache[$cacheKey] = $this->getCacheValueForAttributesMetadata($class, $context);
         }
 
-        return self::$attributesMetadataCache[$class][$propertyName] ?? null;
+        return self::$attributesMetadataCache[$cacheKey][$propertyName] ?? null;
     }
 
-    private function denormalizeFallback(string $propertyName, string $class = null, string $format = null, array $context = array()): string
+    private function denormalizeFallback($propertyName, string $class = null, string $format = null, array $context = [])
     {
         return $this->fallbackNameConverter ? $this->fallbackNameConverter->denormalize($propertyName, $class, $format, $context) : $propertyName;
     }
 
-    private function getCacheValueForAttributesMetadata(string $class): array
+    private function getCacheValueForAttributesMetadata(string $class, array $context): array
     {
         if (!$this->metadataFactory->hasMetadataFor($class)) {
-            return array();
+            return [];
         }
 
         $classMetadata = $this->metadataFactory->getMetadataFor($class);
 
-        $cache = array();
+        $cache = [];
         foreach ($classMetadata->getAttributesMetadata() as $name => $metadata) {
             if (null === $metadata->getSerializedName()) {
+                continue;
+            }
+
+            $groups = $metadata->getGroups();
+            if (!$groups && ($context[AbstractNormalizer::GROUPS] ?? [])) {
+                continue;
+            }
+            if ($groups && !array_intersect($groups, $context[AbstractNormalizer::GROUPS] ?? [])) {
                 continue;
             }
 
@@ -120,5 +131,14 @@ final class MetadataAwareNameConverter implements AdvancedNameConverterInterface
         }
 
         return $cache;
+    }
+
+    private function getCacheKey(string $class, array $context): string
+    {
+        if (isset($context['cache_key'])) {
+            return $class.'-'.$context['cache_key'];
+        }
+
+        return $class.md5(serialize($context[AbstractNormalizer::GROUPS] ?? []));
     }
 }

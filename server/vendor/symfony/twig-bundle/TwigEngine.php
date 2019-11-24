@@ -11,12 +11,13 @@
 
 namespace Symfony\Bundle\TwigBundle;
 
+@trigger_error('The '.TwigEngine::class.' class is deprecated since version 4.3 and will be removed in 5.0; use \Twig\Environment instead.', E_USER_DEPRECATED);
+
 use Symfony\Bridge\Twig\TwigEngine as BaseEngine;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
-use Symfony\Bundle\FrameworkBundle\Templating\TemplateReference;
-use Symfony\Component\Templating\TemplateNameParserInterface;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Config\FileLocatorInterface;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Templating\TemplateNameParserInterface;
 use Twig\Environment;
 use Twig\Error\Error;
 
@@ -24,6 +25,8 @@ use Twig\Error\Error;
  * This engine renders Twig templates.
  *
  * @author Fabien Potencier <fabien@symfony.com>
+ *
+ * @deprecated since version 4.3, to be removed in 5.0; use Twig instead.
  */
 class TwigEngine extends BaseEngine implements EngineInterface
 {
@@ -38,32 +41,10 @@ class TwigEngine extends BaseEngine implements EngineInterface
 
     /**
      * {@inheritdoc}
-     */
-    public function render($name, array $parameters = array())
-    {
-        try {
-            return parent::render($name, $parameters);
-        } catch (Error $e) {
-            if ($name instanceof TemplateReference && !method_exists($e, 'setSourceContext')) {
-                try {
-                    // try to get the real name of the template where the error occurred
-                    $name = $e->getTemplateName();
-                    $path = (string) $this->locator->locate($this->parser->parse($name));
-                    $e->setTemplateName($path);
-                } catch (\Exception $e2) {
-                }
-            }
-
-            throw $e;
-        }
-    }
-
-    /**
-     * {@inheritdoc}
      *
      * @throws Error if something went wrong like a thrown exception while rendering the template
      */
-    public function renderResponse($view, array $parameters = array(), Response $response = null)
+    public function renderResponse($view, array $parameters = [], Response $response = null)
     {
         if (null === $response) {
             $response = new Response();

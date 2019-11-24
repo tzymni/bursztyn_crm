@@ -11,13 +11,16 @@
 
 namespace Symfony\Bundle\TwigBundle\Tests\Functional;
 
-use Symfony\Component\HttpKernel\Kernel;
-use Symfony\Component\Config\Loader\LoaderInterface;
-use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Bundle\TwigBundle\Tests\TestCase;
 use Symfony\Bundle\TwigBundle\TwigBundle;
+use Symfony\Component\Config\Loader\LoaderInterface;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\HttpKernel\Kernel;
 
+/**
+ * @group legacy
+ */
 class CacheWarmingTest extends TestCase
 {
     public function testCacheIsProperlyWarmedWhenTemplatingIsAvailable()
@@ -44,12 +47,12 @@ class CacheWarmingTest extends TestCase
         $this->assertFileExists($kernel->getCacheDir().'/twig');
     }
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->deleteTempDir();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->deleteTempDir();
     }
@@ -83,31 +86,31 @@ class CacheWarmingKernel extends Kernel
 
     public function registerBundles()
     {
-        return array(new FrameworkBundle(), new TwigBundle());
+        return [new FrameworkBundle(), new TwigBundle()];
     }
 
     public function registerContainerConfiguration(LoaderInterface $loader)
     {
         $loader->load(function ($container) {
             $container
-                ->loadFromExtension('framework', array(
+                ->loadFromExtension('framework', [
                     'secret' => '$ecret',
-                    'form' => array('enabled' => false),
-                ))
-                ->loadFromExtension('twig', array( // to be removed in 5.0 relying on default
+                    'form' => ['enabled' => false],
+                ])
+                ->loadFromExtension('twig', [ // to be removed in 5.0 relying on default
                     'strict_variables' => false,
-                ))
+                ])
             ;
         });
 
         if ($this->withTemplating) {
             $loader->load(function ($container) {
-                $container->loadFromExtension('framework', array(
+                $container->loadFromExtension('framework', [
                     'secret' => '$ecret',
-                    'templating' => array('engines' => array('twig')),
-                    'router' => array('resource' => '%kernel.project_dir%/Resources/config/empty_routing.yml'),
-                    'form' => array('enabled' => false),
-                ));
+                    'templating' => ['engines' => ['twig']],
+                    'router' => ['resource' => '%kernel.project_dir%/Resources/config/empty_routing.yml'],
+                    'form' => ['enabled' => false],
+                ]);
             });
         }
     }

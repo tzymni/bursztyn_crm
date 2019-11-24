@@ -1,5 +1,5 @@
 {
-    "Version": "2.1.41.97",
+    "Version": "36",
     "Names": {
         "aa": "Afar",
         "ab": "Abchasais",
@@ -61,7 +61,7 @@
         "bho": "Bhojpuri",
         "bi": "Bislama",
         "bik": "Bikol",
-        "bin": "Bini",
+        "bin": "Edo",
         "bjn": "Banjar",
         "bkm": "Kom",
         "bla": "Siksika",
@@ -86,6 +86,7 @@
         "car": "Carib",
         "cay": "Cayuga",
         "cch": "Atsam",
+        "ccp": "Chakma",
         "ce": "Deideanais",
         "ceb": "Cebuano",
         "cgg": "Chiga",
@@ -312,6 +313,7 @@
         "ln": "Lingala",
         "lo": "Làtho",
         "lol": "Mongo",
+        "lou": "Crìtheol Louisiana",
         "loz": "Lozi",
         "lrc": "Luri Thuathach",
         "lt": "Liotuainis",
@@ -358,7 +360,6 @@
         "ms": "Malaidhis",
         "mt": "Maltais",
         "mua": "Mundang",
-        "mul": "Iomadh cànan",
         "mus": "Creek",
         "mwl": "Miorandais",
         "mwr": "Marwari",
@@ -550,7 +551,6 @@
         "ug": "Ùigiurais",
         "uk": "Ucràinis",
         "umb": "Umbundu",
-        "und": "Cànan neo-aithnichte",
         "ur": "Ùrdu",
         "uz": "Usbagais",
         "vai": "Vai",
@@ -591,7 +591,6 @@
         "zh_Hant": "Sìnis Thradaiseanta",
         "zu": "Zulu",
         "zun": "Zuñi",
-        "zxx": "Susbaint nach eil ’na chànan",
         "zza": "Zazaki"
     }
 }

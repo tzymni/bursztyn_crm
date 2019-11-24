@@ -15,6 +15,9 @@ use Symfony\Bundle\FrameworkBundle\Templating\Loader\TemplateLocator;
 use Symfony\Bundle\FrameworkBundle\Templating\TemplateReference;
 use Symfony\Bundle\FrameworkBundle\Tests\TestCase;
 
+/**
+ * @group legacy
+ */
 class TemplateLocatorTest extends TestCase
 {
     public function testLocateATemplate()
@@ -27,7 +30,7 @@ class TemplateLocatorTest extends TestCase
             ->expects($this->once())
             ->method('locate')
             ->with($template->getPath())
-            ->will($this->returnValue('/path/to/template'))
+            ->willReturn('/path/to/template')
         ;
 
         $locator = new TemplateLocator($fileLocator);
@@ -60,7 +63,7 @@ class TemplateLocatorTest extends TestCase
         $fileLocator
             ->expects($this->once())
             ->method('locate')
-            ->will($this->throwException(new \InvalidArgumentException($errorMessage)))
+            ->willThrowException(new \InvalidArgumentException($errorMessage))
         ;
 
         $locator = new TemplateLocator($fileLocator);
@@ -69,7 +72,7 @@ class TemplateLocatorTest extends TestCase
             $locator->locate($template);
             $this->fail('->locate() should throw an exception when the file is not found.');
         } catch (\InvalidArgumentException $e) {
-            $this->assertContains(
+            $this->assertStringContainsString(
                 $errorMessage,
                 $e->getMessage(),
                 'TemplateLocator exception should propagate the FileLocator exception message'
@@ -77,11 +80,9 @@ class TemplateLocatorTest extends TestCase
         }
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testThrowsAnExceptionWhenTemplateIsNotATemplateReferenceInterface()
     {
+        $this->expectException('InvalidArgumentException');
         $locator = new TemplateLocator($this->getFileLocator());
         $locator->locate('template');
     }
@@ -90,8 +91,8 @@ class TemplateLocatorTest extends TestCase
     {
         return $this
             ->getMockBuilder('Symfony\Component\Config\FileLocator')
-            ->setMethods(array('locate'))
-            ->setConstructorArgs(array('/path/to/fallback'))
+            ->setMethods(['locate'])
+            ->setConstructorArgs(['/path/to/fallback'])
             ->getMock()
         ;
     }

@@ -11,15 +11,18 @@
 
 namespace Symfony\Bundle\FrameworkBundle\Tests\Templating\Helper;
 
-use Symfony\Component\Form\FormView;
-use Symfony\Component\Form\Extension\Templating\TemplatingExtension;
-use Symfony\Component\Form\Tests\AbstractDivLayoutTest;
+use Symfony\Bundle\FrameworkBundle\Templating\Helper\TranslatorHelper;
 use Symfony\Bundle\FrameworkBundle\Tests\Templating\Helper\Fixtures\StubTemplateNameParser;
 use Symfony\Bundle\FrameworkBundle\Tests\Templating\Helper\Fixtures\StubTranslator;
-use Symfony\Component\Templating\PhpEngine;
+use Symfony\Component\Form\Extension\Templating\TemplatingExtension;
+use Symfony\Component\Form\FormView;
+use Symfony\Component\Form\Tests\AbstractDivLayoutTest;
 use Symfony\Component\Templating\Loader\FilesystemLoader;
-use Symfony\Bundle\FrameworkBundle\Templating\Helper\TranslatorHelper;
+use Symfony\Component\Templating\PhpEngine;
 
+/**
+ * @group legacy
+ */
 class FormHelperDivLayoutTest extends AbstractDivLayoutTest
 {
     /**
@@ -27,30 +30,32 @@ class FormHelperDivLayoutTest extends AbstractDivLayoutTest
      */
     protected $engine;
 
+    protected static $supportedFeatureSetVersion = 403;
+
     protected function getExtensions()
     {
         // should be moved to the Form component once absolute file paths are supported
         // by the default name parser in the Templating component
         $reflClass = new \ReflectionClass('Symfony\Bundle\FrameworkBundle\FrameworkBundle');
-        $root = realpath(dirname($reflClass->getFileName()).'/Resources/views');
+        $root = realpath(\dirname($reflClass->getFileName()).'/Resources/views');
         $rootTheme = realpath(__DIR__.'/Resources');
         $templateNameParser = new StubTemplateNameParser($root, $rootTheme);
-        $loader = new FilesystemLoader(array());
+        $loader = new FilesystemLoader([]);
 
         $this->engine = new PhpEngine($templateNameParser, $loader);
         $this->engine->addGlobal('global', '');
-        $this->engine->setHelpers(array(
+        $this->engine->setHelpers([
             new TranslatorHelper(new StubTranslator()),
-        ));
+        ]);
 
-        return array_merge(parent::getExtensions(), array(
-            new TemplatingExtension($this->engine, $this->csrfTokenManager, array(
+        return array_merge(parent::getExtensions(), [
+            new TemplatingExtension($this->engine, $this->csrfTokenManager, [
                 'FrameworkBundle:Form',
-            )),
-        ));
+            ]),
+        ]);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->engine = null;
 
@@ -59,10 +64,10 @@ class FormHelperDivLayoutTest extends AbstractDivLayoutTest
 
     public function testStartTagHasNoActionAttributeWhenActionIsEmpty()
     {
-        $form = $this->factory->create('Symfony\Component\Form\Extension\Core\Type\FormType', null, array(
+        $form = $this->factory->create('Symfony\Component\Form\Extension\Core\Type\FormType', null, [
             'method' => 'get',
             'action' => '',
-        ));
+        ]);
 
         $html = $this->renderStart($form->createView());
 
@@ -71,10 +76,10 @@ class FormHelperDivLayoutTest extends AbstractDivLayoutTest
 
     public function testStartTagHasActionAttributeWhenActionIsZero()
     {
-        $form = $this->factory->create('Symfony\Component\Form\Extension\Core\Type\FormType', null, array(
+        $form = $this->factory->create('Symfony\Component\Form\Extension\Core\Type\FormType', null, [
             'method' => 'get',
             'action' => '0',
-        ));
+        ]);
 
         $html = $this->renderStart($form->createView());
 
@@ -93,12 +98,112 @@ class FormHelperDivLayoutTest extends AbstractDivLayoutTest
         $this->assertSame('&euro; <input type="text" id="name" name="name" required="required" />', $this->renderWidget($view));
     }
 
-    protected function renderForm(FormView $view, array $vars = array())
+    public function testHelpAttr()
+    {
+        $form = $this->factory->createNamed('name', 'Symfony\Component\Form\Extension\Core\Type\TextType', null, [
+            'help' => 'Help text test!',
+            'help_attr' => [
+                'class' => 'class-test',
+            ],
+        ]);
+        $view = $form->createView();
+        $html = $this->renderHelp($view);
+
+        $this->assertMatchesXpath($html,
+            '/p
+    [@id="name_help"]
+    [@class="class-test help-text"]
+    [.="[trans]Help text test![/trans]"]
+'
+        );
+    }
+
+    public function testHelpHtmlDefaultIsFalse()
+    {
+        $form = $this->factory->createNamed('name', 'Symfony\Component\Form\Extension\Core\Type\TextType', null, [
+            'help' => 'Help <b>text</b> test!',
+        ]);
+        $view = $form->createView();
+        $html = $this->renderHelp($view);
+
+        $this->assertMatchesXpath($html,
+            '/p
+    [@id="name_help"]
+    [@class="help-text"]
+    [.="[trans]Help <b>text</b> test![/trans]"]
+'
+        );
+
+        $this->assertMatchesXpath($html,
+            '/p
+    [@id="name_help"]
+    [@class="help-text"]
+    /b
+    [.="text"]
+', 0
+        );
+    }
+
+    public function testHelpHtmlIsFalse()
+    {
+        $form = $this->factory->createNamed('name', 'Symfony\Component\Form\Extension\Core\Type\TextType', null, [
+            'help' => 'Help <b>text</b> test!',
+            'help_html' => false,
+        ]);
+        $view = $form->createView();
+        $html = $this->renderHelp($view);
+
+        $this->assertMatchesXpath($html,
+            '/p
+    [@id="name_help"]
+    [@class="help-text"]
+    [.="[trans]Help <b>text</b> test![/trans]"]
+'
+        );
+
+        $this->assertMatchesXpath($html,
+            '/p
+    [@id="name_help"]
+    [@class="help-text"]
+    /b
+    [.="text"]
+', 0
+        );
+    }
+
+    public function testHelpHtmlIsTrue()
+    {
+        $form = $this->factory->createNamed('name', 'Symfony\Component\Form\Extension\Core\Type\TextType', null, [
+            'help' => 'Help <b>text</b> test!',
+            'help_html' => true,
+        ]);
+        $view = $form->createView();
+        $html = $this->renderHelp($view);
+
+        $this->assertMatchesXpath($html,
+            '/p
+    [@id="name_help"]
+    [@class="help-text"]
+    [.="[trans]Help <b>text</b> test![/trans]"]
+', 0
+        );
+
+        $this->assertMatchesXpath($html,
+            '/p
+    [@id="name_help"]
+    [@class="help-text"]
+    /b
+    [.="text"]
+'
+        );
+    }
+
+    protected function renderForm(FormView $view, array $vars = [])
     {
         return (string) $this->engine->get('form')->form($view, $vars);
     }
 
-    protected function renderLabel(FormView $view, $label = null, array $vars = array())
+    protected function renderLabel(FormView $view, $label = null, array $vars = [])
     {
         return (string) $this->engine->get('form')->label($view, $label, $vars);
     }
@@ -113,27 +218,27 @@ class FormHelperDivLayoutTest extends AbstractDivLayoutTest
         return (string) $this->engine->get('form')->errors($view);
     }
 
-    protected function renderWidget(FormView $view, array $vars = array())
+    protected function renderWidget(FormView $view, array $vars = [])
     {
         return (string) $this->engine->get('form')->widget($view, $vars);
     }
 
-    protected function renderRow(FormView $view, array $vars = array())
+    protected function renderRow(FormView $view, array $vars = [])
     {
         return (string) $this->engine->get('form')->row($view, $vars);
     }
 
-    protected function renderRest(FormView $view, array $vars = array())
+    protected function renderRest(FormView $view, array $vars = [])
     {
         return (string) $this->engine->get('form')->rest($view, $vars);
     }
 
-    protected function renderStart(FormView $view, array $vars = array())
+    protected function renderStart(FormView $view, array $vars = [])
     {
         return (string) $this->engine->get('form')->start($view, $vars);
     }
 
-    protected function renderEnd(FormView $view, array $vars = array())
+    protected function renderEnd(FormView $view, array $vars = [])
     {
         return (string) $this->engine->get('form')->end($view, $vars);
     }
@@ -145,15 +250,15 @@ class FormHelperDivLayoutTest extends AbstractDivLayoutTest
 
     public static function themeBlockInheritanceProvider()
     {
-        return array(
-            array(array('TestBundle:Parent')),
-        );
+        return [
+            [['TestBundle:Parent']],
+        ];
     }
 
     public static function themeInheritanceProvider()
     {
-        return array(
-            array(array('TestBundle:Parent'), array('TestBundle:Child')),
-        );
+        return [
+            [['TestBundle:Parent'], ['TestBundle:Child']],
+        ];
     }
 }

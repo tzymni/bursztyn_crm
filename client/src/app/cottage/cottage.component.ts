@@ -45,7 +45,7 @@ export class CottageComponent implements OnInit {
 
 
     save() {
-
+    console.log("TES");
 
         if (!this.cottageForm.valid) {
             return;
@@ -55,6 +55,8 @@ export class CottageComponent implements OnInit {
             var method = this._cottagesService.updateCottage(this.cottageForm.value, this.id);
         }
         else {
+
+
             var method = this._cottagesService.saveCottage(this.cottageForm.value);
 
 
@@ -65,6 +67,7 @@ export class CottageComponent implements OnInit {
 
         method
             .subscribe(response => {
+                console.log("zas");
                 this.notification.notifier.notify('success', 'Zapisano!');
                 this.activeModal.close();
                 this._router.navigate(['cottages'], {skipLocationChange: true});

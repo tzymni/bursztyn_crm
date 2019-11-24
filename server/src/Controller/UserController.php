@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-class UserController extends Controller implements TokenAuthenticatedController {
+class UserController extends Controller  {
 
     /**
      * Creates new user by given data
@@ -26,23 +26,32 @@ class UserController extends Controller implements TokenAuthenticatedController 
     public function createUser(
     Request $request, UserService $userService, ResponseErrorDecoratorService $errorDecorator
     ) {
+
         $body = $request->getContent();
         $data = json_decode($body, true);
 
 
+            try {
 
-        if (is_null($data) || !isset($data['email']) || !isset($data['password'])) {
-            $status = JsonResponse::HTTP_BAD_REQUEST;
-            $data = $errorDecorator->decorateError(
-                    JsonResponse::HTTP_BAD_REQUEST, "Invalid JSON format"
-            );
+                if (is_null($data) || !isset($data['email']) || !isset($data['password'])) {
+                    $status = JsonResponse::HTTP_BAD_REQUEST;
+                    $data = $errorDecorator->decorateError(
+                        JsonResponse::HTTP_BAD_REQUEST, "Invalid JSON format"
+                    );
 
-            return new JsonResponse($data, $status);
-        }
+                    return new JsonResponse($data, $status);
+                }
 
 
 
-        $result = $userService->createUser($data);
+                $result = $userService->createUser($data);
+
+
+            }
+            catch (\Exception $exception) {
+                echo "ERROR ".$exception->getMessage();
+            }
+
 
 
         if ($result instanceof User) {

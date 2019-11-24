@@ -1,5 +1,5 @@
 {
-    "Version": "2.1.41.97",
+    "Version": "36",
     "Names": {
         "ADP": [
             "ADP",
@@ -116,10 +116,6 @@
         "BEF": [
             "BEF",
             "lur Belgia"
-        ],
-        "BEL": [
-            "BEL",
-            "BEL"
         ],
         "BGL": [
             "BGL",
@@ -1039,6 +1035,10 @@
         ],
         "VEF": [
             "VEF",
+            "bolivar Venezuela (2008–2018)"
+        ],
+        "VES": [
+            "VES",
             "bolivar Venezuela"
         ],
         "VND": [

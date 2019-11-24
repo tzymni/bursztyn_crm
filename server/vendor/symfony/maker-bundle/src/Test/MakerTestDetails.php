@@ -26,6 +26,8 @@ final class MakerTestDetails
 
     private $replacements = [];
 
+    private $postMakeReplacements = [];
+
     private $preMakeCommands = [];
 
     private $postMakeCommands = [];
@@ -38,9 +40,11 @@ final class MakerTestDetails
 
     private $commandAllowedToFail = false;
 
-    private $snapshotSuffix = '';
+    private $rootNamespace = 'App';
 
     private $requiredPhpVersion;
+
+    private $guardAuthenticators = [];
 
     /**
      * @param MakerInterface $maker
@@ -66,44 +70,16 @@ final class MakerTestDetails
         return $this;
     }
 
+    public function getRootNamespace()
+    {
+        return $this->rootNamespace;
+    }
+
     public function changeRootNamespace(string $rootNamespace): self
     {
-        $rootNamespace = trim($rootNamespace, '\\');
+        $this->rootNamespace = trim($rootNamespace, '\\');
 
-        // to bypass read before flush issue
-        $this->snapshotSuffix = $rootNamespace;
-
-        return $this
-            ->addReplacement(
-                'composer.json',
-                '"App\\\\": "src/"',
-                '"'.$rootNamespace.'\\\\": "src/"'
-            )
-            ->addReplacement(
-                'src/Kernel.php',
-                'namespace App',
-                'namespace '.$rootNamespace
-            )
-            ->addReplacement(
-                'bin/console',
-                'use App\\Kernel',
-                'use '.$rootNamespace.'\\Kernel'
-            )
-            ->addReplacement(
-                'public/index.php',
-                'use App\\Kernel',
-                'use '.$rootNamespace.'\\Kernel'
-            )
-            ->addReplacement(
-                'config/services.yaml',
-                'App\\',
-                $rootNamespace.'\\'
-            )
-            ->addReplacement(
-                'phpunit.xml.dist',
-                '<env name="KERNEL_CLASS" value="App\\Kernel" />',
-                '<env name="KERNEL_CLASS" value="'.$rootNamespace.'\\Kernel" />'
-            );
+        return $this;
     }
 
     public function addPreMakeCommand(string $preMakeCommand): self
@@ -143,22 +119,35 @@ final class MakerTestDetails
         return $this;
     }
 
+    public function addPostMakeReplacement(string $filename, string $find, string $replace): self
+    {
+        $this->postMakeReplacements[] = [
+            'filename' => $filename,
+            'find' => $find,
+            'replace' => $replace,
+        ];
+
+        return $this;
+    }
+
     public function configureDatabase(bool $createSchema = true): self
     {
         // currently, we need to replace this in *both* files so we can also
         // run bin/console commands
         $this
             ->addReplacement(
-                'phpunit.xml.dist',
-                'mysql://db_user:db_password@127.0.0.1:3306/db_name',
-                getenv('TEST_DATABASE_DSN')
-            )
-            ->addReplacement(
                 '.env',
                 'mysql://db_user:db_password@127.0.0.1:3306/db_name',
                 getenv('TEST_DATABASE_DSN')
             )
         ;
+
+        // use MySQL 5.6, which is what's currently available on Travis
+        $this->addReplacement(
+            'config/packages/doctrine.yaml',
+            "server_version: '5.7'",
+            "server_version: '5.6'"
+        );
 
         // this looks silly, but it's the only way to drop the database *for sure*,
         // as doctrine:database:drop will error if there is no database
@@ -230,6 +219,13 @@ final class MakerTestDetails
         return $this;
     }
 
+    public function setGuardAuthenticator(string $firewallName, string $id): self
+    {
+        $this->guardAuthenticators[$firewallName] = $id;
+
+        return $this;
+    }
+
     public function getInputs(): array
     {
         return $this->inputs;
@@ -242,9 +238,9 @@ final class MakerTestDetails
 
     public function getUniqueCacheDirectoryName(): string
     {
-        // for cache purposes, only the dependencies are important
-        // shortened to avoid long paths on Windows
-        return 'maker_'.substr(md5(serialize($this->getDependencies()).$this->snapshotSuffix), 0, 10);
+        // for cache purposes, only the dependencies are important!
+        // You can change it ONLY if you don't have another way to implement it
+        return 'maker_'.strtolower($this->getRootNamespace()).'_'.md5(serialize($this->getDependencies()));
     }
 
     public function getPreMakeCommands(): array
@@ -262,6 +258,11 @@ final class MakerTestDetails
         return $this->replacements;
     }
 
+    public function getPostMakeReplacements(): array
+    {
+        return $this->postMakeReplacements;
+    }
+
     public function getMaker(): MakerInterface
     {
         return $this->maker;
@@ -277,14 +278,26 @@ final class MakerTestDetails
 
     public function getDependencies()
     {
-        $depBuilder = new DependencyBuilder();
-        $this->maker->configureDependencies($depBuilder);
+        $depBuilder = $this->getDependencyBuilder();
 
         return array_merge(
             $depBuilder->getAllRequiredDependencies(),
             $depBuilder->getAllRequiredDevDependencies(),
             $this->extraDependencies
         );
+    }
+
+    public function getExtraDependencies()
+    {
+        return $this->extraDependencies;
+    }
+
+    public function getDependencyBuilder(): DependencyBuilder
+    {
+        $depBuilder = new DependencyBuilder();
+        $this->maker->configureDependencies($depBuilder);
+
+        return $depBuilder;
     }
 
     public function getArgumentsString(): string
@@ -300,5 +313,10 @@ final class MakerTestDetails
     public function isSupportedByCurrentPhpVersion(): bool
     {
         return null === $this->requiredPhpVersion || \PHP_VERSION_ID >= $this->requiredPhpVersion;
+    }
+
+    public function getGuardAuthenticators(): array
+    {
+        return $this->guardAuthenticators;
     }
 }

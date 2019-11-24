@@ -21,12 +21,12 @@ class CustomArrayObject implements \ArrayAccess, \IteratorAggregate, \Countable,
 
     public function __construct(array $array = null)
     {
-        $this->array = $array ?: array();
+        $this->array = $array ?: [];
     }
 
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
-        return array_key_exists($offset, $this->array);
+        return \array_key_exists($offset, $this->array);
     }
 
     public function offsetGet($offset)
@@ -48,23 +48,33 @@ class CustomArrayObject implements \ArrayAccess, \IteratorAggregate, \Countable,
         unset($this->array[$offset]);
     }
 
-    public function getIterator()
+    public function getIterator(): \Traversable
     {
         return new \ArrayIterator($this->array);
     }
 
-    public function count()
+    public function count(): int
     {
-        return count($this->array);
+        return \count($this->array);
     }
 
-    public function serialize()
+    public function __serialize(): array
     {
-        return serialize($this->array);
+        return $this->array;
+    }
+
+    public function serialize(): string
+    {
+        return serialize($this->__serialize());
+    }
+
+    public function __unserialize(array $data): void
+    {
+        $this->array = $data;
     }
 
     public function unserialize($serialized)
     {
-        $this->array = (array) unserialize((string) $serialized);
+        $this->__unserialize((array) unserialize((string) $serialized));
     }
 }

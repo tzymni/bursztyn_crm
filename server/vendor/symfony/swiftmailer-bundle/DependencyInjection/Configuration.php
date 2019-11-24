@@ -40,8 +40,8 @@ class Configuration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('swiftmailer');
+        $treeBuilder = new TreeBuilder('swiftmailer');
+        $rootNode = method_exists(TreeBuilder::class, 'getRootNode') ? $treeBuilder->getRootNode() : $treeBuilder->root('swiftmailer');
 
         $rootNode
             ->beforeNormalization()
@@ -50,7 +50,7 @@ class Configuration implements ConfigurationInterface
             ->end()
             ->beforeNormalization()
                 ->ifTrue(function ($v) {
-                    return is_array($v) && !array_key_exists('mailers', $v) && !array_key_exists('mailer', $v);
+                    return \is_array($v) && !\array_key_exists('mailers', $v) && !\array_key_exists('mailer', $v);
                 })
                 ->then(function ($v) {
                     $mailer = [];
@@ -82,8 +82,8 @@ class Configuration implements ConfigurationInterface
      */
     private function getMailersNode()
     {
-        $treeBuilder = new TreeBuilder();
-        $node = $treeBuilder->root('mailers');
+        $treeBuilder = new TreeBuilder('mailers');
+        $node = method_exists(TreeBuilder::class, 'getRootNode') ? $treeBuilder->getRootNode() : $treeBuilder->root('mailers');
 
         $node
             ->requiresAtLeastOneElement()

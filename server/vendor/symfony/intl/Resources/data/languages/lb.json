@@ -1,5 +1,5 @@
 {
-    "Version": "2.1.41.97",
+    "Version": "36",
     "Names": {
         "aa": "Afar",
         "ab": "Abchasesch",
@@ -362,7 +362,6 @@
         "ms": "Malaiesch",
         "mt": "Maltesesch",
         "mua": "Mundang",
-        "mul": "Méisproocheg",
         "mus": "Muskogee-Sprooch",
         "mwl": "Mirandesesch",
         "mwr": "Marwari",
@@ -378,6 +377,7 @@
         "nb": "Norwegesch Bokmål",
         "nd": "Nord-Ndebele-Sprooch",
         "nds": "Nidderdäitsch",
+        "nds_NL": "nds_NL",
         "ne": "Nepalesesch",
         "new": "Newari",
         "ng": "Ndonga",
@@ -562,7 +562,6 @@
         "uga": "Ugaritesch",
         "uk": "Ukrainesch",
         "umb": "Mbundu-Sprooch",
-        "und": "Onbestëmmt Sprooch",
         "ur": "Urdu",
         "uz": "Usbekesch",
         "vai": "Vai-Sprooch",
@@ -606,7 +605,6 @@
         "zh_Hant": "Chinesesch (traditionell)",
         "zu": "Zulu",
         "zun": "Zuni-Sprooch",
-        "zxx": "Keng Sproochinhalter",
         "zza": "Zaza"
     }
 }

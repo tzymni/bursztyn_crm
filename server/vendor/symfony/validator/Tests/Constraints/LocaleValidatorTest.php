@@ -37,7 +37,7 @@ class LocaleValidatorTest extends ConstraintValidatorTestCase
 
     public function testNullIsValid()
     {
-        $this->validator->validate(null, new Locale(array('canonicalize' => true)));
+        $this->validator->validate(null, new Locale(['canonicalize' => true]));
 
         $this->assertNoViolation();
     }
@@ -57,7 +57,7 @@ class LocaleValidatorTest extends ConstraintValidatorTestCase
 
     public function testEmptyStringIsValid()
     {
-        $this->validator->validate('', new Locale(array('canonicalize' => true)));
+        $this->validator->validate('', new Locale(['canonicalize' => true]));
 
         $this->assertNoViolation();
     }
@@ -65,19 +65,17 @@ class LocaleValidatorTest extends ConstraintValidatorTestCase
     /**
      * @group legacy
      * @expectedDeprecation The "canonicalize" option with value "false" is deprecated since Symfony 4.1, set it to "true" instead.
-     * @expectedException \Symfony\Component\Validator\Exception\UnexpectedTypeException
      */
     public function testLegacyExpectsStringCompatibleType()
     {
+        $this->expectException('Symfony\Component\Validator\Exception\UnexpectedTypeException');
         $this->validator->validate(new \stdClass(), new Locale());
     }
 
-    /**
-     * @expectedException \Symfony\Component\Validator\Exception\UnexpectedTypeException
-     */
     public function testExpectsStringCompatibleType()
     {
-        $this->validator->validate(new \stdClass(), new Locale(array('canonicalize' => true)));
+        $this->expectException('Symfony\Component\Validator\Exception\UnexpectedValueException');
+        $this->validator->validate(new \stdClass(), new Locale(['canonicalize' => true]));
     }
 
     /**
@@ -105,14 +103,15 @@ class LocaleValidatorTest extends ConstraintValidatorTestCase
 
     public function getValidLocales()
     {
-        return array(
-            array('en', array('canonicalize' => true)),
-            array('en_US', array('canonicalize' => true)),
-            array('pt', array('canonicalize' => true)),
-            array('pt_PT', array('canonicalize' => true)),
-            array('zh_Hans', array('canonicalize' => true)),
-            array('fil_PH', array('canonicalize' => true)),
-        );
+        return [
+            ['en', ['canonicalize' => true]],
+            ['en_US', ['canonicalize' => true]],
+            ['pt', ['canonicalize' => true]],
+            ['pt_PT', ['canonicalize' => true]],
+            ['zh_Hans', ['canonicalize' => true]],
+            ['tl_PH', ['canonicalize' => true]],
+            ['fil_PH', ['canonicalize' => true]], // alias for "tl_PH"
+        ];
     }
 
     /**
@@ -122,9 +121,9 @@ class LocaleValidatorTest extends ConstraintValidatorTestCase
      */
     public function testLegacyInvalidLocales(string $locale)
     {
-        $constraint = new Locale(array(
+        $constraint = new Locale([
             'message' => 'myMessage',
-        ));
+        ]);
 
         $this->validator->validate($locale, $constraint);
 
@@ -136,10 +135,10 @@ class LocaleValidatorTest extends ConstraintValidatorTestCase
 
     public function getLegacyInvalidLocales()
     {
-        return array(
-            array('EN'),
-            array('foobar'),
-        );
+        return [
+            ['EN'],
+            ['foobar'],
+        ];
     }
 
     /**
@@ -147,10 +146,10 @@ class LocaleValidatorTest extends ConstraintValidatorTestCase
      */
     public function testInvalidLocales($locale)
     {
-        $constraint = new Locale(array(
+        $constraint = new Locale([
             'message' => 'myMessage',
             'canonicalize' => true,
-        ));
+        ]);
 
         $this->validator->validate($locale, $constraint);
 
@@ -162,10 +161,10 @@ class LocaleValidatorTest extends ConstraintValidatorTestCase
 
     public function getInvalidLocales()
     {
-        return array(
-            array('baz'),
-            array('foobar'),
-        );
+        return [
+            ['baz'],
+            ['foobar'],
+        ];
     }
 
     /**
@@ -175,9 +174,9 @@ class LocaleValidatorTest extends ConstraintValidatorTestCase
      */
     public function testInvalidLocalesWithoutCanonicalization(string $locale)
     {
-        $constraint = new Locale(array(
+        $constraint = new Locale([
             'message' => 'myMessage',
-        ));
+        ]);
 
         $this->validator->validate($locale, $constraint);
 
@@ -192,10 +191,10 @@ class LocaleValidatorTest extends ConstraintValidatorTestCase
      */
     public function testValidLocalesWithCanonicalization(string $locale)
     {
-        $constraint = new Locale(array(
+        $constraint = new Locale([
             'message' => 'myMessage',
             'canonicalize' => true,
-        ));
+        ]);
 
         $this->validator->validate($locale, $constraint);
 
@@ -204,10 +203,10 @@ class LocaleValidatorTest extends ConstraintValidatorTestCase
 
     public function getUncanonicalizedLocales(): iterable
     {
-        return array(
-            array('en-US'),
-            array('es-AR'),
-            array('fr_FR.utf8'),
-        );
+        return [
+            ['en-US'],
+            ['es-AR'],
+            ['fr_FR.utf8'],
+        ];
     }
 }

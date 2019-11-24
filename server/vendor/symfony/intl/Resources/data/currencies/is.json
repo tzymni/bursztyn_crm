@@ -1,5 +1,5 @@
 {
-    "Version": "2.1.41.97",
+    "Version": "36",
     "Names": {
         "ADP": [
             "ADP",
@@ -557,6 +557,10 @@
             "NGN",
             "nígerísk næra"
         ],
+        "NIC": [
+            "NIC",
+            "Níkarögsk kordóva (1988–1991)"
+        ],
         "NIO": [
             "NIO",
             "níkaraögsk kordóva"
@@ -823,6 +827,10 @@
         ],
         "VEF": [
             "VEF",
+            "venesúelskur bólívari (2008–2018)"
+        ],
+        "VES": [
+            "VES",
             "venesúelskur bólívari"
         ],
         "VND": [

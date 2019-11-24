@@ -12,19 +12,22 @@
 namespace Symfony\Bundle\FrameworkBundle\Tests\Templating\Helper;
 
 use PHPUnit\Framework\TestCase;
+use Symfony\Bundle\FrameworkBundle\Templating\Helper\RequestHelper;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Bundle\FrameworkBundle\Templating\Helper\RequestHelper;
 
+/**
+ * @group legacy
+ */
 class RequestHelperTest extends TestCase
 {
     protected $requestStack;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->requestStack = new RequestStack();
         $request = new Request();
-        $request->initialize(array('foobar' => 'bar'));
+        $request->initialize(['foobar' => 'bar']);
         $this->requestStack->push($request);
     }
 
