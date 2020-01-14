@@ -7,12 +7,12 @@ namespace App\Controller;
 use App\Entity\Cottages;
 use App\Service\CottageService;
 use App\Service\ResponseErrorDecoratorService;
+use http\Exception\InvalidArgumentException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-
 
 class CottagesController extends Controller implements TokenAuthenticatedController  {
 
@@ -70,9 +70,16 @@ class CottagesController extends Controller implements TokenAuthenticatedControl
     ResponseErrorDecoratorService $errorDecorator
     ) {
 
-        $users = $this->getDoctrine()->getRepository(Cottages::class)->findAllActive();
-        $status = JsonResponse::HTTP_OK;
+        try {
+            $users = $this->getDoctrine()->getRepository(Cottages::class)->findAllActive();
+            $status = JsonResponse::HTTP_OK;
+            throw new \Exception("TEST");
+        }
+        catch (\Exception $exception) {
+           $status = JsonResponse::HTTP_NOT_FOUND;
+            $users = null;
 
+        }
 
         return new JsonResponse($users, $status);
     }
