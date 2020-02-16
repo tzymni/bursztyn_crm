@@ -27,7 +27,7 @@ class UserService {
         if ($user) {
             return $user;
         } else {
-            return "Nie ma takiego uzytkownika";
+            return sprintf("Can't find user with email %s", $email);
         }
     }
 

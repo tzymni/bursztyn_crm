@@ -11,7 +11,14 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-class UserController extends Controller  {
+/**
+ * Class UserController to menage API requests for User.
+ *
+ * @author Tomasz Zymni <tomasz.zymni@gmail.com>
+ * @package App\Controller
+ */
+class UserController extends Controller implements TokenAuthenticatedController
+{
 
     /**
      * Creates new user by given data
@@ -24,35 +31,30 @@ class UserController extends Controller  {
      * @return JsonResponse
      */
     public function createUser(
-    Request $request, UserService $userService, ResponseErrorDecoratorService $errorDecorator
+        Request $request,
+        UserService $userService,
+        ResponseErrorDecoratorService $errorDecorator
     ) {
 
         $body = $request->getContent();
         $data = json_decode($body, true);
 
+        try {
 
-            try {
+            if (is_null($data) || !isset($data['email']) || !isset($data['password'])) {
+                $status = JsonResponse::HTTP_BAD_REQUEST;
+                $data = $errorDecorator->decorateError(
+                    JsonResponse::HTTP_BAD_REQUEST, "Invalid JSON format"
+                );
 
-                if (is_null($data) || !isset($data['email']) || !isset($data['password'])) {
-                    $status = JsonResponse::HTTP_BAD_REQUEST;
-                    $data = $errorDecorator->decorateError(
-                        JsonResponse::HTTP_BAD_REQUEST, "Invalid JSON format"
-                    );
-
-                    return new JsonResponse($data, $status);
-                }
-
-
-
-                $result = $userService->createUser($data);
-
-
-            }
-            catch (\Exception $exception) {
-                echo "ERROR ".$exception->getMessage();
+                return new JsonResponse($data, $status);
             }
 
+            $result = $userService->createUser($data);
 
+        } catch (\Exception $exception) {
+            echo "ERROR " . $exception->getMessage();
+        }
 
         if ($result instanceof User) {
             $status = JsonResponse::HTTP_CREATED;
@@ -70,17 +72,18 @@ class UserController extends Controller  {
     }
 
     /**
+     * Get active user list.
+     *
      * @Route("/api/users")
      * @Method("GET")
      * @param ResponseErrorDecoratorService $errorDecorator
      */
     public function getUserList(
-    ResponseErrorDecoratorService $errorDecorator
+        ResponseErrorDecoratorService $errorDecorator
     ) {
 
         $users = $this->getDoctrine()->getRepository(User::class)->findAllActiveWithoutPassword();
         $status = JsonResponse::HTTP_OK;
-
 
         return new JsonResponse($users, $status);
     }
@@ -90,15 +93,16 @@ class UserController extends Controller  {
      * @Method("GET")
      * @param ResponseErrorDecoratorService $errorDecorator
      */
-    public function getUserByMail(Request $request, UserService $userService, ResponseErrorDecoratorService $errorDecorator) {
+    public function getUserByMail(
+        Request $request,
+        UserService $userService,
+        ResponseErrorDecoratorService $errorDecorator
+    ) {
         $email = $request->get('email');
-
 
         if (!empty($email)) {
             $user = $userService->getUser($email);
         }
-
-
 
         if ($user instanceof User) {
             $status = JsonResponse::HTTP_CREATED;
@@ -113,7 +117,6 @@ class UserController extends Controller  {
             $data = $errorDecorator->decorateError($status);
         }
 
-
         return new JsonResponse($data, $status);
     }
 
@@ -122,7 +125,11 @@ class UserController extends Controller  {
      * @Method({"DELETE"})
      * @param Request $request
      */
-    public function deleteUser(Request $request, UserService $userService, ResponseErrorDecoratorService $errorDecorator) {
+    public function deleteUser(
+        Request $request,
+        UserService $userService,
+        ResponseErrorDecoratorService $errorDecorator
+    ) {
 
         $email = $request->get('email');
 
@@ -132,7 +139,7 @@ class UserController extends Controller  {
             if ($user) {
                 $us = $userService->deleteUser($user);
             } else {
-                
+
             }
         } else {
             $status = JsonResponse::HTTP_BAD_REQUEST;
@@ -150,9 +157,6 @@ class UserController extends Controller  {
             $data = $errorDecorator->decorateError($status, $result);
         }
 
-
-
-
         return new JsonResponse($data, $status);
     }
 
@@ -160,8 +164,12 @@ class UserController extends Controller  {
      * @Route("/api/user/{email}")
      * @Method("PUT")
      */
-    public function updateUser(User $user, Request $request, UserService $userService, ResponseErrorDecoratorService $errorDecorator) {
-   
+    public function updateUser(
+        User $user,
+        Request $request,
+        UserService $userService,
+        ResponseErrorDecoratorService $errorDecorator
+    ) {
 
 //
         $body = $request->getContent();

@@ -35,6 +35,7 @@ class AuthController
     {
         $email = $request->getUser();
         $plainPassword = $request->getPassword();
+
         if (empty($email) || empty($plainPassword)) {
             $status = JsonResponse::HTTP_BAD_REQUEST;
             $data = $errorDecorator->decorateError($status, "Invalid credentials");

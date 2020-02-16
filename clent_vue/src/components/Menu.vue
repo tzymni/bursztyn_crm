@@ -10,10 +10,8 @@
             <sidebar-menu
                     :menu="menu"
                     :collapsed="collapsed"
-                    :theme="selectedTheme"
                     :show-one-child="true"
                     @toggle-collapse="onToggleCollapse"
-                    @item-click="onItemClick"
             />
         </div>
     </div>
@@ -33,22 +31,22 @@
                     },
                     {
                         href: '/',
-                        title: 'Rezerwacje',
+                        title: 'Reservations',
                         icon: 'fa fa-calendar-alt'
                     },
                     {
-                        title: 'Zasoby',
+                        title: 'Assets',
                         icon: 'fa fa-warehouse',
                         child: [
                             {
                                 href: '/cottages',
-                                title: 'Domki',
+                                title: 'Cottages',
                                 icon: 'fa fa-home',
 
                             },
                             {
                                 href: '/users',
-                                title: 'Użytkownicy',
+                                title: 'Users',
                                 icon: 'fa fa-user',
                             }
                         ]
