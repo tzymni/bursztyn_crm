@@ -48,9 +48,7 @@ class AuthController
                     ]);
                     $status = JsonResponse::HTTP_OK;
                     $data = [
-                        'data' => [
                             'token' => $jwt
-                        ]
                     ];
                 } else {
                     $status = JsonResponse::HTTP_BAD_REQUEST;
