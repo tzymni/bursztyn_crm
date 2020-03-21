@@ -41,25 +41,7 @@ class BaseTestCase extends KernelTestCase
             ->get('doctrine')
             ->getManager();
 
-        $this->truncateTables();
-
         $this->testUser = $this->createTestUser();
-    }
-
-    private function truncateTables()
-    {
-        $em = $this->em;
-
-        $query = $em->createQuery('DELETE App:FootballTeam ft WHERE 1 = 1');
-        $query->execute();
-
-        $query = $em->createQuery('DELETE App:FootballLeague fl WHERE 1 = 1');
-        $query->execute();
-
-        parent::tearDown();
-
-        $this->em->close();
-        $this->em = null; // avoid memory leaks
     }
 
     protected function createTestUser($email = self::TEST_USER_EMAIL, $password = self::TEST_USER_PASSWORD)
