@@ -9,7 +9,18 @@ import VueRouter from 'vue-router'
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
+import 'vuetify/dist/vuetify.min.css'
+import 'material-design-icons-iconfont/dist/material-design-icons.css'
+import 'dayspan-vuetify/dist/lib/dayspan-vuetify.min.css'
+import Vuetify from 'vuetify'
+import DaySpanVuetify from 'dayspan-vuetify'
+Vue.use(Vuetify);
 
+Vue.use(DaySpanVuetify, {
+  methods: {
+    getDefaultEventColor: () => '#1976d2'
+  }
+});
 Vue.use(VueSidebarMenu);
 Vue.use(VueRouter);
 // Install BootstrapVue
