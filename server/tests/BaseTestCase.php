@@ -10,8 +10,8 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class BaseTestCase extends KernelTestCase
 {
-    const TEST_USER_PASSWORD = "test123";
-    const TEST_USER_EMAIL = "rest@jwtrestapi.com";
+    const TEST_USER_PASSWORD = "testTomasz";
+    const TEST_USER_EMAIL = "tomasz@test.com";
 
     /**
      * @var Client
@@ -54,9 +54,6 @@ class BaseTestCase extends KernelTestCase
         $query->execute();
 
         $query = $em->createQuery('DELETE App:FootballLeague fl WHERE 1 = 1');
-        $query->execute();
-
-        $query = $em->createQuery('DELETE App:User u WHERE 1 = 1');
         $query->execute();
 
         parent::tearDown();

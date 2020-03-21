@@ -10,19 +10,22 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Doctrine\ORM\EntityManager;
 
-class UserService {
+class UserService
+{
 
     private $em;
     private $encoder;
 
-    public function __construct(EntityManagerInterface $em, UserPasswordEncoderInterface $encoder) {
+    public function __construct(EntityManagerInterface $em, UserPasswordEncoderInterface $encoder)
+    {
         $this->em = $em;
         $this->encoder = $encoder;
     }
 
-    public function getUser($email) {
+    public function getUser($email)
+    {
         $user = $this->em->getRepository('App:User')
-                ->findOneBy(['email' => $email]);
+            ->findOneBy(['email' => $email]);
 
         if ($user) {
             return $user;
@@ -39,19 +42,21 @@ class UserService {
      *    ]
      * @return User|string User entity or string in case of error
      */
-    public function createUser($data) {
+    public function createUser($data)
+    {
         $email = $data['email'];
         $plainPassword = $data['password'];
-        $first_name = $data['first_name'];
-        $last_name = $data['last_name'];
+
+        $firstName = isset($data['first_name']) ? $data['first_name'] : '';
+        $lastName = isset($data['last_name']) ? $data['last_name'] : '';
 
         $user = new User();
         $user->setEmail($email);
         $encoded = password_hash($plainPassword, PASSWORD_DEFAULT);
         $user->setPassword($encoded);
         $user->setIsActive(1);
-        $user->setFirstName($first_name);
-        $user->setLastName($last_name);
+        $user->setFirstName($firstName);
+        $user->setLastName($lastName);
 
         try {
             $this->em->persist($user);
@@ -65,7 +70,8 @@ class UserService {
         }
     }
 
-    public function updateUser(User $user, array $data) {
+    public function updateUser(User $user, array $data)
+    {
 
         try {
             if (isset($data['first_name'])) {
@@ -87,7 +93,8 @@ class UserService {
         }
     }
 
-    public function deleteUser(User $user) {
+    public function deleteUser(User $user)
+    {
 
         $user->setIsActive(0);
 
