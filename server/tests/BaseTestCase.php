@@ -10,8 +10,8 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class BaseTestCase extends KernelTestCase
 {
-    const TEST_USER_PASSWORD = "testTomasz";
-    const TEST_USER_EMAIL = "tomasz@test.com";
+    const TEST_USER_PASSWORD = "Kicia23666";
+    const TEST_USER_EMAIL = "tomasz23fl@gmail.com";
 
     /**
      * @var Client
