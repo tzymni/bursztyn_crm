@@ -25,8 +25,13 @@ function login(username, password) {
             return response;
         })
         .catch(function (error) {
+
             if (error.response) {
                 const errorMessage = error.response.data.error.message;
+                return Promise.reject(errorMessage);
+            }
+            else {
+                const errorMessage = 'Connection problem!';
                 return Promise.reject(errorMessage);
             }
 
