@@ -1,6 +1,6 @@
 export const loginService = {
     login,
-    // logout,
+    logout,
     // getAll
 };
 
@@ -38,10 +38,10 @@ function login(username, password) {
 }
 
 
-// function logout() {
-//     // remove user from local storage to log user out
-//     sessionStorage.removeItem("token");
-// }
+function logout() {
+    // remove user from local storage to log user out
+    sessionStorage.removeItem("token");
+}
 
 // function getAll() {
 //     const requestOptions = {

@@ -53,7 +53,7 @@
                         ]
                     },
                     {
-                        href: '/logout',
+                        href: '/login',
                         title: 'Logout',
                         icon: 'fa fa-sign-out-alt',
                     }

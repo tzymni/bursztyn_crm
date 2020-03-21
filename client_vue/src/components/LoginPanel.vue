@@ -42,7 +42,7 @@
         },
         created() {
             // reset login status
-            // loginService.logout();
+            loginService.logout();
 
             // get return url from route parameters or default to '/'
             this.returnUrl = this.$route.query.returnUrl || "/";
