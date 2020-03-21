@@ -9,10 +9,10 @@ function login(username, password) {
     const axios = require('axios');
 
     const requestOptions = {
-        // method: "POST",
         headers:
-            {"Content-Type": "application/json",
-              "Authorization": 'Basic ' + btoa(username + ":" + password)
+            {
+                "Content-Type": "application/json",
+                "Authorization": 'Basic ' + btoa(username + ":" + password)
             }
     };
 
@@ -29,28 +29,12 @@ function login(username, password) {
             if (error.response) {
                 const errorMessage = error.response.data.error.message;
                 return Promise.reject(errorMessage);
-            }
-            else {
-                const errorMessage = 'Connection problem!';
+            } else {
+                const errorMessage = 'Connection with server problem!';
                 return Promise.reject(errorMessage);
             }
 
         });
-
-
-    // return fetch(`http://localhost:8000/api/authenticate`, requestOptions)
-    //     .then(handleResponse)
-    //     .then(response => {
-    //         // login successful if there's a user in the response
-    //         if (response.data.token) {
-    //
-    //             let token = response.data.token;
-    //             sessionStorage.setItem("token", token);
-    //         }
-    //         return response;
-    //     });
-
-
 }
 
 
