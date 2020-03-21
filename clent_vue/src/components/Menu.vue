@@ -48,8 +48,14 @@
                                 href: '/users',
                                 title: 'Users',
                                 icon: 'fa fa-user',
-                            }
+                            },
+
                         ]
+                    },
+                    {
+                        href: '/logout',
+                        title: 'Logout',
+                        icon: 'fa fa-sign-out-alt',
                     }
                 ],
                 collapsed: false,

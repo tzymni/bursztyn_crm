@@ -1774,3 +1774,5 @@ a0359f,127.0.0.1,POST,http://localhost:8000/api/authenticate,1584801246,,200
 5b91cd,127.0.0.1,POST,http://localhost:8000/api/authenticate,1584801246,,400
 c5db49,127.0.0.1,POST,http://localhost:8000/api/authenticate,1584801246,,400
 6d82f0,127.0.0.1,POST,http://localhost:8000/api/authenticate,1584801247,,400
+c7d802,127.0.0.1,OPTIONS,http://localhost:8000/api/authenticate,1584802686,,200
+148ac4,127.0.0.1,POST,http://localhost:8000/api/authenticate,1584802686,,200
