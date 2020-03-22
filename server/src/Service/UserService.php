@@ -66,7 +66,7 @@ class UserService
         } catch (\Doctrine\DBAL\Exception\UniqueConstraintViolationException $ex) {
             return "Użytkownik z takim adresem email już istnieje";
         } catch (\Exception $ex) {
-            return "Nie udało się stworzyć użytkownika";
+            return "Nie udało się stworzyć użytkownika ";
         }
     }
 

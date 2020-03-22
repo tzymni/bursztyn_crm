@@ -11,7 +11,7 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 class BaseTestCase extends KernelTestCase
 {
     const TEST_USER_PASSWORD = "Kicia23666";
-    const TEST_USER_EMAIL = "tomasz23fl@gmail.com";
+    const TEST_USER_EMAIL = "tomasz223fl@gmail.com";
 
     /**
      * @var Client
@@ -41,7 +41,19 @@ class BaseTestCase extends KernelTestCase
             ->get('doctrine')
             ->getManager();
 
+        $this->truncateTestUser();
         $this->testUser = $this->createTestUser();
+    }
+
+    protected function truncateTestUser($email = self::TEST_USER_EMAIL) {
+
+        $em = $this->em;
+        $query = $em->createQuery(sprintf("DELETE App:User u WHERE u.email = '%s'", $email));
+        $query->execute();
+        parent::tearDown();
+
+        $this->em->close();
+        $this->em = null; // avoid memory leaks
     }
 
     protected function createTestUser($email = self::TEST_USER_EMAIL, $password = self::TEST_USER_PASSWORD)

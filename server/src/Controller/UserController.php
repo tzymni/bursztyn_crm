@@ -82,7 +82,7 @@ class UserController extends Controller implements TokenAuthenticatedController
         ResponseErrorDecoratorService $errorDecorator
     ) {
 
-        $users = $this->getDoctrine()->getRepository(User::class)->findAllActiveWithoutPassword();
+        $users = $this->getDoctrine()->getRepository(User::class)->findAllActiveUsers();
         $status = JsonResponse::HTTP_OK;
 
         return new JsonResponse($users, $status);

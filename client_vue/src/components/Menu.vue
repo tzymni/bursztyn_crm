@@ -1,9 +1,10 @@
 <template>
     <div
-            id="demo"
+            id="menuPanel"
             :class="[{'collapsed' : collapsed}]"
+
     >
-        <div class="demo">
+        <div class="menuPanel">
             <div class="container">
                 <router-view />
             </div>
@@ -19,6 +20,7 @@
 
 <script>
     export default {
+        // props: ['shouldRender'],
         data() {
             return {
                 name: 'Menu',
@@ -56,6 +58,7 @@
                         href: '/login',
                         title: 'Logout',
                         icon: 'fa fa-sign-out-alt',
+                        meta: { hideNavigation: true }
                     }
                 ],
                 collapsed: false,
@@ -83,10 +86,13 @@
         background-color: #f2f4f7;
         color: #262626;
     }
-    #demo {
+    #menuPanel {
         padding-left: 350px;
     }
-    #demo.collapsed {
+    #menuPanel.hide {
+        display: none;
+    }
+    #menuPanel.collapsed {
         padding-left: 50px;
     }
     .container {

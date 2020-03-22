@@ -7,12 +7,16 @@
     import Menu from './components/Menu.vue'
 
     export default {
+        data () {
+          return {showBottomBar: null}
+        },
         name: 'app',
         components: {
             Menu,
         },
         install(Vue) {
             Vue.component('menu', Menu)
+
         }
     }
     export {Menu}

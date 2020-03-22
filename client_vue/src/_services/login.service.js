@@ -1,7 +1,7 @@
 export const loginService = {
     login,
     logout,
-    // getAll
+    getUsers
 };
 
 function login(username, password) {
@@ -43,30 +43,38 @@ function logout() {
     sessionStorage.removeItem("token");
 }
 
-// function getAll() {
-//     const requestOptions = {
-//         method: "GET",
-//         headers: authHeader()
-//     };
-//
-//     return fetch(`/users`, requestOptions).then(handleResponse);
-// }
+function getUsers() {
 
-// function handleResponse(response) {
-//     return response.text().then(text => {
-//
-//
-//         if (!response.ok) {
-//             const data = text && JSON.parse(text);
-//             if (response.status === 401) {
-//                 // auto logout if 401 response returned from api
-//                 logout();
-//                 window.location.reload(true);
-//             }
-//
-//             const error = data.error.message;
-//             return Promise.reject(error);
-//         }
-//
-//     });
-// }
+    const axios = require('axios');
+    const token = sessionStorage.getItem('token');
+    // const requestOptions = {
+    //     headers:
+    //         {
+    //             "Content-Type": "application/json",
+    //             "Authorization": 'Bearer ' + token
+    //         }
+    // };
+
+    const AuthStr = 'Bearer '.concat(token);
+
+
+    return axios.get('http://localhost:8000/api/users', { headers: { Authorization: AuthStr } })
+        .then(function (response) {
+            console.log(response);
+            return response.data;
+        })
+        .catch(function (error) {
+
+            if (error.response) {
+                const errorMessage = error.response.data.error.message;
+                return Promise.reject(errorMessage);
+            } else {
+                const errorMessage = 'Connection with server problem!';
+                return Promise.reject(errorMessage);
+            }
+
+        });
+
+}
+
+

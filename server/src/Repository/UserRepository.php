@@ -19,11 +19,11 @@ class UserRepository extends ServiceEntityRepository
      * 
      * @return User[]
      */
-    public function findAllActiveWithoutPassword(): array
+    public function findAllActiveUsers(): array
     {
 
         $qb = $this->createQueryBuilder('p')
-            ->select('p.email, p.first_name, p.last_name')
+            ->select('p.email, p.first_name, p.last_name, p.is_active')
             ->andWhere('p.is_active = :active')
             ->setParameter('active', 1)
             ->getQuery();
