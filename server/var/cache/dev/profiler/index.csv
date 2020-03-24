@@ -1881,3 +1881,17 @@ b8a06a,127.0.0.1,GET,http://localhost:8000/api/users,1584905875,,200
 91be6d,127.0.0.1,GET,http://localhost:8000/api/users,1584905875,,403
 802b45,127.0.0.1,GET,http://localhost:8000/api/users,1584905936,,200
 efa9a6,127.0.0.1,GET,http://localhost:8000/api/users,1584905936,,403
+8ff9e9,127.0.0.1,OPTIONS,http://localhost:8000/api/users,1584906609,,200
+b0e0c1,127.0.0.1,GET,http://localhost:8000/api/users,1584906609,,200
+8668f6,127.0.0.1,OPTIONS,http://localhost:8000/api/authenticate,1584997333,,200
+b29ad5,127.0.0.1,POST,http://localhost:8000/api/authenticate,1584997336,,200
+0044c5,127.0.0.1,OPTIONS,http://localhost:8000/api/users,1584997339,,200
+d28b51,127.0.0.1,GET,http://localhost:8000/api/users,1584997339,,200
+c2577e,127.0.0.1,GET,http://localhost:8000/api/users,1584997630,,200
+a3a822,127.0.0.1,GET,http://localhost:8000/api/users,1584997634,,200
+9f9a35,127.0.0.1,GET,http://localhost:8000/api/users,1584997641,,200
+9497be,127.0.0.1,GET,http://localhost:8000/api/users,1584997668,,200
+14200c,127.0.0.1,GET,http://localhost:8000/api/users,1584997676,,200
+8f548e,127.0.0.1,OPTIONS,http://localhost:8000/api/users,1584998161,,200
+1303c7,127.0.0.1,GET,http://localhost:8000/api/users,1584998161,,200
+63a7bd,127.0.0.1,GET,http://localhost:8000/api/users,1584998815,,200

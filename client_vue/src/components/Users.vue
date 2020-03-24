@@ -25,10 +25,7 @@
         name: "Users",
         data: function () {
             return {
-                users: [
-                    {first_name: 'Tomasz', last_name: 'Zymni', email: 'tomasz23fl@gmail.com'},
-                    {first_name: 'Asia', last_name: 'Cegiełka', email: 'asia.cegielka@gmail.com'},
-                ]
+                users: []
             }
         },
         mounted() {
@@ -41,15 +38,13 @@
                         self.users = response;
                     }
                 )
-                    .catch(function () {
-
+                    .catch(function (error) {
+                        if (error) {
+                            self.errorNotify = error;
+                            self.loading = false;
+                        }
                     });
             }
         },
     }
 </script>
-
-
-<style scoped>
-
-</style>

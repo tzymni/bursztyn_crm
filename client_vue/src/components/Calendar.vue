@@ -1,11 +1,13 @@
 <template>
-    <v-app id="dayspan" v-cloak>
-        <ds-calendar-app :calendar="calendar"></ds-calendar-app>
-    </v-app>
+    <div class="calendar">
+        <v-app id="dayspan" v-cloak>
+            <ds-calendar-app :calendar="calendar"></ds-calendar-app>
+        </v-app>
+    </div>
 </template>
 
 <script>
-    import { Calendar } from 'dayspan';
+    import {Calendar} from 'dayspan';
 
     export default {
         name: 'app',
@@ -23,12 +25,3 @@
     }
 </style>
 
-<script>
-    export default {
-        name: "calendar"
-    }
-</script>
-
-<style scoped>
-
-</style>

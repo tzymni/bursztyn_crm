@@ -47,20 +47,10 @@ function getUsers() {
 
     const axios = require('axios');
     const token = sessionStorage.getItem('token');
-    // const requestOptions = {
-    //     headers:
-    //         {
-    //             "Content-Type": "application/json",
-    //             "Authorization": 'Bearer ' + token
-    //         }
-    // };
-
     const AuthStr = 'Bearer '.concat(token);
-
 
     return axios.get('http://localhost:8000/api/users', { headers: { Authorization: AuthStr } })
         .then(function (response) {
-            console.log(response);
             return response.data;
         })
         .catch(function (error) {
