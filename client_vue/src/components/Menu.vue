@@ -20,7 +20,6 @@
 
 <script>
     export default {
-        // props: ['shouldRender'],
         data() {
             return {
                 name: 'Menu',
