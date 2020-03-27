@@ -1920,3 +1920,5 @@ bc0810,127.0.0.1,OPTIONS,http://localhost:8000/api/authenticate,1585339401,,200
 0c27e2,127.0.0.1,POST,http://localhost:8000/api/authenticate,1585339413,,200
 dfbd40,127.0.0.1,OPTIONS,http://localhost:8000/api/users,1585340770,,200
 5ed7f0,127.0.0.1,GET,http://localhost:8000/api/users,1585340771,,200
+72bd11,127.0.0.1,GET,http://localhost:8000/api/users,1585341115,,200
+dfc826,127.0.0.1,GET,http://localhost:8000/api/users,1585341129,,200
