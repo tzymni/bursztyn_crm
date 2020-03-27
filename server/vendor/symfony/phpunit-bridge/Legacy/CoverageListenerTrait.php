@@ -13,6 +13,7 @@ namespace Symfony\Bridge\PhpUnit\Legacy;
 
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Warning;
+use PHPUnit\Util\Test;
 
 /**
  * PHP 5.3 compatible trait-like shared implementation.
@@ -31,7 +32,7 @@ class CoverageListenerTrait
     {
         $this->sutFqcnResolver = $sutFqcnResolver;
         $this->warningOnSutNotFound = $warningOnSutNotFound;
-        $this->warnings = array();
+        $this->warnings = [];
     }
 
     public function startTest($test)
@@ -42,7 +43,7 @@ class CoverageListenerTrait
 
         $annotations = $test->getAnnotations();
 
-        $ignoredAnnotations = array('covers', 'coversDefaultClass', 'coversNothing');
+        $ignoredAnnotations = ['covers', 'coversDefaultClass', 'coversNothing'];
 
         foreach ($ignoredAnnotations as $annotation) {
             if (isset($annotations['class'][$annotation]) || isset($annotations['method'][$annotation])) {
@@ -65,21 +66,16 @@ class CoverageListenerTrait
             return;
         }
 
-        $testClass = \PHPUnit\Util\Test::class;
-        if (!class_exists($testClass, false)) {
-            $testClass = \PHPUnit_Util_Test::class;
-        }
-
-        $r = new \ReflectionProperty($testClass, 'annotationCache');
+        $r = new \ReflectionProperty(Test::class, 'annotationCache');
         $r->setAccessible(true);
 
         $cache = $r->getValue();
-        $cache = array_replace_recursive($cache, array(
-            \get_class($test) => array(
-                'covers' => \is_array($sutFqcn) ? $sutFqcn : array($sutFqcn),
-            ),
-        ));
-        $r->setValue($testClass, $cache);
+        $cache = array_replace_recursive($cache, [
+            \get_class($test) => [
+                'covers' => \is_array($sutFqcn) ? $sutFqcn : [$sutFqcn],
+            ],
+        ]);
+        $r->setValue(Test::class, $cache);
     }
 
     private function findSutFqcn($test)

@@ -19,6 +19,7 @@ use Symfony\Component\Asset\Package;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
+use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\DependencyInjection\Exception\LogicException;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpClient\HttpClient;
@@ -28,7 +29,6 @@ use Symfony\Component\Lock\Store\SemaphoreStore;
 use Symfony\Component\Mailer\Mailer;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\PropertyInfo\PropertyInfoExtractorInterface;
-use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Translation\Translator;
 use Symfony\Component\Validator\Validation;
@@ -84,6 +84,9 @@ class Configuration implements ConfigurationInterface
                     ->beforeNormalization()->ifString()->then(function ($v) { return [$v]; })->end()
                     ->prototype('scalar')->end()
                 ->end()
+                ->scalarNode('error_controller')
+                    ->defaultValue('error_controller')
+                ->end()
             ->end()
         ;
 
@@ -113,8 +116,25 @@ class Configuration implements ConfigurationInterface
         $this->addRobotsIndexSection($rootNode);
         $this->addHttpClientSection($rootNode);
         $this->addMailerSection($rootNode);
+        $this->addSecretsSection($rootNode);
 
         return $treeBuilder;
+    }
+
+    private function addSecretsSection(ArrayNodeDefinition $rootNode)
+    {
+        $rootNode
+            ->children()
+                ->arrayNode('secrets')
+                    ->canBeDisabled()
+                    ->children()
+                        ->scalarNode('vault_directory')->defaultValue('%kernel.project_dir%/config/secrets/%kernel.environment%')->cannotBeEmpty()->end()
+                        ->scalarNode('local_dotenv_file')->defaultValue('%kernel.project_dir%/.env.%kernel.environment%.local')->end()
+                        ->scalarNode('decryption_env_var')->defaultValue('base64:default::SYMFONY_DECRYPTION_SECRET')->end()
+                    ->end()
+                ->end()
+            ->end()
+        ;
     }
 
     private function addCsrfSection(ArrayNodeDefinition $rootNode)
@@ -590,10 +610,7 @@ class Configuration implements ConfigurationInterface
                                     ->ifTrue(function ($v) { return \is_array($v) && isset($v['mime_type']); })
                                     ->then(function ($v) { return $v['mime_type']; })
                                 ->end()
-                                ->beforeNormalization()
-                                    ->ifTrue(function ($v) { return !\is_array($v); })
-                                    ->then(function ($v) { return [$v]; })
-                                ->end()
+                                ->beforeNormalization()->castToArray()->end()
                                 ->prototype('scalar')->end()
                             ->end()
                         ->end()
@@ -652,10 +669,7 @@ class Configuration implements ConfigurationInterface
                     ->fixXmlConfig('loader')
                     ->children()
                         ->arrayNode('loaders')
-                            ->beforeNormalization()
-                                ->ifTrue(function ($v) { return !\is_array($v); })
-                                ->then(function ($v) { return [$v]; })
-                             ->end()
+                            ->beforeNormalization()->castToArray()->end()
                             ->prototype('scalar')->end()
                         ->end()
                     ->end()
@@ -680,10 +694,7 @@ class Configuration implements ConfigurationInterface
                         ->scalarNode('base_path')->defaultValue('')->end()
                         ->arrayNode('base_urls')
                             ->requiresAtLeastOneElement()
-                            ->beforeNormalization()
-                                ->ifTrue(function ($v) { return !\is_array($v); })
-                                ->then(function ($v) { return [$v]; })
-                            ->end()
+                            ->beforeNormalization()->castToArray()->end()
                             ->prototype('scalar')->end()
                         ->end()
                     ->end()
@@ -725,10 +736,7 @@ class Configuration implements ConfigurationInterface
                                     ->scalarNode('base_path')->defaultValue('')->end()
                                     ->arrayNode('base_urls')
                                         ->requiresAtLeastOneElement()
-                                        ->beforeNormalization()
-                                            ->ifTrue(function ($v) { return !\is_array($v); })
-                                            ->then(function ($v) { return [$v]; })
-                                        ->end()
+                                        ->beforeNormalization()->castToArray()->end()
                                         ->prototype('scalar')->end()
                                     ->end()
                                 ->end()
@@ -769,12 +777,14 @@ class Configuration implements ConfigurationInterface
                     ->fixXmlConfig('path')
                     ->children()
                         ->arrayNode('fallbacks')
+                            ->info('Defaults to the value of "default_locale".')
                             ->beforeNormalization()->ifString()->then(function ($v) { return [$v]; })->end()
                             ->prototype('scalar')->end()
-                            ->defaultValue(['en'])
+                            ->defaultValue([])
                         ->end()
                         ->booleanNode('logging')->defaultValue(false)->end()
                         ->scalarNode('formatter')->defaultValue('translator.formatter.default')->end()
+                        ->scalarNode('cache_dir')->defaultValue('%kernel.cache_dir%/translations')->end()
                         ->scalarNode('default_path')
                             ->info('The default path used to load translations')
                             ->defaultValue('%kernel.project_dir%/translations')
@@ -823,10 +833,7 @@ class Configuration implements ConfigurationInterface
                             ->defaultValue(['loadValidatorMetadata'])
                             ->prototype('scalar')->end()
                             ->treatFalseLike([])
-                            ->validate()
-                                ->ifTrue(function ($v) { return !\is_array($v); })
-                                ->then(function ($v) { return (array) $v; })
-                            ->end()
+                            ->validate()->castToArray()->end()
                         ->end()
                         ->scalarNode('translation_domain')->defaultValue('validators')->end()
                         ->booleanNode('strict_email')->end()
@@ -854,6 +861,11 @@ class Configuration implements ConfigurationInterface
                             ->end()
                         ->end()
                         ->arrayNode('auto_mapping')
+                            ->info('A collection of namespaces for which auto-mapping will be enabled by default, or null to opt-in with the EnableAutoMapping constraint.')
+                            ->example([
+                                'App\\Entity\\' => [],
+                                'App\\WithSpecificLoaders\\' => ['validator.property_info_loader'],
+                            ])
                             ->useAttributeAsKey('namespace')
                             ->normalizeKeys(false)
                             ->beforeNormalization()
@@ -1001,8 +1013,39 @@ class Configuration implements ConfigurationInterface
                         ->arrayNode('pools')
                             ->useAttributeAsKey('name')
                             ->prototype('array')
+                                ->fixXmlConfig('adapter')
+                                ->beforeNormalization()
+                                    ->ifTrue(function ($v) { return (isset($v['adapters']) || \is_array($v['adapter'] ?? null)) && isset($v['provider']); })
+                                    ->thenInvalid('Pool cannot have a "provider" while "adapter" is set to a map')
+                                ->end()
                                 ->children()
-                                    ->scalarNode('adapter')->defaultValue('cache.app')->end()
+                                    ->arrayNode('adapters')
+                                        ->performNoDeepMerging()
+                                        ->info('One or more adapters to chain for creating the pool, defaults to "cache.app".')
+                                        ->beforeNormalization()
+                                            ->always()->then(function ($values) {
+                                                if ([0] === array_keys($values) && \is_array($values[0])) {
+                                                    return $values[0];
+                                                }
+                                                $adapters = [];
+
+                                                foreach ($values as $k => $v) {
+                                                    if (\is_int($k) && \is_string($v)) {
+                                                        $adapters[] = $v;
+                                                    } elseif (!\is_array($v)) {
+                                                        $adapters[$k] = $v;
+                                                    } elseif (isset($v['provider'])) {
+                                                        $adapters[$v['provider']] = $v['name'] ?? $v;
+                                                    } else {
+                                                        $adapters[] = $v['name'] ?? $v;
+                                                    }
+                                                }
+
+                                                return $adapters;
+                                            })
+                                        ->end()
+                                        ->prototype('scalar')->end()
+                                    ->end()
                                     ->scalarNode('tags')->defaultNull()->end()
                                     ->booleanNode('public')->defaultFalse()->end()
                                     ->integerNode('default_lifetime')->end()
@@ -1136,6 +1179,10 @@ class Configuration implements ConfigurationInterface
                         ->ifTrue(function ($v) { return isset($v['buses']) && \count($v['buses']) > 1 && null === $v['default_bus']; })
                         ->thenInvalid('You must specify the "default_bus" if you define more than one bus.')
                     ->end()
+                    ->validate()
+                        ->ifTrue(static function ($v): bool { return isset($v['buses']) && null !== $v['default_bus'] && !isset($v['buses'][$v['default_bus']]); })
+                        ->then(static function (array $v): void { throw new InvalidConfigurationException(sprintf('The specified default bus "%s" is not configured. Available buses are "%s".', $v['default_bus'], implode('", "', array_keys($v['buses'])))); })
+                    ->end()
                     ->children()
                         ->arrayNode('routing')
                             ->normalizeKeys(false)
@@ -1145,6 +1192,10 @@ class Configuration implements ConfigurationInterface
                                 ->then(function ($config) {
                                     if (!\is_array($config)) {
                                         return [];
+                                    }
+                                    // If XML config with only one routing attribute
+                                    if (2 === \count($config) && isset($config['message-class']) && isset($config['sender'])) {
+                                        $config = [0 => $config];
                                     }
 
                                     $newConfig = [];
@@ -1167,6 +1218,7 @@ class Configuration implements ConfigurationInterface
                                 })
                             ->end()
                             ->prototype('array')
+                                ->performNoDeepMerging()
                                 ->children()
                                     ->arrayNode('senders')
                                         ->requiresAtLeastOneElement()
@@ -1256,6 +1308,7 @@ class Configuration implements ConfigurationInterface
                                         ->defaultTrue()
                                     ->end()
                                     ->arrayNode('middleware')
+                                        ->performNoDeepMerging()
                                         ->beforeNormalization()
                                             ->ifTrue(function ($v) { return \is_string($v) || (\is_array($v) && !\is_int(key($v))); })
                                             ->then(function ($v) { return [$v]; })
@@ -1349,7 +1402,7 @@ class Configuration implements ConfigurationInterface
                                             if (!\is_array($config)) {
                                                 return [];
                                             }
-                                            if (!isset($config['host'])) {
+                                            if (!isset($config['host'], $config['value']) || \count($config) > 2) {
                                                 return $config;
                                             }
 
@@ -1367,6 +1420,9 @@ class Configuration implements ConfigurationInterface
                                 ->end()
                                 ->floatNode('timeout')
                                     ->info('The idle timeout, defaults to the "default_socket_timeout" ini parameter.')
+                                ->end()
+                                ->floatNode('max_duration')
+                                    ->info('The maximum execution time for the request+response as a whole.')
                                 ->end()
                                 ->scalarNode('bindto')
                                     ->info('A network interface name, IP address, a host name or a UNIX socket to bind to.')
@@ -1444,6 +1500,9 @@ class Configuration implements ConfigurationInterface
                                     ->scalarNode('auth_bearer')
                                         ->info('A token enabling HTTP Bearer authorization.')
                                     ->end()
+                                    ->scalarNode('auth_ntlm')
+                                        ->info('A "username:password" pair to use Microsoft NTLM authentication (requires the cURL extension).')
+                                    ->end()
                                     ->arrayNode('query')
                                         ->info('Associative array of query string values merged with the base URI.')
                                         ->useAttributeAsKey('key')
@@ -1452,7 +1511,7 @@ class Configuration implements ConfigurationInterface
                                                 if (!\is_array($config)) {
                                                     return [];
                                                 }
-                                                if (!isset($config['key'])) {
+                                                if (!isset($config['key'], $config['value']) || \count($config) > 2) {
                                                     return $config;
                                                 }
 
@@ -1482,7 +1541,7 @@ class Configuration implements ConfigurationInterface
                                                 if (!\is_array($config)) {
                                                     return [];
                                                 }
-                                                if (!isset($config['host'])) {
+                                                if (!isset($config['host'], $config['value']) || \count($config) > 2) {
                                                     return $config;
                                                 }
 
@@ -1500,6 +1559,9 @@ class Configuration implements ConfigurationInterface
                                     ->end()
                                     ->floatNode('timeout')
                                         ->info('The idle timeout, defaults to the "default_socket_timeout" ini parameter.')
+                                    ->end()
+                                    ->floatNode('max_duration')
+                                        ->info('The maximum execution time for the request+response as a whole.')
                                     ->end()
                                     ->scalarNode('bindto')
                                         ->info('A network interface name, IP address, a host name or a UNIX socket to bind to.')
@@ -1553,8 +1615,33 @@ class Configuration implements ConfigurationInterface
                 ->arrayNode('mailer')
                     ->info('Mailer configuration')
                     ->{!class_exists(FullStack::class) && class_exists(Mailer::class) ? 'canBeDisabled' : 'canBeEnabled'}()
+                    ->validate()
+                        ->ifTrue(function ($v) { return isset($v['dsn']) && \count($v['transports']); })
+                        ->thenInvalid('"dsn" and "transports" cannot be used together.')
+                    ->end()
+                    ->fixXmlConfig('transport')
                     ->children()
-                        ->scalarNode('dsn')->defaultValue('smtp://null')->end()
+                        ->scalarNode('dsn')->defaultNull()->end()
+                        ->arrayNode('transports')
+                            ->useAttributeAsKey('name')
+                            ->prototype('scalar')->end()
+                        ->end()
+                        ->arrayNode('envelope')
+                            ->info('Mailer Envelope configuration')
+                            ->children()
+                                ->scalarNode('sender')->end()
+                                ->arrayNode('recipients')
+                                    ->performNoDeepMerging()
+                                    ->beforeNormalization()
+                                    ->ifArray()
+                                        ->then(function ($v) {
+                                            return array_filter(array_values($v));
+                                        })
+                                    ->end()
+                                    ->prototype('scalar')->end()
+                                ->end()
+                            ->end()
+                        ->end()
                     ->end()
                 ->end()
             ->end()

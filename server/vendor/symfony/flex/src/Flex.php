@@ -243,7 +243,8 @@ class Flex implements PluginInterface, EventSubscriberInterface
             $app->add(new Command\UpdateCommand($resolver));
             $app->add(new Command\RemoveCommand($resolver));
             $app->add(new Command\UnpackCommand($resolver));
-            $app->add(new Command\SyncRecipesCommand($this, $this->options->get('root-dir')));
+            $app->add(new Command\RecipesCommand($this, $this->lock, $this->rfs));
+            $app->add(new Command\InstallRecipesCommand($this, $this->options->get('root-dir')));
             $app->add(new Command\GenerateIdCommand($this));
             $app->add(new Command\DumpEnvCommand($this->config, $this->options));
 
@@ -268,6 +269,17 @@ class Flex implements PluginInterface, EventSubscriberInterface
         return $backtrace;
     }
 
+    public function lockPlatform()
+    {
+        if (!$this->downloader->isEnabled()) {
+            return; // "symfony/flex" not found in the root composer.json - don't create the symfony.lock file
+        }
+
+        $this->lock->set('php', [
+            'version' => $this->config->get('platform')['php'] ?? (PHP_MAJOR_VERSION.'.'.PHP_MINOR_VERSION),
+        ]);
+    }
+
     public function configureProject(Event $event)
     {
         if (!$this->downloader->isEnabled()) {
@@ -283,7 +295,7 @@ class Flex implements PluginInterface, EventSubscriberInterface
         // new projects are most of the time proprietary
         $manipulator->addMainKey('license', 'proprietary');
 
-        // replace unbounded contraints for symfony/* packages by extra.symfony.require
+        // replace unbounded constraints for symfony/* packages by extra.symfony.require
         $config = json_decode($contents, true);
         if ($symfonyVersion = $config['extra']['symfony']['require'] ?? null) {
             $versions = $this->downloader->getVersions();
@@ -389,7 +401,8 @@ class Flex implements PluginInterface, EventSubscriberInterface
             copy($rootDir.'/.env.dist', $rootDir.'/.env');
         }
 
-        $recipes = $this->fetchRecipes();
+        $recipes = $this->fetchRecipes($this->operations);
+        $this->operations = [];     // Reset the operation after getting recipes
 
         if (2 === $this->displayThanksReminder) {
             $love = '\\' === \DIRECTORY_SEPARATOR ? 'love' : '💖 ';
@@ -653,7 +666,41 @@ class Flex implements PluginInterface, EventSubscriberInterface
         $this->updateComposerLock();
     }
 
-    private function fetchRecipes(): array
+    public function updateAutoloadFile()
+    {
+        if (!$platform = $this->lock->get('php')['version'] ?? null) {
+            return;
+        }
+
+        $autoloadFile = $this->config->get('vendor-dir').'/autoload.php';
+
+        if (!file_exists($autoloadFile)) {
+            return;
+        }
+
+        $code = file_get_contents($autoloadFile);
+        $code = substr($code, \strlen("<?php\n"));
+
+        if (false !== strpos($code, 'PHP_VERSION_ID')) {
+            return;
+        }
+
+        $platform = preg_replace('/[^-+.~_\w]/', '', $platform);
+        $version = sprintf('%d%02d00', ...explode('.', $platform.'.0'));
+
+        file_put_contents($autoloadFile, <<<EOPHP
+<?php
+
+if (\PHP_VERSION_ID < $version) {
+    echo sprintf("Fatal Error: composer.lock was created for PHP version $platform or higher but the current PHP version is %d.%d.%d.\\n", PHP_MAJOR_VERSION, PHP_MINOR_VERSION, PHP_RELEASE_VERSION);
+    exit(1);
+}
+$code
+EOPHP
+        );
+    }
+
+    public function fetchRecipes(array $operations): array
     {
         if (!$this->downloader->isEnabled()) {
             $this->io->writeError('<warning>Symfony recipes are disabled: "symfony/flex" not found in the root composer.json</>');
@@ -661,7 +708,7 @@ class Flex implements PluginInterface, EventSubscriberInterface
             return [];
         }
         $devPackages = null;
-        $data = $this->downloader->getRecipes($this->operations);
+        $data = $this->downloader->getRecipes($operations);
         $manifests = $data['manifests'] ?? [];
         $locks = $data['locks'] ?? [];
         // symfony/flex and symfony/framework-bundle recipes should always be applied first
@@ -669,7 +716,7 @@ class Flex implements PluginInterface, EventSubscriberInterface
             'symfony/flex' => null,
             'symfony/framework-bundle' => null,
         ];
-        foreach ($this->operations as $i => $operation) {
+        foreach ($operations as $i => $operation) {
             if ($operation instanceof UpdateOperation) {
                 $package = $operation->getTargetPackage();
             } else {
@@ -706,7 +753,7 @@ class Flex implements PluginInterface, EventSubscriberInterface
             }
 
             if (isset($manifests[$name])) {
-                $recipes[$name] = new Recipe($package, $name, $job, $manifests[$name]);
+                $recipes[$name] = new Recipe($package, $name, $job, $manifests[$name], $locks[$name] ?? []);
             }
 
             $noRecipe = !isset($manifests[$name]) || (isset($manifests[$name]['not_installable']) && $manifests[$name]['not_installable']);
@@ -726,7 +773,7 @@ class Flex implements PluginInterface, EventSubscriberInterface
                 }
             }
         }
-        $this->operations = [];
+        $operations = [];
 
         return array_filter($recipes);
     }
@@ -839,7 +886,7 @@ class Flex implements PluginInterface, EventSubscriberInterface
 
         return [
             InstallerEvents::PRE_DEPENDENCIES_SOLVING => [['populateProvidersCacheDir', PHP_INT_MAX]],
-            InstallerEvents::POST_DEPENDENCIES_SOLVING => [['populateFilesCacheDir', PHP_INT_MAX]],
+            InstallerEvents::POST_DEPENDENCIES_SOLVING => [['populateFilesCacheDir', PHP_INT_MAX], ['lockPlatform']],
             PackageEvents::PRE_PACKAGE_INSTALL => [['populateFilesCacheDir', ~PHP_INT_MAX]],
             PackageEvents::PRE_PACKAGE_UPDATE => [['populateFilesCacheDir', ~PHP_INT_MAX]],
             PackageEvents::POST_PACKAGE_INSTALL => __CLASS__ === self::class ? [['record'], ['checkForUpdate']] : 'record',
@@ -849,6 +896,7 @@ class Flex implements PluginInterface, EventSubscriberInterface
             ScriptEvents::POST_INSTALL_CMD => 'install',
             ScriptEvents::PRE_UPDATE_CMD => 'configureInstaller',
             ScriptEvents::POST_UPDATE_CMD => 'update',
+            ScriptEvents::POST_AUTOLOAD_DUMP => 'updateAutoloadFile',
             PluginEvents::PRE_FILE_DOWNLOAD => 'onFileDownload',
             'auto-scripts' => 'executeAutoScripts',
         ];

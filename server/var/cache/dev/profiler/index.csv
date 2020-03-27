@@ -1914,3 +1914,9 @@ b165cd,127.0.0.1,GET,http://localhost:8000/api/users,1585337488,,200
 49bfa5,127.0.0.1,GET,http://localhost:8000/api/users,1585338324,,200
 fd4b9d,127.0.0.1,GET,http://localhost:8000/api/users,1585338328,,200
 6033b8,127.0.0.1,GET,http://localhost:8000/api/users,1585338899,,200
+2f03c0,127.0.0.1,OPTIONS,http://localhost:8000/api/authenticate,1585339399,,200
+bc0810,127.0.0.1,OPTIONS,http://localhost:8000/api/authenticate,1585339401,,200
+817443,127.0.0.1,OPTIONS,http://localhost:8000/api/authenticate,1585339413,,200
+0c27e2,127.0.0.1,POST,http://localhost:8000/api/authenticate,1585339413,,200
+dfbd40,127.0.0.1,OPTIONS,http://localhost:8000/api/users,1585340770,,200
+5ed7f0,127.0.0.1,GET,http://localhost:8000/api/users,1585340771,,200

@@ -1,6 +1,7 @@
 {
-    "Version": "36",
-    "Names": {
+    "Version": "36.1",
+    "Names": [],
+    "LocalizedNames": {
         "ar_001": "Modern Standard Arabic",
         "de_AT": "Austrian German",
         "de_CH": "Swiss High German",

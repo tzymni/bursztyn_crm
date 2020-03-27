@@ -25,7 +25,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Selectable;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping\ClassMetadata;
-use function array_merge;
 use function get_class;
 
 /**
@@ -368,16 +367,6 @@ final class PersistentCollection extends AbstractLazyCollection implements Selec
      */
     public function removeElement($element)
     {
-        if ( ! $this->initialized && $this->association['fetch'] === ClassMetadata::FETCH_EXTRA_LAZY) {
-            if ($this->collection->contains($element)) {
-                return $this->collection->removeElement($element);
-            }
-
-            $persister = $this->em->getUnitOfWork()->getCollectionPersister($this->association);
-
-            return $persister->removeElement($this, $element);
-        }
-
         $removed = parent::removeElement($element);
 
         if ( ! $removed) {
@@ -567,9 +556,7 @@ final class PersistentCollection extends AbstractLazyCollection implements Selec
         if ($this->association['isOwningSide'] && $this->owner) {
             $this->changed();
 
-            if (! $this->em->getClassMetadata(get_class($this->owner))->isChangeTrackingDeferredExplicit()) {
-                $uow->scheduleCollectionDeletion($this);
-            }
+            $uow->scheduleCollectionDeletion($this);
 
             $this->takeSnapshot();
         }
@@ -672,7 +659,7 @@ final class PersistentCollection extends AbstractLazyCollection implements Selec
 
         $criteria = clone $criteria;
         $criteria->where($expression);
-        $criteria->orderBy(array_merge($this->association['orderBy'] ?? [], $criteria->getOrderings()));
+        $criteria->orderBy($criteria->getOrderings() ?: $this->association['orderBy'] ?? []);
 
         $persister = $this->em->getUnitOfWork()->getEntityPersister($this->association['targetEntity']);
 

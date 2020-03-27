@@ -29,9 +29,6 @@
             "ref": "ae205d5114e719deb64d2110f56ef910787d1e04"
         }
     },
-    "doctrine/doctrine-cache-bundle": {
-        "version": "1.3.3"
-    },
     "doctrine/doctrine-migrations-bundle": {
         "version": "1.2",
         "recipe": {
@@ -77,9 +74,6 @@
     "egulias/email-validator": {
         "version": "2.1.4"
     },
-    "fig/link-util": {
-        "version": "1.0.0"
-    },
     "firebase/php-jwt": {
         "version": "v5.0.0"
     },
@@ -112,6 +106,9 @@
     },
     "ocramius/proxy-manager": {
         "version": "2.2.0"
+    },
+    "php": {
+        "version": "7.3"
     },
     "phpdocumentor/reflection-common": {
         "version": "1.0.1"
@@ -205,6 +202,9 @@
     },
     "symfony/dotenv": {
         "version": "v4.1.1"
+    },
+    "symfony/error-handler": {
+        "version": "v4.4.6"
     },
     "symfony/event-dispatcher": {
         "version": "v4.1.1"

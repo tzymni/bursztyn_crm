@@ -11,6 +11,8 @@
 
 namespace Symfony\Component\DependencyInjection;
 
+use Symfony\Component\DependencyInjection\Argument\RewindableGenerator;
+use Symfony\Component\DependencyInjection\Argument\ServiceLocator as ArgumentServiceLocator;
 use Symfony\Component\DependencyInjection\Exception\EnvNotFoundException;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Exception\ParameterCircularReferenceException;
@@ -21,6 +23,10 @@ use Symfony\Component\DependencyInjection\ParameterBag\EnvPlaceholderParameterBa
 use Symfony\Component\DependencyInjection\ParameterBag\FrozenParameterBag;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Contracts\Service\ResetInterface;
+
+// Help opcache.preload discover always-needed symbols
+class_exists(RewindableGenerator::class);
+class_exists(ArgumentServiceLocator::class);
 
 /**
  * Container is a dependency injection container.
@@ -220,9 +226,15 @@ class Container implements ResettableContainerInterface
      */
     public function get($id, $invalidBehavior = /* self::EXCEPTION_ON_INVALID_REFERENCE */ 1)
     {
-        return $this->services[$id]
+        $service = $this->services[$id]
             ?? $this->services[$id = $this->aliases[$id] ?? $id]
             ?? ('service_container' === $id ? $this : ($this->factories[$id] ?? [$this, 'make'])($id, $invalidBehavior));
+
+        if (!\is_object($service) && null !== $service) {
+            @trigger_error(sprintf('Non-object services are deprecated since Symfony 4.4, please fix the "%s" service which is of type "%s" right now.', $id, \gettype($service)), E_USER_DEPRECATED);
+        }
+
+        return $service;
     }
 
     /**
@@ -416,9 +428,14 @@ class Container implements ResettableContainerInterface
     }
 
     /**
+     * @param string|false $registry
+     * @param string|bool  $load
+     *
+     * @return mixed
+     *
      * @internal
      */
-    final protected function getService($registry, $id, $method, $load)
+    final protected function getService($registry, string $id, ?string $method, $load)
     {
         if ('service_container' === $id) {
             return $this;
