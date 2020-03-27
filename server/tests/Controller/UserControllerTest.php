@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
  * Unit tests for UserController.
  *
  * @author Tomasz Zymni <tomasz.zymni@gmail.com>
+ *ls
  * @package App\Tests\Controller
  */
 class UserControllerTest extends BaseTestCase
