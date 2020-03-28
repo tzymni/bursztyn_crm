@@ -165,7 +165,6 @@ class UserController extends AbstractController implements TokenAuthenticatedCon
         UserService $userService,
         ResponseErrorDecoratorService $errorDecorator
     ) {
-//
         $body = $request->getContent();
         $data = json_decode($body, true);
 
@@ -194,8 +193,6 @@ class UserController extends AbstractController implements TokenAuthenticatedCon
         }
 
         return new JsonResponse($data, $status);
-//        
-//
     }
 
 }

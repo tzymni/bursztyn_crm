@@ -20,6 +20,24 @@ class AuthControllerTest extends BaseTestCase
         $this->assertArrayHasKey("token", $responseData);
     }
 
+    public function testAuthenticate____When_User_is_Inactive___Returns_No_Such_Userr_Error_Response()
+    {
+        $response = $this->client->post("authenticate", [
+            'auth' => [static::TEST_INACTIVE_USER_EMAIL, static::TEST_INACTIVE_USER_PASSWORD]
+        ]);
+
+        $email = self::TEST_INACTIVE_USER_EMAIL;
+
+        $this->assertEquals(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
+        $responseData = json_decode($response->getBody(), true);
+
+        $this->assertArrayHasKey("error", $responseData);
+        $this->assertArrayHasKey("code", $responseData['error']);
+        $this->assertArrayHasKey("message", $responseData['error']);
+        $this->assertEquals(Response::HTTP_BAD_REQUEST, $responseData['error']['code']);
+        $this->assertEquals(sprintf("Can't find user with email %s", $email), $responseData['error']['message']);
+    }
+
     public function testAuthenticate____When_Email_Does_Not_Exist____Returns_No_Such_User_Error_Response()
     {
         $email = "nosuchuser@jwtrestapi.com";
@@ -40,7 +58,7 @@ class AuthControllerTest extends BaseTestCase
 
     public function testAuthenticate____When_Password_is_Incorrect____Returns_Invalid_Password_Response()
     {
-        $email =self::TEST_USER_EMAIL;
+        $email = self::TEST_USER_EMAIL;
 
         $response = $this->client->post("authenticate", [
             'auth' => [$email, "testXXXXXXX"] // invalid password

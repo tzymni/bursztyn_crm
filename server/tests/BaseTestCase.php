@@ -13,6 +13,9 @@ class BaseTestCase extends KernelTestCase
     const TEST_USER_PASSWORD = "test";
     const TEST_USER_EMAIL = "test@gmail.com";
 
+    const TEST_INACTIVE_USER_PASSWORD = "testInactive";
+    const TEST_INACTIVE_USER_EMAIL = "test-inactive@gmail.com";
+
     /**
      * @var Client
      */
@@ -28,6 +31,11 @@ class BaseTestCase extends KernelTestCase
      */
     protected $testUser;
 
+    /**
+     * @var User
+     */
+    protected $testInactiveUser;
+
     public function setUp()
     {
         $this->client = new \GuzzleHttp\Client([
@@ -42,8 +50,10 @@ class BaseTestCase extends KernelTestCase
             ->getManager();
 
         $this->truncateTestUser();
-        $this->testUser = $this->createTestUser();
 
+        $this->testUser = $this->createTestUser();
+        $this->testInactiveUser = $this->createTestUser(self::TEST_INACTIVE_USER_EMAIL,
+            self::TEST_INACTIVE_USER_PASSWORD);
     }
 
     protected function truncateTestUser($email = self::TEST_USER_EMAIL)
@@ -63,10 +73,21 @@ class BaseTestCase extends KernelTestCase
         $userService = $container
             ->get('App\Service\UserService');
 
-         return $userService->createUser([
-            'email' => $email,
-            'password' => $password
-        ]);
+
+        if($email == self::TEST_INACTIVE_USER_EMAIL) {
+            $conditions = [
+                'email' => $email,
+                'password' => $password,
+                'is_active' => false
+            ];
+        } else {
+            $conditions = [
+                'email' => $email,
+                'password' => $password
+            ];
+        }
+
+        return $userService->createUser($conditions);
     }
 
     /**

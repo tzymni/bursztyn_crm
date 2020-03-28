@@ -39,7 +39,7 @@ class AuthController extends AbstractController
             $data = $errorDecorator->decorateError($status, "Invalid credentials");
         } else {
 //            $result = $this->getDoctrine()->getRepository(User::class)->getUser($email)
-            $result = $userService->getUser($email);
+$result = $userService->getUser($email);
 
 
             if ($result instanceof User) {

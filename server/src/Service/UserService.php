@@ -25,7 +25,7 @@ class UserService
     public function getUser($email)
     {
         $user = $this->em->getRepository('App:User')->findBy(array("is_active" => true, "email" => $email), array(),
-            array(1));
+        array(1));
 
         if (isset($user) && isset($user[0])) {
             return $user[0];
@@ -46,6 +46,8 @@ class UserService
     {
         $email = $data['email'];
         $plainPassword = $data['password'];
+        /** @var TYPE_NAME $isActive */
+        $isActive = isset($data['is_active']) ? $data['is_active'] : true;
 
         $firstName = isset($data['first_name']) ? $data['first_name'] : '';
         $lastName = isset($data['last_name']) ? $data['last_name'] : '';
@@ -54,7 +56,7 @@ class UserService
         $user->setEmail($email);
         $encoded = password_hash($plainPassword, PASSWORD_DEFAULT);
         $user->setPassword($encoded);
-        $user->setIsActive(true);
+        $user->setIsActive($isActive);
         $user->setFirstName($firstName);
         $user->setLastName($lastName);
 
