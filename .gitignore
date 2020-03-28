@@ -1,5 +1,7 @@
 server/var/*
 server/vendor/
 server/.env
+server/bin/phpunit
+server/bin/.phpunit
 client/node_modules/
 .idea/

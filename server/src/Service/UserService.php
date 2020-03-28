@@ -24,11 +24,11 @@ class UserService
 
     public function getUser($email)
     {
-        $user = $this->em->getRepository('App:User')
-            ->findOneBy(['email' => $email]);
+        $user = $this->em->getRepository('App:User')->findBy(array("is_active" => true, "email" => $email), array(),
+            array(1));
 
-        if ($user) {
-            return $user;
+        if (isset($user) && isset($user[0])) {
+            return $user[0];
         } else {
             return sprintf("Can't find user with email %s", $email);
         }
@@ -54,7 +54,7 @@ class UserService
         $user->setEmail($email);
         $encoded = password_hash($plainPassword, PASSWORD_DEFAULT);
         $user->setPassword($encoded);
-        $user->setIsActive(1);
+        $user->setIsActive(true);
         $user->setFirstName($firstName);
         $user->setLastName($lastName);
 
@@ -72,7 +72,6 @@ class UserService
 
     public function updateUser(User $user, array $data)
     {
-
         try {
             if (isset($data['first_name'])) {
                 $user->setFirstName($data['first_name']);
@@ -95,7 +94,6 @@ class UserService
 
     public function deleteUser(User $user)
     {
-
         $user->setIsActive(0);
 
         try {

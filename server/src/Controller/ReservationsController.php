@@ -8,12 +8,12 @@ use App\Entity\Cottages;
 use App\Service\ReservationService;
 use App\Service\ResponseErrorDecoratorService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-class ReservationsController extends Controller {
+class ReservationsController extends AbstractController {
 
     /**
      * @Route("/reservations", name="reservations")

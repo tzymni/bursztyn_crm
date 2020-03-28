@@ -9,14 +9,14 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Controller\TokenAuthenticatedController;
 
 /**
  * Class FootballLeagueController
  * @package App\Controller
  */
-class FootballLeagueController extends Controller implements TokenAuthenticatedController
+class FootballLeagueController extends AbstractController implements TokenAuthenticatedController
 {
     /**
      * Creates new league by given name (if not exists)

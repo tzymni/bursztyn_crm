@@ -40,8 +40,7 @@ class AuthControllerTest extends BaseTestCase
 
     public function testAuthenticate____When_Password_is_Incorrect____Returns_Invalid_Password_Response()
     {
-        $email = "rest@jwtrestapi.com";
-        $password = "test123";
+        $email =self::TEST_USER_EMAIL;
 
         $response = $this->client->post("authenticate", [
             'auth' => [$email, "testXXXXXXX"] // invalid password

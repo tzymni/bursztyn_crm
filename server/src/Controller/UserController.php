@@ -6,7 +6,7 @@ use App\Entity\User;
 use App\Service\ResponseErrorDecoratorService;
 use App\Service\UserService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -17,7 +17,7 @@ use Symfony\Component\Routing\Annotation\Route;
  * @author Tomasz Zymni <tomasz.zymni@gmail.com>
  * @package App\Controller
  */
-class UserController extends Controller implements TokenAuthenticatedController
+class UserController extends AbstractController implements TokenAuthenticatedController
 {
 
     /**
@@ -35,12 +35,10 @@ class UserController extends Controller implements TokenAuthenticatedController
         UserService $userService,
         ResponseErrorDecoratorService $errorDecorator
     ) {
-
         $body = $request->getContent();
         $data = json_decode($body, true);
 
         try {
-
             if (is_null($data) || !isset($data['email']) || !isset($data['password'])) {
                 $status = JsonResponse::HTTP_BAD_REQUEST;
                 $data = $errorDecorator->decorateError(
@@ -51,7 +49,6 @@ class UserController extends Controller implements TokenAuthenticatedController
             }
 
             $result = $userService->createUser($data);
-
         } catch (\Exception $exception) {
             echo "ERROR " . $exception->getMessage();
         }
@@ -81,7 +78,6 @@ class UserController extends Controller implements TokenAuthenticatedController
     public function getUserList(
         ResponseErrorDecoratorService $errorDecorator
     ) {
-
         $users = $this->getDoctrine()->getRepository(User::class)->findAllActiveUsers();
         $status = JsonResponse::HTTP_OK;
 
@@ -99,6 +95,7 @@ class UserController extends Controller implements TokenAuthenticatedController
         ResponseErrorDecoratorService $errorDecorator
     ) {
         $email = $request->get('email');
+        $user = null;
 
         if (!empty($email)) {
             $user = $userService->getUser($email);
@@ -130,7 +127,6 @@ class UserController extends Controller implements TokenAuthenticatedController
         UserService $userService,
         ResponseErrorDecoratorService $errorDecorator
     ) {
-
         $email = $request->get('email');
 
         if (!empty($email)) {
@@ -139,7 +135,6 @@ class UserController extends Controller implements TokenAuthenticatedController
             if ($user) {
                 $us = $userService->deleteUser($user);
             } else {
-
             }
         } else {
             $status = JsonResponse::HTTP_BAD_REQUEST;
@@ -170,7 +165,6 @@ class UserController extends Controller implements TokenAuthenticatedController
         UserService $userService,
         ResponseErrorDecoratorService $errorDecorator
     ) {
-
 //
         $body = $request->getContent();
         $data = json_decode($body, true);

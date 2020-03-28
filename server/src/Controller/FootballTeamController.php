@@ -9,11 +9,11 @@ use App\Service\FootballTeamService;
 use App\Service\ResponseErrorDecoratorService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
-class FootballTeamController extends Controller implements TokenAuthenticatedController
+class FootballTeamController extends AbstractController implements TokenAuthenticatedController
 {
     /**
      * Creates new team by given name (if not exists) and stripe IF league given team assigned to exists
