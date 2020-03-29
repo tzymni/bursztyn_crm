@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Entity;
-
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -12,8 +10,15 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class User
 {
+
     /**
      * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     * @ORM\Column(type="integer")
+     */
+    private $id;
+
+    /**
      * @ORM\Column(type="string", unique=true, length=191)
      */
     private $email;
@@ -37,9 +42,6 @@ class User
      * @ORM\Column(type="string", length=255)
      */
     private $last_name;
-
-
-
 
     /**
      * @return mixed
@@ -109,5 +111,11 @@ class User
         return $this;
     }
 
-
+    /**
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
 }

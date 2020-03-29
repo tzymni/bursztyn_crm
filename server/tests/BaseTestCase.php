@@ -49,17 +49,19 @@ class BaseTestCase extends KernelTestCase
             ->get('doctrine')
             ->getManager();
 
-        $this->truncateTestUser();
+        $this->truncateTestUsers();
 
         $this->testUser = $this->createTestUser();
         $this->testInactiveUser = $this->createTestUser(self::TEST_INACTIVE_USER_EMAIL,
             self::TEST_INACTIVE_USER_PASSWORD);
     }
 
-    protected function truncateTestUser($email = self::TEST_USER_EMAIL)
+    protected function truncateTestUsers()
     {
         $em = $this->em;
-        $query = $em->createQuery(sprintf("DELETE App:User u WHERE u.email = '%s'", $email));
+        $testEmails = array(self::TEST_USER_EMAIL, self::TEST_INACTIVE_USER_EMAIL);
+        $query = $em->createQuery(sprintf("DELETE App:User u WHERE u.email IN (%s)",
+            "'" . implode("','", $testEmails) . "'"));
         $query->execute();
         parent::tearDown();
 
@@ -73,8 +75,7 @@ class BaseTestCase extends KernelTestCase
         $userService = $container
             ->get('App\Service\UserService');
 
-
-        if($email == self::TEST_INACTIVE_USER_EMAIL) {
+        if ($email == self::TEST_INACTIVE_USER_EMAIL) {
             $conditions = [
                 'email' => $email,
                 'password' => $password,

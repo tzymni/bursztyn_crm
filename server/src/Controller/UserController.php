@@ -85,33 +85,36 @@ class UserController extends AbstractController implements TokenAuthenticatedCon
     }
 
     /**
-     * @Route("/api/user/{email}")
+     * @Route("/api/user/{id}")
      * @Method("GET")
      * @param ResponseErrorDecoratorService $errorDecorator
      */
-    public function getUserByMail(
+    public function getUserById(
         Request $request,
         UserService $userService,
         ResponseErrorDecoratorService $errorDecorator
     ) {
-        $email = $request->get('email');
-        $user = null;
+        $id = $request->get('id');
 
-        if (!empty($email)) {
-            $user = $userService->getUser($email);
-        }
-
-        if ($user instanceof User) {
-            $status = JsonResponse::HTTP_CREATED;
-            $data = [
-                'email' => $user->getEmail(),
-                'first_name' => $user->getFirstName(),
-                'last_name' => $user->getLastName(),
-                'password' => $user->getPassword()
-            ];
-        } else {
+        if (empty($id) || !is_numeric($id)) {
             $status = JsonResponse::HTTP_BAD_REQUEST;
-            $data = $errorDecorator->decorateError($status);
+            $data = $errorDecorator->decorateError($status, "Invalid credentials");
+        } else {
+            $result = $userService->getUserById($id);
+
+            if ($result instanceof User) {
+                $status = JsonResponse::HTTP_OK;
+                $data = [
+                    'id' => $result->getId(),
+                    'email' => $result->getEmail(),
+                    'first_name' => $result->getFirstName(),
+                    'last_name' => $result->getLastName(),
+                    'password' => $result->getPassword()
+                ];
+            } else {
+                $status = JsonResponse::HTTP_BAD_REQUEST;
+                $data = $errorDecorator->decorateError($status, $result);
+            }
         }
 
         return new JsonResponse($data, $status);
@@ -130,7 +133,7 @@ class UserController extends AbstractController implements TokenAuthenticatedCon
         $email = $request->get('email');
 
         if (!empty($email)) {
-            $user = $userService->getUser($email);
+            $user = $userService->getUserById($email);
 
             if ($user) {
                 $us = $userService->deleteUser($user);

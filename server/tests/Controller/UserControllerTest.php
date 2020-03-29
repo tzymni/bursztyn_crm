@@ -2,7 +2,6 @@
 
 namespace App\Tests\Controller;
 
-use App\Entity\User;
 use App\Tests\BaseTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -40,7 +39,6 @@ class UserControllerTest extends BaseTestCase
         foreach ($responseData as $data) {
             $this->assertEquals(true, $data['is_active']);
         }
-
     }
 
     /**
@@ -57,7 +55,53 @@ class UserControllerTest extends BaseTestCase
         ]);
 
         $this->assertEquals(Response::HTTP_FORBIDDEN, $response->getStatusCode());
+    }
 
+    public function testGetUser__when_Email_is_Provided__Returns_User_Json_In_Response()
+    {
+
+    }
+
+    public function testGetUser__when_Id_is_Provided__Returns_User_Json_In_Response()
+    {
+        $token = $this->getValidToken();
+        $id = $this->testUser->getId();
+
+        $response = $this->client->get("/api/user/{$id}", [
+            'headers' => [
+                'Authorization' => 'Bearer ' . $token
+            ]
+        ]);
+
+        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+
+        $responseData = json_decode($response->getBody(), true);
+        $this->assertArrayHasKey('id', $responseData);
+        $this->assertArrayHasKey('email', $responseData);
+        $this->assertArrayHasKey('first_name', $responseData);
+        $this->assertArrayHasKey('last_name', $responseData);
+        $this->assertArrayHasKey('password', $responseData);
+    }
+
+    public function testGetUser__when_Id_is_Provided_And_User_Inactive__Returns_No_Such_User_Error_Response()
+    {
+        $token = $this->getValidToken();
+        $id = $this->testInactiveUser->getId();
+        $response = $this->client->get("/api/user/{$id}", [
+            'headers' => [
+                'Authorization' => 'Bearer ' . $token
+            ]
+        ]);
+
+        $this->assertEquals(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
+
+        $responseData = json_decode($response->getBody(), true);
+
+        $this->assertArrayHasKey("error", $responseData);
+        $this->assertArrayHasKey("code", $responseData['error']);
+        $this->assertArrayHasKey("message", $responseData['error']);
+        $this->assertEquals(Response::HTTP_BAD_REQUEST, $responseData['error']['code']);
+        $this->assertEquals("Can't find user!", $responseData['error']['message']);
     }
 
 }

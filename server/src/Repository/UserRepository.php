@@ -20,7 +20,7 @@ class UserRepository extends ServiceEntityRepository
     public function findAllActiveUsers(): array
     {
         $qb = $this->createQueryBuilder('p')
-            ->select('p.email, p.first_name, p.last_name, p.is_active')
+            ->select('p.id, p.email, p.first_name, p.last_name, p.is_active')
             ->andWhere('p.is_active = :active')
             ->setParameter('active', true)
             ->getQuery();

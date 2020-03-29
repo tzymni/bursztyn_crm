@@ -38,9 +38,7 @@ class AuthController extends AbstractController
             $status = JsonResponse::HTTP_BAD_REQUEST;
             $data = $errorDecorator->decorateError($status, "Invalid credentials");
         } else {
-//            $result = $this->getDoctrine()->getRepository(User::class)->getUser($email)
-$result = $userService->getUser($email);
-
+            $result = $userService->getUserByEmail($email);
 
             if ($result instanceof User) {
                 if (password_verify($plainPassword, $result->getPassword())) {

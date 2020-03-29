@@ -22,15 +22,27 @@ class UserService
         $this->encoder = $encoder;
     }
 
-    public function getUser($email)
+    public function getUserByEmail($email)
     {
         $user = $this->em->getRepository('App:User')->findBy(array("is_active" => true, "email" => $email), array(),
-        array(1));
+            array(1));
 
         if (isset($user) && isset($user[0])) {
             return $user[0];
         } else {
             return sprintf("Can't find user with email %s", $email);
+        }
+    }
+
+    public function getUserById($id)
+    {
+        $user = $this->em->getRepository('App:User')->findBy(array("is_active" => true, "id" => $id), array(),
+            array(1));
+
+        if (isset($user) && isset($user[0])) {
+            return $user[0];
+        } else {
+            return sprintf("Can't find user!");
         }
     }
 

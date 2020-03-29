@@ -20,7 +20,7 @@ class AuthControllerTest extends BaseTestCase
         $this->assertArrayHasKey("token", $responseData);
     }
 
-    public function testAuthenticate____When_User_is_Inactive___Returns_No_Such_Userr_Error_Response()
+    public function testAuthenticate____When_User_is_Inactive___Returns_No_Such_User_Error_Response()
     {
         $response = $this->client->post("authenticate", [
             'auth' => [static::TEST_INACTIVE_USER_EMAIL, static::TEST_INACTIVE_USER_PASSWORD]
