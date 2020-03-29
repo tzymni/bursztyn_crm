@@ -15,12 +15,17 @@
                     @toggle-collapse="onToggleCollapse"
             />
         </div>
+
+        <Footer />
     </div>
 
 </template>
 
 <script>
+    import Footer from "./Footer";
+
     export default {
+        components: {Footer},
         data() {
             return {
                 name: 'Menu',

@@ -21,7 +21,6 @@
     body, html, #app, #dayspan {
         font-family: Roboto, sans-serif;
         width: 100%;
-        height: 100%;
     }
 </style>
 
