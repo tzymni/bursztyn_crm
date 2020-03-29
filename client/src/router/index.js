@@ -4,6 +4,7 @@ import Users from "../components/Users.vue";
 import Calendar from "../components/Calendar";
 import Cottages from "../components/Cottages";
 import LoginPanel from "../components/LoginPanel";
+import Logout from "../components/Logout";
 
 Vue.use(Router)
 
@@ -25,6 +26,10 @@ export const router = new Router({
         {
             path: '/login',
             component: LoginPanel
+        },
+        {
+            path: '/logout',
+            component: Logout
         },
     ]
 })

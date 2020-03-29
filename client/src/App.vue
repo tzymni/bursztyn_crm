@@ -1,18 +1,39 @@
 <template>
     <div id="app">
-        <Menu/>
+        <component v-bind:is="component"/>
     </div>
+
 </template>
 <script>
     import Menu from './components/Menu.vue'
+    import LoginPanel from "./components/LoginPanel";
 
     export default {
-        data () {
-          return {showBottomBar: null}
+        data() {
+            return {
+                component: "LoginPanel"
+            }
+        },
+        created() {
+
+            const loggedIn = sessionStorage.getItem('token');
+            if (loggedIn) {
+                this.component = Menu;
+            }
         },
         name: 'app',
         components: {
             Menu,
+            LoginPanel
+        },
+        methods: {
+            toggleComponent() {
+                if (this.component === Menu) {
+                    this.component = LoginPanel;
+                } else {
+                    this.component = Menu;
+                }
+            },
         },
         install(Vue) {
             Vue.component('menu', Menu)

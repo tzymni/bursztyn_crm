@@ -16,6 +16,7 @@
             />
         </div>
     </div>
+
 </template>
 
 <script>
@@ -54,7 +55,7 @@
                         ]
                     },
                     {
-                        href: '/login',
+                        href: '/logout',
                         title: 'Logout',
                         icon: 'fa fa-sign-out-alt',
                         meta: { hideNavigation: true }

@@ -41,6 +41,7 @@ function login(username, password) {
 function logout() {
     // remove user from local storage to log user out
     sessionStorage.removeItem("token");
+    // location.reload();
 }
 
 function getUsers() {

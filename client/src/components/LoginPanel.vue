@@ -63,6 +63,7 @@
 
                 loginService.login(username, password).then(function () {
                         router.push('/');
+                        self.$parent.toggleComponent();
                     }
                 )
                     .catch(function (error) {
