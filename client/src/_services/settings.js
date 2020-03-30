@@ -1,9 +1,15 @@
 export const Settings = {
-    getSystemVersion
+    getSystemVersion,
+    getUserFromSession
 };
 
-var systemVersion = '0.4.1';
+const systemVersion = '0.5.0';
 
 function getSystemVersion() {
     return systemVersion;
+}
+
+function getUserFromSession() {
+    let userFromSession = sessionStorage.getItem("user");
+    return JSON.parse(userFromSession);
 }

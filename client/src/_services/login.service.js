@@ -20,7 +20,11 @@ function login(username, password) {
         .then(function (response) {
             if (response.data.token) {
                 let token = response.data.token;
+                let user = response.data.user;
+
                 sessionStorage.setItem("token", token);
+                sessionStorage.setItem("user", JSON.stringify(user));
+
             }
             return response;
         })
@@ -41,7 +45,6 @@ function login(username, password) {
 function logout() {
     // remove user from local storage to log user out
     sessionStorage.removeItem("token");
-    // location.reload();
 }
 
 function getUsers() {

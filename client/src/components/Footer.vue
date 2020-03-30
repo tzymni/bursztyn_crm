@@ -11,7 +11,7 @@
                 tile
         >
             <v-card-text class="py-2 white--text text-center">
-                {{ date }} — <strong>BursztynCRM</strong> v {{ version }}
+                Hello {{user_name}} {{ date }} — <strong>BursztynCRM</strong> v {{ version }}
             </v-card-text>
         </v-card>
     </v-footer>
@@ -20,21 +20,41 @@
 <script>
 
     import {Settings} from "../_services/settings";
+    import {loginService} from "../_services/login.service";
 
     var moment = require('moment');
     export default {
-        data () {
+        data() {
             return {
                 date: moment().format('DD-MM-YYYY H:mm'),
-                version: Settings.getSystemVersion()
+                version: Settings.getSystemVersion(),
+                user_name: ''
             }
         },
         created() {
 
             setInterval(() => {
+                console.log("DDD");
+                this.date = moment().format('DD-MM-YYYY H:mm');
+                this.getUserLogin();
+            }, 60000)
 
-                this.date =  moment().format('DD-MM-YYYY H:mm');
-            }, 1000)
+        },
+        methods: {
+
+            getUserLogin() {
+                var user = Settings.getUserFromSession()
+                if (user && user.first_name != '')
+                    this.user_name = user.first_name;
+                else if (user && user.email != '') {
+                    this.user_name = user.email;
+                } else {
+                    loginService.logout();
+                    location.reload();
+                }
+
+            }
+
         }
 
     }

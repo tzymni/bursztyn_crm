@@ -45,9 +45,17 @@ class AuthController extends AbstractController
                     $jwt = $authService->authenticate([
                         'email' => $result->getEmail()
                     ]);
+
+                    $user = array();
+                    $user['id'] = $result->getId();
+                    $user['email'] = $result->getEmail();
+                    $user['first_name'] = $result->getFirstName();
+                    $user['last_name'] = $result->getLastName();
+
                     $status = JsonResponse::HTTP_OK;
                     $data = [
-                        'token' => $jwt
+                        'token' => $jwt,
+                        'user' => $user
                     ];
                 } else {
                     $status = JsonResponse::HTTP_BAD_REQUEST;
