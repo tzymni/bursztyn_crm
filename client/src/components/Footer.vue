@@ -11,18 +11,22 @@
                 tile
         >
             <v-card-text class="py-2 white--text text-center">
-                {{ date }} — <strong>BursztynCRM</strong>
+                {{ date }} — <strong>BursztynCRM</strong> v {{ version }}
             </v-card-text>
         </v-card>
     </v-footer>
 </template>
 
 <script>
+
+    import {Settings} from "../_services/settings";
+
     var moment = require('moment');
     export default {
         data () {
             return {
-                date: moment().format('DD-MM-YYYY H:mm')
+                date: moment().format('DD-MM-YYYY H:mm'),
+                version: Settings.getSystemVersion()
             }
         },
         created() {
