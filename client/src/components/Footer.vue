@@ -34,7 +34,6 @@
         created() {
 
             setInterval(() => {
-                console.log("DDD");
                 this.date = moment().format('DD-MM-YYYY H:mm');
                 this.getUserLogin();
             }, 60000)
