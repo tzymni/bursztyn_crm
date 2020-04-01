@@ -5,3 +5,6 @@ server/bin/phpunit
 server/bin/.phpunit
 client/node_modules/
 .idea/
+server/phpunit.xml.dist
+server/symfony.lock
+

@@ -1,7 +1,6 @@
 <?php
-
 namespace App\Service;
-
+//init_set('display_errors', '1');
 use App\Entity\User;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -24,8 +23,19 @@ class UserService
 
     public function getUserByEmail($email)
     {
-        $user = $this->em->getRepository('App:User')->findBy(array("is_active" => true, "email" => $email), array(),
-            array(1));
+
+try {
+//            $user = $this->em->getRepository('App:User')->findBy(array("is_active" => true, "email" => $email), array(),
+//                array(1));
+	$rep = $this->em->getRepository('App:User');
+	
+            $user = $rep->findBy(array("is_active" => true, "email" => $email), array(),
+                array(1));
+        }
+        catch (\Exception $exception) {
+            print_r($exception->getMessage());
+            die();
+        }
 
         if (isset($user) && isset($user[0])) {
             return $user[0];

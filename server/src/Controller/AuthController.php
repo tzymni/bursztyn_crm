@@ -31,6 +31,8 @@ class AuthController extends AbstractController
         AuthService $authService,
         ResponseErrorDecoratorService $errorDecorator
     ) {
+    
+	
         $email = $request->getUser();
         $plainPassword = $request->getPassword();
 
@@ -38,8 +40,9 @@ class AuthController extends AbstractController
             $status = JsonResponse::HTTP_BAD_REQUEST;
             $data = $errorDecorator->decorateError($status, "Invalid credentials");
         } else {
-            $result = $userService->getUserByEmail($email);
 
+
+            $result = $userService->getUserByEmail($email);
             if ($result instanceof User) {
                 if (password_verify($plainPassword, $result->getPassword())) {
                     $jwt = $authService->authenticate([
