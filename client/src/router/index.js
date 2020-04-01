@@ -15,27 +15,36 @@ export const router = new Router({
             path: '/',
             component: Calendar,
             meta: {
-            title: 'About Page - Example App'
+            title: 'Bursztyn - Calendar'
             }
         },
         {
             path: '/users',
-            component: Users
+            component: Users,
+            meta: {
+            title: 'Bursztyn - Users'
+            }
         },
         {
             path: '/cottages',
-            component: Cottages
+            component: Cottages,
+            meta: {
+            title: 'Bursztyn - Cottages'
+            }
         },
         {
             path: '/login',
             component: LoginPanel,
             meta: {
-            title: 'About Page - Example App'
+            title: 'Bursztyn - Login Panel'
             }
         },
         {
             path: '/logout',
-            component: Logout
+            component: Logout,
+            meta: {
+            title: 'Bursztyn - Bye bye'
+            }
         },
     ]
 })

@@ -107,11 +107,11 @@ h2 {
 
 .container-form-group {
     margin: 0 auto;
-    padding: 3rem;
+    padding: 4rem;
     width: 20rem;
     color: #ededee;
-    background: rgb(2,0,36);
-background: linear-gradient(180deg, rgba(2,0,36,1) 0%, rgba(9,121,107,1) 0%, rgba(0,212,255,1) 100%);
+    background: rgb(159,159,159);
+background: linear-gradient(180deg, rgba(159,159,159,1) 0%, rgba(38,38,38,1) 20%);
     border-style: outset;
     border-radius: 0.5rem;
     border-color: #ededee;
