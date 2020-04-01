@@ -13,7 +13,10 @@ export const router = new Router({
 
         {
             path: '/',
-            component: Calendar
+            component: Calendar,
+            meta: {
+            title: 'About Page - Example App'
+            }
         },
         {
             path: '/users',
@@ -25,7 +28,10 @@ export const router = new Router({
         },
         {
             path: '/login',
-            component: LoginPanel
+            component: LoginPanel,
+            meta: {
+            title: 'About Page - Example App'
+            }
         },
         {
             path: '/logout',
@@ -39,6 +45,7 @@ router.beforeEach((to, from, next) => {
     const publicPages = ['/login'];
     const authRequired = !publicPages.includes(to.path);
     const loggedIn = sessionStorage.getItem('token');
+    document.title = to.meta.title;
 
     if (authRequired && !loggedIn) {
         return next({
