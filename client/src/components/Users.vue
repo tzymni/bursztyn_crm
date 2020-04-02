@@ -4,8 +4,8 @@
 
 <!-- New Table approach, much easier to edit -->
 
-<table id="users" class="table table-small table-users">
-  <thead class="table-head-users">
+<table id="users" class="table table-small table-striped table-users table-bordered">
+  <thead class="table-head-users thead-dark">
     <tr class="table-row-users">
       <th>Email</th>
       <th>Name</th>
@@ -77,44 +77,19 @@
     }
 </script>
 <style scoped>
-h1{
-    text-align: left;
-}
+
 .table-users {
     max-width: 50vw;
     text-align: left;
-}
-
-.table-row-users {
-
 }
 
 .table-head-users {
     text-transform: uppercase;
 }
 
-.table-head-users th {
-    border-right: 1px solid #7D82A8;
-}
-
-.table-head-users th:last-child {
-  border-right: none;
-}
-
-.table-body-users td {
-  border-right: 1px solid #7D82A8;
-}
-.table-body-users td:last-child {
-  border-right: none;
-  padding:5px;
-} 
-
 .table-btn{
-    width:20px;
-    height:20px;
-}
-#show-modal {
-    left: 100px;
+    width:15px;
+    height:15px;
 }
 
 </style>

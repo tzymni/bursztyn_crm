@@ -80,11 +80,6 @@
 </script>
 <style>
 
-body, html, #app{
-    margin: 0px;
-    padding: 0px;
-}
-
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans+Condensed&family=Raleway&display=swap');
 
 .wrap-container {
@@ -100,18 +95,14 @@ body, html, #app{
     box-sizing: border-box;
 }
 
-h2 {
-    font-family: 'Raleway', sans-serif;
-    margin: 1rem;
-}
+
 
 .container-form-group {
     margin: 0 auto;
     padding: 4rem;
     width: 20rem;
     color: #ededee;
-    background: rgb(159,159,159);
-background: linear-gradient(180deg, rgba(159,159,159,1) 0%, rgba(38,38,38,1) 20%);
+    background: #292121;
     border-style: outset;
     border-radius: 0.5rem;
     border-color: #ededee;

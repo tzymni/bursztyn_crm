@@ -16,6 +16,8 @@ import Vuetify from 'vuetify'
 import DaySpanVuetify from 'dayspan-vuetify'
 Vue.use(Vuetify);
 
+require('@/assets/css/global.css');
+
 Vue.use(DaySpanVuetify, {
   methods: {
     getDefaultEventColor: () => '#1976d2'
@@ -43,3 +45,5 @@ new Vue({
   template: '<App/>',
   render: h => h(App),
 }).$mount('#app')
+
+

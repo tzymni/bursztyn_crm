@@ -1,0 +1,31 @@
+/* Global CSS */
+
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans+Condensed&family=Raleway&display=swap');
+
+body, html, #app{
+    margin: 0px;
+    padding: 0px;
+    font-family: 'Open Sans Condensed', sans-serif;
+}
+
+#app {
+        font-family: 'Open Sans Condensed', sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        color: #2c3e50;
+
+    }
+
+    h1{
+    text-align: left;
+    font-family: 'Raleway', sans-serif;
+    color: red;
+    text-decoration: line-through;
+}
+
+h2 {
+    font-family: 'Raleway', sans-serif;
+    margin: 1rem;
+    !important color: red;
+    text-decoration: line-through;
+}

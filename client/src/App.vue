@@ -7,7 +7,7 @@
 <script>
     import Menu from './components/Menu.vue'
     import LoginPanel from "./components/LoginPanel";
-
+require('@/assets/css/global.css');
     export default {
         data() {
             return {
@@ -42,13 +42,6 @@
     }
     export {Menu}
 </script>
-<style>
-    #app {
-        font-family: 'Avenir', Helvetica, Arial, sans-serif;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-        text-align: center;
-        color: #2c3e50;
-        margin-top: 60px;
-    }
+<style >
+      @import './assets/css/global.css';
 </style>
