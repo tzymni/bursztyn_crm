@@ -57,11 +57,6 @@ class UserControllerTest extends BaseTestCase
         $this->assertEquals(Response::HTTP_FORBIDDEN, $response->getStatusCode());
     }
 
-    public function testGetUser__when_Email_is_Provided__Returns_User_Json_In_Response()
-    {
-
-    }
-
     public function testGetUser__when_Id_is_Provided__Returns_User_Json_In_Response()
     {
         $token = $this->getValidToken();
@@ -102,6 +97,43 @@ class UserControllerTest extends BaseTestCase
         $this->assertArrayHasKey("message", $responseData['error']);
         $this->assertEquals(Response::HTTP_BAD_REQUEST, $responseData['error']['code']);
         $this->assertEquals("Can't find user!", $responseData['error']['message']);
+    }
+
+    public function testCreateUser__When_All_Data_Is_Provided___Returns_Success()
+    {
+        $emailTest = time() . '@test-create.pl';
+        $data = array('email' => $emailTest, 'password' => 'test', 'first_name' => 'Test', 'last_name' => 'Test');
+
+        $token = $this->getValidToken();
+        $response = $this->client->post("/users/create", [
+            'body' => json_encode($data),
+            'headers' => [
+                'Authorization' => 'Bearer ' . $token
+            ]
+        ]);
+
+        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+        $responseData = json_decode($response->getBody(), true);
+        $this->assertEmpty($responseData);
+    }
+
+    public function testCreateUser__When_Email_Already_Exist___Returns_Error_Json_Response()
+    {
+        $testEmail = self::TEST_INACTIVE_USER_EMAIL;
+        $data = array('email' => $testEmail, 'password' => 'test', 'first_name' => 'Test', 'last_name' => 'Test');
+
+        $token = $this->getValidToken();
+        $response = $this->client->post("/users/create", [
+            'body' => json_encode($data),
+            'headers' => [
+                'Authorization' => 'Bearer ' . $token
+            ]
+        ]);
+
+        $this->assertEquals(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
+        $responseData = json_decode($response->getBody(), true);
+        $this->assertNotEmpty($responseData);
+        $this->assertEquals($responseData['error']['message'], sprintf('User with email %s already exist!', $testEmail));
     }
 
 }

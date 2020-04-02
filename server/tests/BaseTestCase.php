@@ -60,7 +60,7 @@ class BaseTestCase extends KernelTestCase
     {
         $em = $this->em;
         $testEmails = array(self::TEST_USER_EMAIL, self::TEST_INACTIVE_USER_EMAIL);
-        $query = $em->createQuery(sprintf("DELETE App:User u WHERE u.email IN (%s)",
+        $query = $em->createQuery(sprintf("DELETE App:User u WHERE u.email IN (%s) OR u.email LIKE '%@test-create.pl'",
             "'" . implode("','", $testEmails) . "'"));
         $query->execute();
         parent::tearDown();
