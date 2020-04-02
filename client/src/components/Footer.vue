@@ -32,7 +32,7 @@
             }
         },
         created() {
-
+            this.getUserLogin();
             setInterval(() => {
                 this.date = moment().format('DD-MM-YYYY H:mm');
                 this.getUserLogin();
@@ -42,7 +42,7 @@
         methods: {
 
             getUserLogin() {
-                var user = Settings.getUserFromSession()
+                let user = Settings.getUserFromSession();
                 if (user && user.first_name != '')
                     this.user_name = user.first_name;
                 else if (user && user.email != '') {
