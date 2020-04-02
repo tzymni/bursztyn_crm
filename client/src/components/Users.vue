@@ -4,13 +4,13 @@
 
 <!-- New Table approach, much easier to edit -->
 
-<table id="users" class="table-users">
+<table id="users" class="table table-small table-users">
   <thead class="table-head-users">
     <tr class="table-row-users">
       <th>Email</th>
       <th>Name</th>
       <th>Surname</th>
-      <th>Operatins</th>
+      <th>Operations</th>
     </tr>
   </thead>
   <tbody class="table-body-users">
@@ -18,7 +18,8 @@
       <td>{{user.email}}</td>
       <td>{{user.first_name}}</td>
       <td>{{user.last_name}}</td>
-      <td><a href="#" class="btn btn-danger table-btn">Dummie Delete</a></td>
+      <td><a href="#" class="btn btn-danger"><img class="table-btn" src="https://img.icons8.com/wired/64/000000/trash.png"/></a>
+        <a href="#" class="btn btn-primary"><img class="table-btn" src="https://img.icons8.com/pastel-glyph/64/000000/edit.png"/></a></td>
     </tr>
   </tbody>
 </table>
@@ -30,7 +31,7 @@
 -->
 
         <div>
-            <b-button id="show-modal" @click="showModal()">Add user</b-button>
+            <b-button class="btn btn-info" id="show-modal" @click="showModal()">Add user</b-button>
             <b-modal id="user-form-modal" title="User form" hide-footer>
                 <UserForm />
             </b-modal>
@@ -76,11 +77,12 @@
     }
 </script>
 <style scoped>
+h1{
+    text-align: left;
+}
 .table-users {
-    width: 80%;
-    margin: 0 auto;
-    border-collapse: collapse;
-    border: 3px solid #44475C;
+    max-width: 50vw;
+    text-align: left;
 }
 
 .table-row-users {
@@ -89,16 +91,10 @@
 
 .table-head-users {
     text-transform: uppercase;
-    text-align: left;
-    background: #44475C;
-    color: #FFF;
-    padding: 8px;
-    min-width: 30px;
 }
 
 .table-head-users th {
-    padding: 1rem;
-    border-right: 2px solid #fff;
+    border-right: 1px solid #7D82A8;
 }
 
 .table-head-users th:last-child {
@@ -106,15 +102,19 @@
 }
 
 .table-body-users td {
-  text-align: left;
-  padding: 8px;
-  border-right: 2px solid #7D82A8;
-  border-bottom: 1px solid #7D82A8;
+  border-right: 1px solid #7D82A8;
 }
-table-body-users td:last-child {
+.table-body-users td:last-child {
   border-right: none;
+  padding:5px;
+} 
+
+.table-btn{
+    width:20px;
+    height:20px;
 }
-
-
+#show-modal {
+    left: 100px;
+}
 
 </style>
