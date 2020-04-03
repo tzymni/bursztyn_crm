@@ -4,7 +4,7 @@
         <br/>
         <div>
             <b-button id="show-modal" @click="showModal()">Add user</b-button>
-            <b-modal id="user-form-modal" title="User form" hide-footer>
+            <b-modal @hide="setUsers()" id="user-form-modal" title="User form" hide-footer>
                 <UserForm />
             </b-modal>
         </div>
@@ -45,7 +45,8 @@
                             self.loading = false;
                         }
                     });
-            }
+            },
         },
     }
+    export {UserForm}
 </script>

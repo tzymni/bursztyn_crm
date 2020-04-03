@@ -132,8 +132,45 @@ class UserControllerTest extends BaseTestCase
 
         $this->assertEquals(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
         $responseData = json_decode($response->getBody(), true);
+
         $this->assertNotEmpty($responseData);
-        $this->assertEquals($responseData['error']['message'], sprintf('User with email %s already exist!', $testEmail));
+        $this->assertEquals($responseData['error']['message'],
+            sprintf('User with email %s already exist!', $testEmail));
     }
 
+    public function testCreateUser__When_Email_Not_Provided___Returns_Error_Json_Response()
+    {
+        $data = array('email' => '', 'password' => 'test', 'first_name' => 'Test', 'last_name' => 'Test');
+
+        $token = $this->getValidToken();
+        $response = $this->client->post("/users/create", [
+            'body' => json_encode($data),
+            'headers' => [
+                'Authorization' => 'Bearer ' . $token
+            ]
+        ]);
+
+        $this->assertEquals(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
+        $responseData = json_decode($response->getBody(), true);
+        $this->assertNotEmpty($responseData);
+        $this->assertEquals($responseData['error']['message'], 'Invalid data!');
+    }
+
+    public function testCreateUser__When_Password_Not_Provided___Returns_Error_Json_Response()
+    {
+        $data = array('email' => 'test@test-create.pl', 'password' => '', 'first_name' => 'Test', 'last_name' => 'Test');
+
+        $token = $this->getValidToken();
+        $response = $this->client->post("/users/create", [
+            'body' => json_encode($data),
+            'headers' => [
+                'Authorization' => 'Bearer ' . $token
+            ]
+        ]);
+
+        $this->assertEquals(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
+        $responseData = json_decode($response->getBody(), true);
+        $this->assertNotEmpty($responseData);
+        $this->assertEquals($responseData['error']['message'], 'Invalid data!');
+    }
 }

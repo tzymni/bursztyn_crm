@@ -36,26 +36,24 @@ class UserController extends AbstractController implements TokenAuthenticatedCon
         ResponseErrorDecoratorService $errorDecorator
     ) {
         $body = $request->getContent();
-
         $data = json_decode($body, true);
 
-        $dataIsCorrect = (is_null($data) || !isset($data['email']) || !isset($data['password'])) ? false : true;
+        $dataIsCorrect = (!is_null($data) && !empty($data['email']) && !empty($data['password'])) ? true : false;
 
         if (!$dataIsCorrect) {
             $status = JsonResponse::HTTP_BAD_REQUEST;
             $response = $errorDecorator->decorateError(
-                JsonResponse::HTTP_BAD_REQUEST, "Invalid data!"
+                $status,
+                "Invalid data!"
             );
-
-            return new JsonResponse($response, $status);
         }
 
         $user = $userService->createUser($data);
 
-        if ($user instanceof User) {
+        if ($user instanceof User && empty($response)) {
             $status = JsonResponse::HTTP_OK;
             $response = array();
-        } else {
+        } elseif (empty($status)) {
             $errorResponse = $user;
             $status = JsonResponse::HTTP_BAD_REQUEST;
             $response = $errorDecorator->decorateError($status, $errorResponse);
@@ -170,7 +168,8 @@ class UserController extends AbstractController implements TokenAuthenticatedCon
         if (is_null($data)) {
             $status = JsonResponse::HTTP_BAD_REQUEST;
             $data = $errorDecorator->decorateError(
-                JsonResponse::HTTP_BAD_REQUEST, "Invalid JSON format"
+                JsonResponse::HTTP_BAD_REQUEST,
+                "Invalid JSON format"
             );
 
             return new JsonResponse($data, $status);
