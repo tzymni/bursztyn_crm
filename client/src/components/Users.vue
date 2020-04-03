@@ -1,41 +1,75 @@
 <template>
     <div class="users">
         <h1>Users list</h1>
-
-<!-- New Table approach, much easier to edit -->
-
-<table id="users" class="table table-small table-striped table-users table-bordered">
-  <thead class="table-head-users thead-dark">
-    <tr class="table-row-users">
-      <th>Email</th>
-      <th>Name</th>
-      <th>Surname</th>
-      <th>Operations</th>
-    </tr>
-  </thead>
-  <tbody class="table-body-users">
-    <tr v-for="user in users"  v-bind:key="user.id" class="table-row-users">
-      <td>{{user.email}}</td>
-      <td>{{user.first_name}}</td>
-      <td>{{user.last_name}}</td>
-      <td><a href="#" class="btn btn-danger"><img class="table-btn" src="https://img.icons8.com/wired/64/000000/trash.png"/></a>
-        <a href="#" class="btn btn-primary"><img class="table-btn" src="https://img.icons8.com/pastel-glyph/64/000000/edit.png"/></a></td>
-    </tr>
-  </tbody>
-</table>
-
-
- <!--       
-    Old table, too hard to edit
-    <b-table striped small hover :fields="fields" :items="users"></b-table> 
--->
-
+        <div class="container">
         <div>
             <b-button class="btn btn-info" id="show-modal" @click="showModal()">Add user</b-button>
             <b-modal id="user-form-modal" title="User form" hide-footer>
                 <UserForm />
             </b-modal>
         </div>
+      <!--  
+ New Table approach, much easier to edit 
+            <b-pagination
+              v-model="currentPage"
+              :total-rows="rows"
+              :per-page="perPage"
+              aria-controls="users"
+            ></b-pagination>
+
+            <table id="users" class="table table-small table-striped table-users table-bordered">
+              <thead class="table-head-users thead-dark">
+                <tr class="table-row-users">
+                  <th>Email</th>
+                  <th>Name</th>
+                  <th>Surname</th>
+                  <th>Operations</th>
+                </tr>
+              </thead>
+              <tbody class="table-body-users">
+                <tr v-for="user in users" v-bind:key="user.id" class="table-row-users" >
+                  <td>{{user.email}}</td>
+                  <td>{{user.first_name}}</td>
+                  <td>{{user.last_name}}</td>
+                  <td><a href="#" class="btn btn-danger"><font-awesome-icon icon="trash-alt" /></a>
+                    <a href="#" class="btn btn-primary"><font-awesome-icon icon="edit" /></a></td>
+                </tr>
+              </tbody>
+            </table>
+        </div>
+-->
+ <!--       
+    Old table, too hard to edit -->
+        <div class ="table-wrap">
+            <b-table id="users"
+                :per-page="perPage"
+                :current-page="currentPage" striped small bordered class="table-users" :fields="fields" :items="users"
+                thead-class="thead-dark">
+                <template v-slot:head(id)="data">
+                    <p class="hide">{{data.field.id}}</p>
+                    </template>
+                    <template v-slot:cell(id)="data">
+                    <p class="hide">{{data.item.id}}</p>
+                    <p class="icon"><font-awesome-icon icon="user" /></p>
+                    </template>
+                    <template v-slot:head(is_active)="data">
+                    <p  class="hide">{{data.field.is_active}}</p>
+                    <p>Operations</p>
+                    </template>
+                    <template v-slot:cell(is_active)="data">
+                    <p class="hide">{{data.item.is_active}}</p>
+                    <a href="#" class="btn btn-danger"><font-awesome-icon icon="trash-alt" /></a>
+                            <a href="#" class="btn btn-primary"><font-awesome-icon icon="edit" /></a>
+                    </template> 
+            </b-table>
+            <b-pagination
+                v-model="currentPage"
+                :total-rows="rows"
+                :per-page="perPage"
+                aria-controls="users"
+            ></b-pagination>
+        </div>
+    </div>
     </div>
 
 </template>
@@ -49,7 +83,9 @@
         components: {UserForm},
         data: function () {
             return {
-                users: []
+                users: [],
+                perPage: 3,
+                currentPage: 1
             }
         },
         mounted() {
@@ -74,12 +110,25 @@
                     });
             }
         },
+        computed: {
+            rows() {
+            return this.users.length
+        }
+    }
     }
 </script>
 <style scoped>
+.users {
+    width: 100%;
+    max-width: 50vw;
+}
+.table-wrap {
+    margin-top: 1rem;
+}
 
 .table-users {
-    max-width: 50vw;
+    width: 100%;
+    max-width: 40vw;
     text-align: left;
 }
 
@@ -90,6 +139,20 @@
 .table-btn{
     width:15px;
     height:15px;
+}
+.hide {
+    width: 0px;
+    height: 0px;
+    padding: 0;
+    margin: 0;
+    display: none;
+}
+
+.icon {
+    width: 10px;
+    height: 10px;
+    padding:0;
+    margin: 0 auto;
 }
 
 </style>

@@ -17,15 +17,15 @@ body, html, #app{
     }
 
     h1{
+    padding:1em;
     text-align: left;
     font-family: 'Raleway', sans-serif;
-    color: red;
-    text-decoration: line-through;
+    border-bottom: 1px solid #2c3e50;
+    border-radius: 5em;
 }
 
 h2 {
     font-family: 'Raleway', sans-serif;
-    margin: 1rem;
-    !important color: red;
-    text-decoration: line-through;
+    width:100%;
+    margin: 0 auto;
 }
