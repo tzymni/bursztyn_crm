@@ -25,9 +25,9 @@
 </table>
 
 
- <!--       
+ <!--
     Old table, too hard to edit
-    <b-table striped small hover :fields="fields" :items="users"></b-table> 
+    <b-table striped small hover :fields="fields" :items="users"></b-table>
 -->
 
         <div>
@@ -72,9 +72,10 @@
                             self.loading = false;
                         }
                     });
-            }
+            },
         },
     }
+    export {UserForm}
 </script>
 <style scoped>
 

@@ -26,6 +26,6 @@ body, html, #app{
 h2 {
     font-family: 'Raleway', sans-serif;
     margin: 1rem;
-    !important color: red;
+    /*!important color: red;*/
     text-decoration: line-through;
 }

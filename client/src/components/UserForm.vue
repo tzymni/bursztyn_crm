@@ -4,7 +4,7 @@
             <div class="form-group">
                 <label for="email">Email</label>
                 <input type="text" v-model="email" name="email" class="form-control"
-                       :class="{ 'is-invalid': submitted && !username }"/>
+                       :class="{ 'is-invalid': submitted && !email }"/>
                 <div v-show="submitted && !email" class="invalid-feedback">Email is required</div>
             </div>
             <div class="form-group">
@@ -35,8 +35,7 @@
 </template>
 
 <script>
-    // import {loginService} from "../_services/login.service";
-    // import {router} from "../router";
+    import {userService} from "../_services/user.service";
 
     export default {
         name: "UserForm",
@@ -47,40 +46,36 @@
                 first_name: "",
                 last_name: "",
                 submitted: false,
-                loading: false,
                 returnUrl: "",
-                errorNotify: ""
+                errorNotify: "",
+                loading: false
             };
         },
         methods: {
             handleSubmit() {
-                console.log("TEST");
-                // this.$emit("close")
-                this.$bvModal.hide("user-form-modal");
-
                 this.submitted = true;
-                const {email, password} = this;
+                const {email, password, first_name, last_name} = this;
 
                 // stop here if form is invalid
                 if (!(email && password)) {
                     return;
                 }
-                //
-                // this.loading = true;
-                // var self = this;
-                //
-                // loginService.login(username, password).then(function () {
-                //         router.push('/');
-                //         self.$parent.toggleComponent();
-                //     }
-                // )
-                //     .catch(function (error) {
-                //         if (error) {
-                //             self.errorNotify = error;
-                //             self.loading = false;
-                //         }
-                //     });
-            }
+
+                const data = {email, password, first_name, last_name};
+
+                var self = this;
+
+                userService.saveUser(data).then(function () {
+                        self.$bvModal.hide("user-form-modal");
+                    }
+                )
+                    .catch(function (error) {
+                        if (error) {
+                            self.errorNotify = error;
+                        }
+                    });
+            },
+
         }
     }
 </script>
