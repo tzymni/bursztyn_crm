@@ -6,6 +6,7 @@ body, html, #app{
     margin: 0px;
     padding: 0px;
     font-family: 'Open Sans Condensed', sans-serif;
+        min-height:100%; 
 }
 
 #app {

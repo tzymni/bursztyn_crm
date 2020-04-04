@@ -120,6 +120,7 @@
 <style scoped>
 .users {
     width: 100%;
+    min-height:100%;
     max-width: 50vw;
 }
 .table-wrap {

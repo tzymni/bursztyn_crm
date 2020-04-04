@@ -3,6 +3,8 @@
     <v-footer
             dark
             padless
+            flex
+            sticky
             class="footer"
     >
         <v-card
@@ -10,9 +12,16 @@
                 flat
                 tile
         >
-            <v-card-text class="py-2 white--text text-center">
-                Hello {{user_name}} {{ date }} — <strong>BursztynCRM</strong> v {{ version }}
-            </v-card-text>
+        <v-card-text class="py-2 text-center" flex>
+            <div class="footer-div">
+                Hello {{user_name}}
+            </div>
+            <div class="footer-div">
+                <strong>BursztynCRM</strong> v {{ version }}
+            </div>
+            <div class="footer-div">
+                {{ date }}
+            </div></v-card-text>
         </v-card>
     </v-footer>
 </template>
@@ -61,11 +70,25 @@
 
 <style>
     .footer {
-        position: absolute;
-        right: 0;
-        bottom: 0;
-        left: 0;
-        padding: 1rem;
-        text-align: center;
+position: sticky; 
+    left: 0 ; right: 0; bottom: 0; 
+        width: 100%;
+        
+    }
+
+    .footer-div {
+        flex: 33.3%;
+        display: inline-block;
+        border-right: 1px solid #fff;
+        padding: 0 7%;
+    }
+
+    .footer-div:last-child {
+        border-right: none;
+    }
+
+    p {
+        display: inline;
+        width: 100%;
     }
 </style>

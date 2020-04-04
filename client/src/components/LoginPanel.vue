@@ -119,7 +119,7 @@ label {
 input.form-login {
     background: transparent;
     border: none;
-    border-bottom: 2px dotted #ededee;
+    border-bottom: 1px solid #ededee;
     width: 100%;
     outline: none;
     padding: 0px 0px 0px 0px;
@@ -128,6 +128,7 @@ input.form-login {
 
 input.form-login:focus {
     border-color: #DDDDDD;
+    transition: border-color 0.6s linear;
 }
 
 input.is-invalid {
