@@ -17,7 +17,9 @@ body, html, #app{
 
     }
 
-    h1{
+/* Fonts */
+
+h1{
     padding:1em;
     text-align: left;
     font-family: 'Raleway', sans-serif;
