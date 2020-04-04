@@ -1,6 +1,7 @@
 <template>
     <div>
         <form @submit.prevent="handleSubmit">
+
             <div class="form-group">
                 <label for="email">Email</label>
                 <input type="text" v-model="email" name="email" class="form-control"
@@ -41,6 +42,8 @@
         name: "UserForm",
         data() {
             return {
+                childMessage: '',
+                id: null,
                 email: "",
                 password: "",
                 first_name: "",
@@ -48,8 +51,16 @@
                 submitted: false,
                 returnUrl: "",
                 errorNotify: "",
-                loading: false
+                loading: false,
             };
+        },
+        mounted() {
+            if (typeof this.editId != 'undefined' && this.editId != null) {
+                this.getUserById(this.editId);
+            }
+        },
+        props: {
+            editId: Number,
         },
         methods: {
             handleSubmit() {
@@ -60,8 +71,8 @@
                 if (!(email && password)) {
                     return;
                 }
-
-                const data = {email, password, first_name, last_name};
+                let id = this.id;
+                const data = {email, password, first_name, last_name, id};
 
                 var self = this;
 
@@ -75,6 +86,25 @@
                         }
                     });
             },
+            getUserById(id) {
+
+                var self = this;
+                userService.getUser(id).then(function (data) {
+                        console.log(data);
+                        self.first_name = data.first_name;
+                        self.last_name = data.last_name;
+                        self.email = data.email;
+                        self.password = data.password;
+                        self.id = data.id;
+                    }
+                )
+                    .catch(function (error) {
+                        if (error) {
+                            self.errorNotify = error;
+                        }
+                    });
+
+            }
 
         }
     }
