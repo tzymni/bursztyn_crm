@@ -1,8 +1,10 @@
 <template>
-    <div class="calendar">
-        <v-app id="dayspan" v-cloak>
-            <ds-calendar-app :calendar="calendar"></ds-calendar-app>
-        </v-app>
+    <div class="container">
+        <div class="calendar">
+            <v-app id="dayspan" v-cloak>
+                <ds-calendar-app :calendar="calendar"></ds-calendar-app>
+            </v-app>
+        </div>
     </div>
 </template>
 
