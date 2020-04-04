@@ -38,34 +38,28 @@ class UserController extends AbstractController implements TokenAuthenticatedCon
         $body = $request->getContent();
         $data = json_decode($body, true);
 
-        try {
-            if (is_null($data) || !isset($data['email']) || !isset($data['password'])) {
-                $status = JsonResponse::HTTP_BAD_REQUEST;
-                $data = $errorDecorator->decorateError(
-                    JsonResponse::HTTP_BAD_REQUEST, "Invalid JSON format"
-                );
+        $dataIsCorrect = (!is_null($data) && !empty($data['email']) && !empty($data['password'])) ? true : false;
 
-                return new JsonResponse($data, $status);
-            }
-
-            $result = $userService->createUser($data);
-        } catch (\Exception $exception) {
-            echo "ERROR " . $exception->getMessage();
-        }
-
-        if ($result instanceof User) {
-            $status = JsonResponse::HTTP_CREATED;
-            $data = [
-                'data' => [
-                    'email' => $result->getEmail()
-                ]
-            ];
-        } else {
+        if (!$dataIsCorrect) {
             $status = JsonResponse::HTTP_BAD_REQUEST;
-            $data = $errorDecorator->decorateError($status, $result);
+            $response = $errorDecorator->decorateError(
+                $status,
+                "Invalid data!"
+            );
         }
 
-        return new JsonResponse($data, $status);
+        $user = $userService->createUser($data);
+
+        if ($user instanceof User && empty($response)) {
+            $status = JsonResponse::HTTP_OK;
+            $response = array();
+        } elseif (empty($status)) {
+            $errorResponse = $user;
+            $status = JsonResponse::HTTP_BAD_REQUEST;
+            $response = $errorDecorator->decorateError($status, $errorResponse);
+        }
+
+        return new JsonResponse($response, $status);
     }
 
     /**
@@ -174,7 +168,8 @@ class UserController extends AbstractController implements TokenAuthenticatedCon
         if (is_null($data)) {
             $status = JsonResponse::HTTP_BAD_REQUEST;
             $data = $errorDecorator->decorateError(
-                JsonResponse::HTTP_BAD_REQUEST, "Invalid JSON format"
+                JsonResponse::HTTP_BAD_REQUEST,
+                "Invalid JSON format"
             );
 
             return new JsonResponse($data, $status);

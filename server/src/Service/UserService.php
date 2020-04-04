@@ -70,7 +70,6 @@ try {
         $plainPassword = $data['password'];
         /** @var TYPE_NAME $isActive */
         $isActive = isset($data['is_active']) ? $data['is_active'] : true;
-
         $firstName = isset($data['first_name']) ? $data['first_name'] : '';
         $lastName = isset($data['last_name']) ? $data['last_name'] : '';
 
@@ -88,9 +87,9 @@ try {
 
             return $user;
         } catch (\Doctrine\DBAL\Exception\UniqueConstraintViolationException $ex) {
-            return "Użytkownik z takim adresem email już istnieje";
+            return sprintf("User with email %s already exist!", $email);
         } catch (\Exception $ex) {
-            return "Nie udało się stworzyć użytkownika ";
+            return "Error with creating user";
         }
     }
 

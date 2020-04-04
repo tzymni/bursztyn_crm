@@ -3,7 +3,7 @@ export const Settings = {
     getUserFromSession
 };
 
-const systemVersion = '0.5.2';
+const systemVersion = '0.6.0';
 
 function getSystemVersion() {
     return systemVersion;
