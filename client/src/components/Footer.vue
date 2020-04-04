@@ -1,9 +1,10 @@
 <template>
-        <v-footer   
+        <v-footer 
                     dark
                     flex
                     sticky
                 class="footer p-3 text-center"
+
         >
         <v-card-text padless class="text-left footer-div">
         
