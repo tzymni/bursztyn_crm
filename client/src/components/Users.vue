@@ -1,6 +1,6 @@
 <template>
     <div class="users">
-        <h1>Users list</h1>
+        <h1>Users</h1>
         <div class="container">
 
         <div>
@@ -91,7 +91,8 @@
 <style scoped>
 .users {
     width: 100%;
-    min-height:100%;
+    height: 100%;
+    min-height:99vh;
     max-width: 50vw;
 }
 .table-wrap {

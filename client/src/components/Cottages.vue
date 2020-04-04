@@ -1,6 +1,7 @@
 <template>
-    <div class="hello">
+    <div class="cottages">
         <h1>{{ msg }}</h1>
+        <div class="container"></div>
     </div>
 </template>
 
@@ -9,17 +10,19 @@
         name: 'Test',
         data () {
             return {
-                msg: 'DUPA DUPA'
+                msg: 'Cottages'
             }
         }
     }
 </script>
 
 <style scoped>
-    h1, h2 {
-        font-weight: normal;
-    }
-
+.cottages {
+    width: 100%;
+    height: 100%;
+    min-height:99vh;
+    max-width: 50vw;
+}
     ul {
         list-style-type: none;
         padding: 0;
