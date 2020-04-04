@@ -88,7 +88,7 @@
         }
     }
 </script>
-<style>
+<style scooped>
 
 .wrap-container {
     height: 100%;

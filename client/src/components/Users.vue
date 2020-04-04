@@ -54,7 +54,7 @@
         data: function () {
             return {
                 users: [],
-                perPage: 3,
+                perPage: 10,
                 currentPage: 1
             }
         },
@@ -92,7 +92,7 @@
 .users {
     width: 100%;
     height: 100%;
-    min-height:99vh;
+    min-height:95vh;
     max-width: 50vw;
 }
 .table-wrap {
