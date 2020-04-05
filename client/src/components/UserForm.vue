@@ -4,7 +4,8 @@
 
             <div class="form-group">
                 <label for="email">Email</label>
-                <input type="text" v-model="email" name="email" class="form-control"
+                <input :disabled="disabledEmailField == true" type="text" v-model="email" name="email"
+                       class="form-control"
                        :class="{ 'is-invalid': submitted && !email }"/>
                 <div v-show="submitted && !email" class="invalid-feedback">Email is required</div>
             </div>
@@ -52,6 +53,8 @@
                 returnUrl: "",
                 errorNotify: "",
                 loading: false,
+                disabledEmailField: false,
+                reg: /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
             };
         },
         mounted() {
@@ -65,13 +68,18 @@
         methods: {
             handleSubmit() {
                 this.submitted = true;
+                let id = this.id;
                 const {email, password, first_name, last_name} = this;
 
                 // stop here if form is invalid
-                if (!(email && password)) {
+                if (!(email && password) && !id) {
+                    return;
+                } else if (!this.reg.test(email)) {
+                    this.errorNotify = "Please Enter Correct Email";
                     return;
                 }
-                let id = this.id;
+
+
                 const data = {email, password, first_name, last_name, id};
 
                 var self = this;
@@ -90,12 +98,12 @@
 
                 var self = this;
                 userService.getUser(id).then(function (data) {
-                        console.log(data);
+
                         self.first_name = data.first_name;
                         self.last_name = data.last_name;
                         self.email = data.email;
-                        self.password = data.password;
                         self.id = data.id;
+                        self.disabledEmailField = true;
                     }
                 )
                     .catch(function (error) {

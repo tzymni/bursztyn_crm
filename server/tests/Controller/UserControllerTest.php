@@ -25,11 +25,14 @@ class UserControllerTest extends BaseTestCase
     {
         $token = $this->getValidToken();
 
-        $response = $this->client->get("/api/users", [
-            'headers' => [
-                'Authorization' => 'Bearer ' . $token
+        $response = $this->client->get(
+            "/api/users",
+            [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $token
+                ]
             ]
-        ]);
+        );
         $responseData = json_decode($response->getBody(), true);
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
         $this->assertArrayHasKey("email", $responseData[0]);
@@ -48,11 +51,14 @@ class UserControllerTest extends BaseTestCase
     public function testGetUsers__whenTokenInvalid()
     {
         $token = sha1(time());
-        $response = $this->client->get("/api/users", [
-            'headers' => [
-                'Authorization' => 'Bearer ' . $token
+        $response = $this->client->get(
+            "/api/users",
+            [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $token
+                ]
             ]
-        ]);
+        );
 
         $this->assertEquals(Response::HTTP_FORBIDDEN, $response->getStatusCode());
     }
@@ -62,11 +68,14 @@ class UserControllerTest extends BaseTestCase
         $token = $this->getValidToken();
         $id = $this->testUser->getId();
 
-        $response = $this->client->get("/api/user/{$id}", [
-            'headers' => [
-                'Authorization' => 'Bearer ' . $token
+        $response = $this->client->get(
+            "/api/user/{$id}",
+            [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $token
+                ]
             ]
-        ]);
+        );
 
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
 
@@ -82,11 +91,14 @@ class UserControllerTest extends BaseTestCase
     {
         $token = $this->getValidToken();
         $id = $this->testInactiveUser->getId();
-        $response = $this->client->get("/api/user/{$id}", [
-            'headers' => [
-                'Authorization' => 'Bearer ' . $token
+        $response = $this->client->get(
+            "/api/user/{$id}",
+            [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $token
+                ]
             ]
-        ]);
+        );
 
         $this->assertEquals(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
 
@@ -105,12 +117,15 @@ class UserControllerTest extends BaseTestCase
         $data = array('email' => $emailTest, 'password' => 'test', 'first_name' => 'Test', 'last_name' => 'Test');
 
         $token = $this->getValidToken();
-        $response = $this->client->post("/users/create", [
-            'body' => json_encode($data),
-            'headers' => [
-                'Authorization' => 'Bearer ' . $token
+        $response = $this->client->post(
+            "/users/create",
+            [
+                'body' => json_encode($data),
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $token
+                ]
             ]
-        ]);
+        );
 
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
         $responseData = json_decode($response->getBody(), true);
@@ -123,19 +138,24 @@ class UserControllerTest extends BaseTestCase
         $data = array('email' => $testEmail, 'password' => 'test', 'first_name' => 'Test', 'last_name' => 'Test');
 
         $token = $this->getValidToken();
-        $response = $this->client->post("/users/create", [
-            'body' => json_encode($data),
-            'headers' => [
-                'Authorization' => 'Bearer ' . $token
+        $response = $this->client->post(
+            "/users/create",
+            [
+                'body' => json_encode($data),
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $token
+                ]
             ]
-        ]);
+        );
 
         $this->assertEquals(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
         $responseData = json_decode($response->getBody(), true);
 
         $this->assertNotEmpty($responseData);
-        $this->assertEquals($responseData['error']['message'],
-            sprintf('User with email %s already exist!', $testEmail));
+        $this->assertEquals(
+            $responseData['error']['message'],
+            sprintf('User with email %s already exist!', $testEmail)
+        );
     }
 
     public function testCreateUser__When_Email_Not_Provided___Returns_Error_Json_Response()
@@ -143,12 +163,15 @@ class UserControllerTest extends BaseTestCase
         $data = array('email' => '', 'password' => 'test', 'first_name' => 'Test', 'last_name' => 'Test');
 
         $token = $this->getValidToken();
-        $response = $this->client->post("/users/create", [
-            'body' => json_encode($data),
-            'headers' => [
-                'Authorization' => 'Bearer ' . $token
+        $response = $this->client->post(
+            "/users/create",
+            [
+                'body' => json_encode($data),
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $token
+                ]
             ]
-        ]);
+        );
 
         $this->assertEquals(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
         $responseData = json_decode($response->getBody(), true);
@@ -156,21 +179,130 @@ class UserControllerTest extends BaseTestCase
         $this->assertEquals($responseData['error']['message'], 'Invalid data!');
     }
 
-    public function testCreateUser__When_Password_Not_Provided___Returns_Error_Json_Response()
+    public function testCreateUser__WhenPasswordNotProvided__ReturnsErrorJsonResponse()
     {
-        $data = array('email' => 'test@test-create.pl', 'password' => '', 'first_name' => 'Test', 'last_name' => 'Test');
+        $data = array(
+            'email' => 'test@test-create.pl',
+            'password' => '',
+            'first_name' => 'Test',
+            'last_name' => 'Test'
+        );
 
         $token = $this->getValidToken();
-        $response = $this->client->post("/users/create", [
-            'body' => json_encode($data),
-            'headers' => [
-                'Authorization' => 'Bearer ' . $token
+        $response = $this->client->post(
+            "/users/create",
+            [
+                'body' => json_encode($data),
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $token
+                ]
             ]
-        ]);
+        );
 
         $this->assertEquals(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
         $responseData = json_decode($response->getBody(), true);
         $this->assertNotEmpty($responseData);
         $this->assertEquals($responseData['error']['message'], 'Invalid data!');
     }
+
+    public function testUpdateUserFirstNameAndLastName__WhenIdAndDataIsProvided__ReturnsSuccess()
+    {
+        $container = $this->getPrivateContainer();
+        $userService = $container
+            ->get('App\Service\UserService');
+
+        $data = array(
+            'id' => $this->testUser->getId(),
+            'email' => $this->testUser->getEmail(),
+            'password' => '',
+            'first_name' => 'Changed First Name ' . time(),
+            'last_name' => 'Changed Last Name' . time()
+        );
+
+        $token = $this->getValidToken();
+        $response = $this->client->put(
+            "/api/user/" . $this->testUser->getId(),
+            [
+                'body' => json_encode($data),
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $token
+                ]
+            ]
+        );
+
+        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+        $responseData = json_decode($response->getBody(), true);
+
+        $this->assertEmpty($responseData);
+
+        $updatedUser = $userService->getUserById($this->testUser->getId());
+
+        $this->assertEquals($this->testUser->getId(), $updatedUser->getId());
+        $this->assertEquals($this->testUser->getEmail(), $updatedUser->getEmail());
+        $this->assertEquals($this->testUser->getPassword(), $updatedUser->getPassword());
+    }
+
+    public function testUpdateUserPassword__WhenIdAndPasswordIsProvided__ReturnsSuccess()
+    {
+        $container = $this->getPrivateContainer();
+        $userService = $container
+            ->get('App\Service\UserService');
+
+        $data = array(
+            'id' => $this->testUser->getId(),
+            'email' => $this->testUser->getEmail(),
+            'password' => 'newPassword',
+            'first_name' => '',
+            'last_name' => ''
+        );
+
+        $token = $this->getValidToken();
+        $response = $this->client->put(
+            "/api/user/" . $this->testUser->getId(),
+            [
+                'body' => json_encode($data),
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $token
+                ]
+            ]
+        );
+
+        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+        $responseData = json_decode($response->getBody(), true);
+
+        $this->assertEmpty($responseData);
+
+        $updatedUser = $userService->getUserById($this->testUser->getId());
+
+        $this->assertEquals($this->testUser->getId(), $updatedUser->getId());
+        $this->assertEquals($this->testUser->getEmail(), $updatedUser->getEmail());
+        $this->assertNotEquals($this->testUser->getPassword(), $updatedUser->getPassword());
+    }
+
+    public function testUpdateUser__WhenDataNotProvided__ReturnsErrorJsonResponse() {
+
+        $data = array(
+            'id' => $this->testUser->getId(),
+            'email' => '',
+            'password' => '',
+            'first_name' => '',
+            'last_name' => ''
+        );
+
+        $token = $this->getValidToken();
+        $response = $this->client->put(
+            "/api/user/" . $this->testUser->getId(),
+            [
+                'body' => json_encode($data),
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $token
+                ]
+            ]
+        );
+
+        $this->assertEquals(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
+        $responseData = json_decode($response->getBody(), true);
+        $this->assertEquals($responseData['error']['message'], 'Invalid data!');
+    }
+
 }

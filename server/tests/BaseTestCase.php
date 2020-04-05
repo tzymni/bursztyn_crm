@@ -85,7 +85,9 @@ class BaseTestCase extends KernelTestCase
         } else {
             $conditions = [
                 'email' => $email,
-                'password' => $password
+                'password' => $password,
+                'first_name' => 'Test user name',
+                'last_name' => 'Test user last name'
             ];
         }
 
@@ -152,7 +154,7 @@ class BaseTestCase extends KernelTestCase
         return $jwt;
     }
 
-    private function getPrivateContainer()
+    protected function getPrivateContainer()
     {
         self::bootKernel();
 

@@ -153,11 +153,10 @@ class UserController extends AbstractController implements TokenAuthenticatedCon
     }
 
     /**
-     * @Route("/api/user/{email}")
+     * @Route("/api/user/{id}")
      * @Method("PUT")
      */
     public function updateUser(
-        User $user,
         Request $request,
         UserService $userService,
         ResponseErrorDecoratorService $errorDecorator
@@ -165,26 +164,22 @@ class UserController extends AbstractController implements TokenAuthenticatedCon
         $body = $request->getContent();
         $data = json_decode($body, true);
 
-        if (is_null($data)) {
+        if (empty($data) || empty($data['email'])) {
             $status = JsonResponse::HTTP_BAD_REQUEST;
             $data = $errorDecorator->decorateError(
-                JsonResponse::HTTP_BAD_REQUEST,
-                "Invalid JSON format"
+                $status,
+                "Invalid data!"
             );
 
             return new JsonResponse($data, $status);
         }
 
+        $user = $userService->getUserById($data);
+
         $result = $userService->updateUser($user, $data);
         if ($result instanceof User) {
             $status = JsonResponse::HTTP_OK;
-            $data = [
-                'data' => [
-                    'email' => $result->getEmail(),
-                    'first_name' => $result->getFirstName(),
-                    'last_name' => $result->getLastName(),
-                ]
-            ];
+            $data = array();
         } else {
             $status = JsonResponse::HTTP_BAD_REQUEST;
             $data = $errorDecorator->decorateError($status, $result);

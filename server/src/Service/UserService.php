@@ -1,5 +1,7 @@
 <?php
+
 namespace App\Service;
+
 //init_set('display_errors', '1');
 use App\Entity\User;
 use App\Repository\UserRepository;
@@ -23,16 +25,17 @@ class UserService
 
     public function getUserByEmail($email)
     {
-
-try {
+        try {
 //            $user = $this->em->getRepository('App:User')->findBy(array("is_active" => true, "email" => $email), array(),
 //                array(1));
-	$rep = $this->em->getRepository('App:User');
-	
-            $user = $rep->findBy(array("is_active" => true, "email" => $email), array(),
-                array(1));
-        }
-        catch (\Exception $exception) {
+            $rep = $this->em->getRepository('App:User');
+
+            $user = $rep->findBy(
+                array("is_active" => true, "email" => $email),
+                array(),
+                array(1)
+            );
+        } catch (\Exception $exception) {
             print_r($exception->getMessage());
             die();
         }
@@ -46,8 +49,11 @@ try {
 
     public function getUserById($id)
     {
-        $user = $this->em->getRepository('App:User')->findBy(array("is_active" => true, "id" => $id), array(),
-            array(1));
+        $user = $this->em->getRepository('App:User')->findBy(
+            array("is_active" => true, "id" => $id),
+            array(),
+            array(1)
+        );
 
         if (isset($user) && isset($user[0])) {
             return $user[0];
@@ -96,12 +102,16 @@ try {
     public function updateUser(User $user, array $data)
     {
         try {
-            if (isset($data['first_name'])) {
+            if (isset($data['first_name']) && !empty($data['first_name'])) {
                 $user->setFirstName($data['first_name']);
             }
 
-            if (isset($data['last_name'])) {
+            if (isset($data['last_name']) && !empty($data['last_name'])) {
                 $user->setLastName($data['last_name']);
+            }
+
+            if (isset($data['password']) && !empty($data['password'])) {
+                $user->setPassword($data['password']);
             }
 
             $this->em->persist($user);
@@ -109,7 +119,7 @@ try {
 
             return $user;
         } catch (\Doctrine\DBAL\Exception\UniqueConstraintViolationException $ex) {
-            return "user with given name already exists";
+            return "User with given name already exists";
         } catch (\Exception $ex) {
             return "Unable to update user";
         }
