@@ -1,8 +1,14 @@
 <template>
     <div class="wrap-container">
-    <div class="container-form-group">
-        <h2>Log-in Panel</h2>
-        <form @submit.prevent="handleSubmit">
+        <b-card bg-variant="light" 
+                text-variant="dark" 
+                border-variant="dark" 
+                header="Please login"
+                header-text-variant="white"
+                header-bg-variant="dark"
+                header-class="p-4 card_header"
+                class="text-center">
+        <form class="p-5 pt-0 text-left" @submit.prevent="handleSubmit">
             <div class="form-group">
                 <label for="username">Email</label>
                 <input type="text" v-model="username" name="username" class="form-login"
@@ -15,14 +21,18 @@
                        :class="{ 'is-invalid': submitted && !password }"/>
                 <div v-show="submitted && !password" class="invalid-feedback">Password is required</div>
             </div>
-            <div class="form-group">
-                <button class="btn-login" :disabled="loading">Sign in</button>
+            <div class="text-right form-group small">
+                <b-link class="font-weight-light small" href="#foo">Forgotten Password?</b-link>
+            </div>
+            <div class="form-group text-center">
+                <button class="btn btn-outline-dark rounded-pill py-2 mt-2" :disabled="loading">Sign in</button>
                 <img v-show="loading"
                      src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA=="/>
             </div>
             <div v-if="errorNotify" class="alert alert-danger">{{errorNotify}}</div>
         </form>
-    </div>
+
+</b-card>
 </div>
 </template>
 
@@ -78,36 +88,30 @@
         }
     }
 </script>
-<style>
-
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans+Condensed&family=Raleway&display=swap');
+<style scooped>
 
 .wrap-container {
-    height: 100vh;
-    font-family: 'Open Sans Condensed', sans-serif;
+    height: 100%;
+    min-height:100vh;
     margin: 0;
-    padding: 10vh;
-    font-size: 1rem;
+    padding: 15vh;
+    font-size: 1.5rem;
     font-weight: 300;
     line-height: 1.5;
-    color: #212529;
+    color: ##343a40;
     background-color: #ededee;
-    box-sizing: border-box;
 }
 
 
-
-.container-form-group {
+.card {
     margin: 0 auto;
-    padding: 4rem;
-    width: 20rem;
-    color: #ededee;
-    background: #292121;
-    border-style: outset;
-    border-radius: 0.5rem;
-    border-color: #ededee;
-    border-width: 1px;
+    max-width: 30rem;
+    box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2), 0px 8px 10px 1px rgba(0, 0, 0, 0.14), 0px 3px 14px 2px rgba(0, 0, 0, 0.12);
+    border-radius: 24px 4px !important;
+    overflow: hidden;
 }
+
+
 
 label {
     font-weight: 100;
@@ -119,7 +123,7 @@ label {
 input.form-login {
     background: transparent;
     border: none;
-    border-bottom: 1px solid #ededee;
+    border-bottom: 1px solid #343a40;
     width: 100%;
     outline: none;
     padding: 0px 0px 0px 0px;
@@ -127,38 +131,12 @@ input.form-login {
 }
 
 input.form-login:focus {
-    border-color: #DDDDDD;
+    border-color: #4B545C;
     transition: border-color 0.6s linear;
 }
 
 input.is-invalid {
     border-color: red;
 }
-
-.btn-login{
-    display:inline-block;
-    padding:0.5em 3em;
-    border-bottom: 2px solid #ededee;
-    border-radius: 0.5rem;
-    margin: 1rem;
-    box-sizing: border-box;
-    text-decoration:none;
-    text-transform:uppercase;
-    color:#ededee;
-    text-align:center;
-    transition: all 0.15s;
-}
-
-.btn-login:hover{
-    color:#DDDDDD;
-    border-color:#DDDDDD;
-}
-
-.btn-login:active{
-    color:#BBBBBB;
-    border-color:#BBBBBB;
-}
-
-
 
 </style>

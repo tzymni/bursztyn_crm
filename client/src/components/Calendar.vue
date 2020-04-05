@@ -1,11 +1,9 @@
 <template>
-    <div class="container">
-        <div class="calendar">
+        <v-card class="calendar">
             <v-app id="dayspan" v-cloak>
                 <ds-calendar-app :calendar="calendar"></ds-calendar-app>
             </v-app>
-        </div>
-    </div>
+        </v-card>
 </template>
 
 <script>
@@ -19,10 +17,8 @@
     }
 </script>
 
+
 <style>
-    body, html, #app, #dayspan {
-        font-family: Roboto, sans-serif;
-        width: 100%;
-    }
+
 </style>
 
