@@ -111,7 +111,8 @@ class UserService
             }
 
             if (isset($data['password']) && !empty($data['password'])) {
-                $user->setPassword($data['password']);
+                $encoded = password_hash($data['password'], PASSWORD_DEFAULT);
+                $user->setPassword($encoded);
             }
 
             $this->em->persist($user);
