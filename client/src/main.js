@@ -14,6 +14,19 @@ import 'material-design-icons-iconfont/dist/material-design-icons.css'
 import 'dayspan-vuetify/dist/lib/dayspan-vuetify.min.css'
 import Vuetify from 'vuetify'
 import DaySpanVuetify from 'dayspan-vuetify'
+import 'tui-calendar/dist/tui-calendar.css'
+
+
+// If you use the default popups, use this.
+import 'tui-date-picker/dist/tui-date-picker.css';
+import 'tui-time-picker/dist/tui-time-picker.css';
+import 'tui-calendar/dist/tui-calendar.css'
+import Calendar from '@toast-ui/vue-calendar/src/Calendar.vue'
+
+// If you use the default popups, use this.
+import 'tui-date-picker/dist/tui-date-picker.css';
+import 'tui-time-picker/dist/tui-time-picker.css';
+
 Vue.use(Vuetify);
 
 require('@/assets/css/global.css');
@@ -29,6 +42,7 @@ Vue.use(VueRouter);
 Vue.use(BootstrapVue)
 // Optionally install the BootstrapVue icon components plugin
 Vue.use(IconsPlugin)
+Vue.use(Calendar);
 
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faCoffee } from '@fortawesome/free-solid-svg-icons'

@@ -7,7 +7,9 @@
 <script>
     import Menu from './components/Menu.vue'
     import LoginPanel from "./components/LoginPanel";
-require('@/assets/css/global.css');
+
+    require('@/assets/css/global.css');
+
     export default {
         data() {
             return {
@@ -42,6 +44,6 @@ require('@/assets/css/global.css');
     }
     export {Menu}
 </script>
-<style >
-      @import './assets/css/global.css';
+<style>
+    @import './assets/css/global.css';
 </style>
