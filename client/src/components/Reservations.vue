@@ -1,283 +1,338 @@
 <template>
- <div>
-              <span id="menu-navi">
-                <button type="button" class="btn btn-default btn-sm move-today" data-action="move-today">Today</button>
-                <button type="button" class="btn btn-default btn-sm move-day" data-action="move-prev">
-                    <i class="calendar-icon ic-arrow-line-left" data-action="move-prev"></i>
+    <div id="app">
+        <div class="calendar-controls">
+            <div v-if="message" class="notification is-success">{{ message }}</div>
+
+            <div class="box">
+                <h4 class="title is-5">Play with the options!</h4>
+
+                <div class="field">
+                    <label class="label">Period UOM</label>
+                    <div class="control">
+                        <div class="select">
+                            <select v-model="displayPeriodUom">
+                                <option>month</option>
+                                <option>week</option>
+                                <option>year</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label">Period Count</label>
+                    <div class="control">
+                        <div class="select">
+                            <select v-model="displayPeriodCount">
+                                <option :value="1">1</option>
+                                <option :value="2">2</option>
+                                <option :value="3">3</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label">Starting day of the week</label>
+                    <div class="control">
+                        <div class="select">
+                            <select v-model="startingDayOfWeek">
+                                <option
+                                        v-for="(d, index) in dayNames"
+                                        :key="index"
+                                        :value="index"
+                                >
+                                    {{ d }}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label">Today Button</label>
+                    <label class="checkbox">
+                        <input v-model="useTodayIcons" type="checkbox" />
+                        Icons
+                    </label>
+                </div>
+
+                <div class="field">
+                    <label class="label">Themes</label>
+                    <label class="checkbox">
+                        <input v-model="useDefaultTheme" type="checkbox" />
+                        Default
+                    </label>
+                </div>
+
+                <div class="field">
+                    <label class="checkbox">
+                        <input v-model="useHolidayTheme" type="checkbox" />
+                        Holidays
+                    </label>
+                </div>
+            </div>
+
+            <div class="box">
+                <div class="field">
+                    <label class="label">Title</label>
+                    <div class="control">
+                        <input v-model="newItemTitle" class="input" type="text" />
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label">Start date</label>
+                    <div class="control">
+                        <input v-model="newItemStartDate" class="input" type="date" />
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label">End date</label>
+                    <div class="control">
+                        <input v-model="newItemEndDate" class="input" type="date" />
+                    </div>
+                </div>
+
+                <button class="button is-info" @click="clickTestAddItem">
+                    Add Item
                 </button>
-                <button type="button" class="btn btn-default btn-sm move-day" data-action="move-next">
-                    <i class="calendar-icon ic-arrow-line-right" data-action="move-next"></i>
-                </button>
-            </span>
- <calendar style="height: 800px;"
-
-           :calendars="calendarList"
-           :schedules="scheduleList"
-           :view="view"
-           :taskView="taskView"
-           :scheduleView="scheduleView"
-           :theme="theme"
-           :week="week"
-           :month="month"
-           :disableDblClick="disableDblClick"
-           :isReadOnly="isReadOnly"
-           :useCreationPopup="useCreationPopup"
-           :useDetailPopup="useDetailPopup"
-           @afterRenderSchedule="onAfterRenderSchedule"
-           @beforeCreateSchedule="onBeforeCreateSchedule"
-           @beforeDeleteSchedule="onBeforeDeleteSchedule"
-           @beforeUpdateSchedule="onBeforeUpdateSchedule"
-           @clickDayname="onClickDayname"
-           @clickSchedule="onClickSchedule"
-           @clickTimezonesCollapseBtn="onClickTimezonesCollapseBtn"
- >
-
-  <span id="renderRange" class="render-range"></span>
-
-
- </calendar>
- </div>
+            </div>
+        </div>
+        <div class="calendar-parent">
+            <calendar-view
+                    :events="items"
+                    :show-date="showDate"
+                    :time-format-options="{ hour: 'numeric', minute: '2-digit' }"
+                    :enable-drag-drop="true"
+                    :disable-past="disablePast"
+                    :disable-future="disableFuture"
+                    :show-event-times="showEventTimes"
+                    :display-period-uom="displayPeriodUom"
+                    :display-period-count="displayPeriodCount"
+                    :starting-day-of-week="startingDayOfWeek"
+                    :class="themeClasses"
+                    :period-changed-callback="periodChanged"
+                    :current-period-label="useTodayIcons ? 'icons' : ''"
+                    @drop-on-date="onDrop"
+                    @click-date="onClickDay"
+                    @click-event="onClickItem"
+            >
+                <calendar-view-header
+                        slot="header"
+                        slot-scope="{ headerProps }"
+                        :header-props="headerProps"
+                        @input="setShowDate"
+                />
+            </calendar-view>
+        </div>
+    </div>
 </template>
 <script>
- import 'tui-calendar/dist/tui-calendar.css'
- import { Calendar } from '@toast-ui/vue-calendar';
+    // Load CSS from the published version
+    require("vue-simple-calendar/static/css/default.css")
+    require("vue-simple-calendar/static/css/holidays-us.css")
+    // Load CSS from the local repo
+    //require("../../vue-simple-calendar/static/css/default.css")
+    //require("../../vue-simple-calendar/static/css/holidays-us.css")
+    import {
+        CalendarView,
+        CalendarViewHeader,
+        CalendarMathMixin,
+    } from "vue-simple-calendar" // published version
+    //} from "../../vue-simple-calendar/src/components/bundle.js" // local repo
+    export default {
+        name: "App",
+        components: {
+            CalendarView,
+            CalendarViewHeader,
+        },
+        mixins: [CalendarMathMixin],
+        data() {
+            return {
+                /* Show the current month, and give it some fake items to show */
+                showDate: this.thisMonth(1),
+                message: "",
+                startingDayOfWeek: 1,
+                disablePast: false,
+                disableFuture: false,
+                displayPeriodUom: "month",
+                displayPeriodCount: 1,
+                showEventTimes: true,
+                newItemTitle: "",
+                newItemStartDate: "",
+                newItemEndDate: "",
+                useDefaultTheme: true,
+                useHolidayTheme: true,
+                useTodayIcons: true,
+                items: [
+                    {
+                        id: "e0",
+                        startDate: "2018-01-05",
+                    },
+                    {
+                        id: "e1",
+                        startDate: this.thisMonth(15, 18, 30),
+                    },
+                    {
+                        id: "1",
+                        startDate: this.thisMonth(15),
+                        title: "Single-day item with a long title",
+                        style: 'background-color: red'
 
- export default {
-  name: 'myCalendar',
-  components: {
-   'calendar': Calendar
-  },
-  data() {
-   return {
-    calendarList: [
-     {
-      id: '0',
-      name: 'home'
-     },
-     {
-      id: '1',
-      name: 'office'
-     }
-    ],
-    scheduleList: [
-     {
-      id: '1',
-      calendarId: '1',
-      title: 'my schedule',
-      category: 'time',
-      dueDateClass: '',
-      start: '2018-10-18T22:30:00+09:00',
-      end: '2018-10-19T02:30:00+09:00'
-     },
-     {
-      id: '2',
-      calendarId: '1',
-      title: 'second schedule',
-      category: 'time',
-      dueDateClass: '',
-      start: '2020-04-09T17:30:00+09:00',
-      end: '2020-04-12T17:31:00+09:00'
-     },    {
-      id: '2',
-      calendarId: '1',
-      title: 'second schedule',
-      category: 'time',
-      dueDateClass: '',
-      start: '2020-04-09T17:30:00+09:00',
-      end: '2020-04-12T17:31:00+09:00'
-     },    {
-      id: '2',
-      calendarId: '1',
-      title: 'second schedule',
-      category: 'time',
-      dueDateClass: '',
-      start: '2020-04-09T17:30:00+09:00',
-      end: '2020-04-12T17:31:00+09:00'
-     },    {
-      id: '2',
-      calendarId: '1',
-      title: 'second schedule',
-      category: 'time',
-      dueDateClass: '',
-      start: '2020-04-09T17:30:00+09:00',
-      end: '2020-04-12T17:31:00+09:00'
-     },    {
-      id: '2',
-      calendarId: '1',
-      title: 'second schedule',
-      category: 'time',
-      dueDateClass: '',
-      start: '2020-04-09T17:30:00+09:00',
-      end: '2020-04-12T17:31:00+09:00'
-     },  {
-      id: '2',
-      calendarId: '1',
-      title: 'second schedule',
-      category: 'time',
-      dueDateClass: '',
-      start: '2020-04-09T17:30:00+09:00',
-      end: '2020-04-12T17:31:00+09:00'
-     },  {
-      id: '2',
-      calendarId: '1',
-      title: 'second schedule',
-      category: 'time',
-      dueDateClass: '',
-      start: '2020-04-09T17:30:00+09:00',
-      end: '2020-04-12T17:31:00+09:00'
-     },  {
-      id: '2',
-      calendarId: '1',
-      title: 'second schedule',
-      category: 'time',
-      dueDateClass: '',
-      start: '2020-04-09T17:30:00+09:00',
-      end: '2020-04-12T17:31:00+09:00'
-     },  {
-      id: '2',
-      calendarId: '1',
-      title: 'second schedule',
-      category: 'time',
-      dueDateClass: '',
-      start: '2020-04-09T17:30:00+09:00',
-      end: '2020-04-12T17:31:00+09:00'
-     },  {
-      id: '2',
-      calendarId: '1',
-      title: 'second schedule',
-      category: 'time',
-      dueDateClass: '',
-      start: '2020-04-09T17:30:00+09:00',
-      end: '2020-04-12T17:31:00+09:00'
-     },  {
-      id: '2',
-      calendarId: '1',
-      title: 'second schedule',
-      category: 'time',
-      dueDateClass: '',
-      start: '2020-04-09T17:30:00+09:00',
-      end: '2020-04-12T17:31:00+09:00'
-     },  {
-      id: '2',
-      calendarId: '1',
-      title: 'second schedule',
-      category: 'time',
-      dueDateClass: '',
-      start: '2020-04-09T17:30:00+09:00',
-      end: '2020-04-12T17:31:00+09:00'
-     },
-    ],
-    view: 'month',
-    taskView: true,
-    scheduleView: ['day'],
-    theme: {
-     'month.dayname.height': '30px',
-     'month.dayname.borderLeft': '1px solid #ff0000',
-     'month.dayname.textAlign': 'center',
-     'week.today.color': '#333',
-     'week.daygridLeft.width': '100px',
-     'week.timegridLeft.width': '100px'
-    },
-    week: {
-     narrowWeekend: true,
-     showTimezoneCollapseButton: true,
-     timezonesCollapsed: false
-    },
-    month: {
-     visibleWeeksCount: 6,
-     startDayOfWeek: 1,
-     visibleScheduleCount: 5,
-    },
+                    },
 
-    disableDblClick: false,
-    isReadOnly: false,
-
-    useCreationPopup: true,
-    useDetailPopup: true,
-   }
-  },
-  methods: {
-   onAfterRenderSchedule() {
-    // implement your code
-   },
-   onBeforeCreateSchedule() {
-    // implement your code
-   },
-   onBeforeDeleteSchedule() {
-    // implement your code
-   },
-   onBeforeUpdateSchedule(e) {
-
-    // this.view = 'week';
-    // this.unselect().next();
-    console.log(e);
-    console.log(this);
-    this.date = '2020-03-03';
-    // implement your code
-   },
-   onClickDayname() {
-    console.log("month");
-    // implement your code
-   },
-   onClickSchedule() {
-    // implement your code
-   },
-   onClickTimezonesCollapseBtn() {
-    // implement y
-   },
-  },
-  template: {
-   milestone: function(schedule) {
-    return '<span class="calendar-font-icon ic-milestone-b"></span> <span style="background-color: ' + schedule.bgColor + '">' + schedule.title + '</span>';
-   },
-   milestoneTitle: function() {
-    return '<span class="tui-full-calendar-left-content">MILESTONE</span>';
-   },
-   task: function(schedule) {
-    return '#' + schedule.title;
-   },
-   taskTitle: function() {
-    return '<span class="tui-full-calendar-left-content">TASK</span>';
-   },
-   allday: function(schedule) {
-  console.log(schedule);
-   },
-   alldayTitle: function() {
-    return '<span class="tui-full-calendar-left-content">ALL DAY</span>';
-   },
-   time: function(schedule) {
-    return '<strong>' + 'test' + '</strong> ' + schedule.title;
-   },
-   goingDuration: function(schedule) {
-    return '<span class="calendar-icon ic-travel-time"></span>' + schedule.goingDuration + 'min.';
-   },
-   comingDuration: function(schedule) {
-    return '<span class="calendar-icon ic-travel-time"></span>' + schedule.comingDuration + 'min.';
-   },
-   monthMoreTitleDate: function(date, dayname) {
-    var day = date.split('.')[2];
-
-    return '<span class="tui-full-calendar-month-more-title-day">' + day + '</span> <span class="tui-full-calendar-month-more-title-day-label">' + dayname + '</span>';
-   },
-   monthMoreClose: function() {
-    return '<span class="tui-full-calendar-icon tui-full-calendar-ic-close"></span>';
-   },
-   monthGridHeader: function(dayModel) {
-    var date = parseInt(dayModel.date.split('-')[2], 10);
-    var classNames = ['tui-full-calendar-weekday-grid-date'];
-
-    if (dayModel.isToday) {
-     classNames.push('tui-full-calendar-weekday-grid-date-decorator');
+                    {
+                        id: "2",
+                        startDate: this.thisMonth(7, 9, 25),
+                        endDate: this.thisMonth(10, 16, 30),
+                        title: "Multi-day item with a long title and times",
+                        style: 'background-color: red'
+                    },
+                    {
+                        id: "3",
+                        startDate: this.thisMonth(7, 9, 25),
+                        endDate: this.thisMonth(10, 16, 30),
+                        title: "Multi-day item with a long title and times",
+                        style: 'background-color: green'
+                    },
+                    {
+                        id: "4",
+                        startDate: this.thisMonth(7, 9, 25),
+                        endDate: this.thisMonth(10, 16, 30),
+                        title: "Multi-day item with a long title and times",
+                        style: 'background-color: brown'
+                    },
+                    {
+                        id: "5",
+                        startDate: this.thisMonth(7, 9, 25),
+                        endDate: this.thisMonth(10, 16, 30),
+                        title: "Multi-day item with a long title and times",
+                        style: 'background-color: grey'
+                    },
+                    {
+                        id: "e4",
+                        startDate: this.thisMonth(20),
+                        title: "My Birthday!",
+                        classes: "birthday",
+                        url: "https://en.wikipedia.org/wiki/Birthday",
+                    }
+                ],
+            }
+        },
+        computed: {
+            userLocale() {
+                return this.getDefaultBrowserLocale
+            },
+            dayNames() {
+                return this.getFormattedWeekdayNames(this.userLocale, "long", 0)
+            },
+            themeClasses() {
+                return {
+                    "theme-default": this.useDefaultTheme,
+                    "holiday-us-traditional": this.useHolidayTheme,
+                    "holiday-us-official": this.useHolidayTheme,
+                }
+            },
+        },
+        mounted() {
+            this.newItemStartDate = this.isoYearMonthDay(this.today())
+            this.newItemEndDate = this.isoYearMonthDay(this.today())
+        },
+        methods: {
+            periodChanged() {
+                // range, eventSource) {
+                // Demo does nothing with this information, just including the method to demonstrate how
+                // you can listen for changes to the displayed range and react to them (by loading items, etc.)
+                //console.log(eventSource)
+                //console.log(range)
+            },
+            thisMonth(d, h, m) {
+                const t = new Date()
+                return new Date(t.getFullYear(), t.getMonth(), d, h || 0, m || 0)
+            },
+            onClickDay(d) {
+                this.message = `You clicked: ${d.toLocaleDateString()}`
+            },
+            onClickItem(e) {
+                this.message = `You clicked: ${e.title}`
+            },
+            setShowDate(d) {
+                this.message = `Changing calendar view to ${d.toLocaleDateString()}`
+                this.showDate = d
+            },
+            onDrop(item, date) {
+                this.message = `You dropped ${item.id} on ${date.toLocaleDateString()}`
+                // Determine the delta between the old start date and the date chosen,
+                // and apply that delta to both the start and end date to move the item.
+                const eLength = this.dayDiff(item.startDate, date)
+                item.originalEvent.startDate = this.addDays(item.startDate, eLength)
+                item.originalEvent.endDate = this.addDays(item.endDate, eLength)
+            },
+            clickTestAddItem() {
+                this.items.push({
+                    startDate: this.newItemStartDate,
+                    endDate: this.newItemEndDate,
+                    title: this.newItemTitle,
+                    id:
+                        "e" +
+                        Math.random()
+                            .toString(36)
+                            .substr(2, 10),
+                })
+                this.message = "You added a calendar item!"
+            },
+        },
     }
-
-    return '<span class="' + classNames.join(' ') + '">' + date + '</span>';
-   },
-   monthGridHeaderExceed: function(hiddenSchedules) {
-    return '<span class="weekday-grid-more-schedules">+' + hiddenSchedules + '</span>';
-   },
-   monthGridFooter: function() {
-    return '';
-   },
-  }
- }
 </script>
+
+<style>
+    html,
+    body {
+        height: 100%;
+        margin: 0;
+        background-color: #f7fcff;
+    }
+    #app {
+        display: flex;
+        flex-direction: row;
+        font-family: Calibri, sans-serif;
+        width: 95vw;
+        min-width: 30rem;
+        max-width: 100rem;
+        min-height: 40rem;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .calendar-controls {
+        margin-right: 1rem;
+        min-width: 14rem;
+        max-width: 14rem;
+    }
+    .calendar-parent {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        overflow-x: hidden;
+        overflow-y: hidden;
+        max-height: 80vh;
+        background-color: white;
+    }
+    /* For long calendars, ensure each week gets sufficient height. The body of the calendar will scroll if needed */
+    .cv-wrapper.period-month.periodCount-2 .cv-week,
+    .cv-wrapper.period-month.periodCount-3 .cv-week,
+    .cv-wrapper.period-year .cv-week {
+        min-height: 6rem;
+    }
+    /* These styles are optional, to illustrate the flexbility of styling the calendar purely with CSS. */
+    /* Add some styling for items tagged with the "birthday" class */
+    .theme-default .cv-event.birthday {
+        background-color: #e0f0e0;
+        border-color: #d7e7d7;
+    }
+    .theme-default .cv-event.birthday::before {
+        content: "\1F382"; /* Birthday cake */
+        margin-right: 0.5em;
+    }
+</style>
