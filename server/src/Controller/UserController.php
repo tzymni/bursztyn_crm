@@ -94,7 +94,7 @@ class UserController extends AbstractController implements TokenAuthenticatedCon
             $status = JsonResponse::HTTP_BAD_REQUEST;
             $data = $errorDecorator->decorateError($status, "Invalid credentials");
         } else {
-            $result = $userService->getUserById($id);
+            $result = $userService->getActiveUserById($id);
 
             if ($result instanceof User) {
                 $status = JsonResponse::HTTP_OK;
@@ -115,7 +115,7 @@ class UserController extends AbstractController implements TokenAuthenticatedCon
     }
 
     /**
-     * @Route("/api/user/{email}")
+     * @Route("/api/user/{id}")
      * @Method({"DELETE"})
      * @param Request $request
      */
@@ -124,29 +124,25 @@ class UserController extends AbstractController implements TokenAuthenticatedCon
         UserService $userService,
         ResponseErrorDecoratorService $errorDecorator
     ) {
-        $email = $request->get('email');
+        $id = $request->get('id');
+        $deletedUserResponse = null;
 
-        if (!empty($email)) {
-            $user = $userService->getUserById($email);
+        if (!empty($id)) {
+            $user = $userService->getActiveUserById($id);
 
-            if ($user) {
-                $us = $userService->deleteUser($user);
+            if ($user instanceof User) {
+                $deletedUserResponse = $userService->deleteUser($user);
             } else {
+                $deletedUserResponse = $user;
             }
-        } else {
-            $status = JsonResponse::HTTP_BAD_REQUEST;
         }
 
-        if ($result instanceof User) {
-            $status = JsonResponse::HTTP_CREATED;
-            $data = [
-                'data' => [
-                    'email' => $result->getEmail()
-                ]
-            ];
+        if ($deletedUserResponse instanceof User) {
+            $status = JsonResponse::HTTP_OK;
+            $data = array();
         } else {
             $status = JsonResponse::HTTP_BAD_REQUEST;
-            $data = $errorDecorator->decorateError($status, $result);
+            $data = $errorDecorator->decorateError($status, $deletedUserResponse);
         }
 
         return new JsonResponse($data, $status);
@@ -166,26 +162,26 @@ class UserController extends AbstractController implements TokenAuthenticatedCon
 
         if (empty($data) || empty($data['email'])) {
             $status = JsonResponse::HTTP_BAD_REQUEST;
-            $data = $errorDecorator->decorateError(
+            $response = $errorDecorator->decorateError(
                 $status,
                 "Invalid data!"
             );
 
-            return new JsonResponse($data, $status);
+            return new JsonResponse($response, $status);
         }
 
-        $user = $userService->getUserById($data);
+        $user = $userService->getActiveUserById($data);
 
         $result = $userService->updateUser($user, $data);
         if ($result instanceof User) {
             $status = JsonResponse::HTTP_OK;
-            $data = array();
+            $response = array();
         } else {
             $status = JsonResponse::HTTP_BAD_REQUEST;
-            $data = $errorDecorator->decorateError($status, $result);
+            $response = $errorDecorator->decorateError($status, $result);
         }
 
-        return new JsonResponse($data, $status);
+        return new JsonResponse($response, $status);
     }
 
 }

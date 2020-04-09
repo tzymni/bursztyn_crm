@@ -2,6 +2,7 @@
 
 namespace App\Tests\Controller;
 
+use App\Entity\User;
 use App\Tests\BaseTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -235,7 +236,7 @@ class UserControllerTest extends BaseTestCase
 
         $this->assertEmpty($responseData);
 
-        $updatedUser = $userService->getUserById($this->testUser->getId());
+        $updatedUser = $userService->getActiveUserById($this->testUser->getId());
 
         $this->assertEquals($this->testUser->getId(), $updatedUser->getId());
         $this->assertEquals($this->testUser->getEmail(), $updatedUser->getEmail());
@@ -272,15 +273,15 @@ class UserControllerTest extends BaseTestCase
 
         $this->assertEmpty($responseData);
 
-        $updatedUser = $userService->getUserById($this->testUser->getId());
+        $updatedUser = $userService->getActiveUserById($this->testUser->getId());
 
         $this->assertEquals($this->testUser->getId(), $updatedUser->getId());
         $this->assertEquals($this->testUser->getEmail(), $updatedUser->getEmail());
         $this->assertNotEquals($this->testUser->getPassword(), $updatedUser->getPassword());
     }
 
-    public function testUpdateUser__WhenDataNotProvided__ReturnsErrorJsonResponse() {
-
+    public function testUpdateUser__WhenDataNotProvided__ReturnsErrorJsonResponse()
+    {
         $data = array(
             'id' => $this->testUser->getId(),
             'email' => '',
@@ -303,6 +304,64 @@ class UserControllerTest extends BaseTestCase
         $this->assertEquals(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
         $responseData = json_decode($response->getBody(), true);
         $this->assertEquals($responseData['error']['message'], 'Invalid data!');
+    }
+
+    public function testSoftDeleteUser__WhenIdIsProvided__ReturnsSuccess()
+    {
+        $container = $this->getPrivateContainer();
+        $userService = $container
+            ->get('App\Service\UserService');
+
+        $token = $this->getValidToken();
+        $response = $this->client->delete(
+            "/api/user/" . $this->testUser->getId(),
+            [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $token
+                ]
+            ]
+        );
+
+        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+        $responseData = json_decode($response->getBody(), true);
+        $this->assertEmpty($responseData);
+
+        $deletedUser = $userService->getUserById($this->testUser->getId());
+
+        $this->assertFalse($deletedUser->getIsActive());
+    }
+
+    public function testSoftDeleteUser__WhenUserAlreadyDeleted__ReturnsError()
+    {
+        $testUserId = $this->testUser->getId();
+
+        $token = $this->getValidToken();
+        $response = $this->client->delete(
+            "/api/user/" . $testUserId,
+            [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $token
+                ]
+            ]
+        );
+
+        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+        $responseData = json_decode($response->getBody(), true);
+        $this->assertEmpty($responseData);
+
+        // remove one more time
+        $newResponse = $this->client->delete(
+            "/api/user/" . $testUserId,
+            [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $token
+                ]
+            ]
+        );
+        $newResponseData = json_decode($newResponse->getBody(), true);
+
+        $this->assertEquals($newResponseData['error']['message'], "Can't find user!");
+        $this->assertEquals(Response::HTTP_BAD_REQUEST, $newResponse->getStatusCode());
     }
 
 }
