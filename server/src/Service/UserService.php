@@ -2,7 +2,6 @@
 
 namespace App\Service;
 
-//init_set('display_errors', '1');
 use App\Entity\User;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -11,6 +10,12 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Doctrine\ORM\EntityManager;
 
+/**
+ * Class UserService.
+ *
+ * @package App\Service
+ * @author Tomasz Zymni <tomasz.zymni@gmail.com>
+ */
 class UserService
 {
 
@@ -23,11 +28,15 @@ class UserService
         $this->encoder = $encoder;
     }
 
+    /**
+     * Find active user by email.
+     *
+     * @param $email
+     * @return object|string
+     */
     public function getUserByEmail($email)
     {
         try {
-//            $user = $this->em->getRepository('App:User')->findBy(array("is_active" => true, "email" => $email), array(),
-//                array(1));
             $rep = $this->em->getRepository('App:User');
 
             $user = $rep->findBy(
@@ -36,8 +45,7 @@ class UserService
                 array(1)
             );
         } catch (\Exception $exception) {
-            print_r($exception->getMessage());
-            die();
+                return $exception->getMessage();
         }
 
         if (isset($user) && isset($user[0])) {
@@ -47,10 +55,37 @@ class UserService
         }
     }
 
-    public function getUserById($id)
+    /**
+     * Find active user by id.
+     *
+     * @param $id
+     * @return object|string
+     */
+    public function getActiveUserById($id)
     {
         $user = $this->em->getRepository('App:User')->findBy(
             array("is_active" => true, "id" => $id),
+            array(),
+            array(1)
+        );
+
+        if (isset($user) && isset($user[0])) {
+            return $user[0];
+        } else {
+            return sprintf("Can't find user!");
+        }
+    }
+
+    /**
+     * Get user by id no matter of status is_active.
+     *
+     * @param $id
+     * @return object|string
+     */
+    public function getUserById($id)
+    {
+        $user = $this->em->getRepository('App:User')->findBy(
+            array("id" => $id),
             array(),
             array(1)
         );
@@ -99,6 +134,13 @@ class UserService
         }
     }
 
+    /**
+     * Update user.
+     *
+     * @param User $user
+     * @param array $data
+     * @return User|string
+     */
     public function updateUser(User $user, array $data)
     {
         try {
@@ -126,9 +168,15 @@ class UserService
         }
     }
 
+    /**
+     * Soft delete user (change is_active = 0).
+     *
+     * @param User $user
+     * @return User|string
+     */
     public function deleteUser(User $user)
     {
-        $user->setIsActive(0);
+        $user->setIsActive(false);
 
         try {
             $this->em->persist($user);

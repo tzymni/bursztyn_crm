@@ -1,7 +1,6 @@
 export const loginService = {
     login,
     logout,
-    getUsers
 };
 
 function login(username, password) {
@@ -47,28 +46,6 @@ function logout() {
     sessionStorage.removeItem("token");
 }
 
-function getUsers() {
 
-    const axios = require('axios');
-    const token = sessionStorage.getItem('token');
-    const AuthStr = 'Bearer '.concat(token);
-
-    return axios.get('http://localhost:8000/api/users', { headers: { Authorization: AuthStr } })
-        .then(function (response) {
-            return response.data;
-        })
-        .catch(function (error) {
-
-            if (error.response) {
-                const errorMessage = error.response.data.error.message;
-                return Promise.reject(errorMessage);
-            } else {
-                const errorMessage = 'Connection with server problem!';
-                return Promise.reject(errorMessage);
-            }
-
-        });
-
-}
 
 
