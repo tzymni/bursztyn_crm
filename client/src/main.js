@@ -26,9 +26,7 @@ import Calendar from '@toast-ui/vue-calendar/src/Calendar.vue'
 // If you use the default popups, use this.
 import 'tui-date-picker/dist/tui-date-picker.css';
 import 'tui-time-picker/dist/tui-time-picker.css';
-import FullCalendar from 'vue-full-calendar'
 
-Vue.use(FullCalendar)
 Vue.use(Vuetify);
 
 require('@/assets/css/global.css');
