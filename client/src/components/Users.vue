@@ -8,6 +8,19 @@
                 <b-modal @hide="setUsers()" id="user-form-modal" title="User form" hide-footer>
                     <UserForm :editId="$data.editId" v-on:childToParent="showModal"/>
                 </b-modal>
+                <b-modal id="delete-form"
+                hide-footer 
+                title="Removing user">
+                <p>Are you sure you want to delete {{$data.editId}} ?</p>
+                <div class="m-footer text-center">
+                <b-button @click="deleteUser($data.editId)" class="btn btn-danger p-2 m-3">
+                            Delete
+                </b-button>
+                <b-button @click="$bvModal.hide('delete-form')" class="btn p-2 m-3">
+                            Cancel
+                </b-button>
+                    </div>
+                </b-modal>
             </div>
 
             <div class="table-wrap">
@@ -31,7 +44,7 @@
                     </template>
                     <template v-slot:cell(is_active)="data">
                         <p class="hide">{{data.item.is_active}}</p>
-                        <a @click="deleteUser(data.item.id)"  class="btn btn-danger">
+                        <a @click="show(data.item.id)"  class="btn btn-danger">
                             <font-awesome-icon icon="trash-alt"/>
                         </a>
                         <a @click="showModal(data.item.id)" class="btn btn-primary">
@@ -76,6 +89,10 @@
                 this.editId = id;
                 this.$bvModal.show("user-form-modal");
             },
+            show (id) {
+                this.editId = id;
+                this.$bvModal.show('delete-form');
+            },
             setUsers() {
                 var self = this;
                 userService.getUsers().then(function (response) {
@@ -101,12 +118,15 @@
                             self.loading = false;
                         }
                     });
+
+                this.$bvModal.hide('delete-form');
             }
         },
         computed: {
             rows() {
                 return this.users.length
-            }
+            },
+        
         }
     }
     export {UserForm}
