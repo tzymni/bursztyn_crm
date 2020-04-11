@@ -99,7 +99,7 @@
             },
             setCottages() {
                 var self = this;
-                cottageService.getCottages().then(function (response) {
+                cottageService.getCottage().then(function (response) {
                         self.Cottages = response;
                     }
                 )
@@ -112,8 +112,8 @@
             },
             deleteUser(id) {
                 var self = this;
-                cottageService.deleteUser(id).then(function () {
-                       self.setCottages();
+                cottageService.deleteCottage(id).then(function () {
+                       self.setCottage();
                     }
                 )
                     .catch(function (error) {
