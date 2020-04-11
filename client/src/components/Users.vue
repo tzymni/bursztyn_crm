@@ -11,7 +11,7 @@
                 <b-modal id="delete-form"
                 hide-footer 
                 title="Removing user">
-                <p>Are you sure you want to delete {{$data.editId}} ?</p>
+                <p>Are you sure you want to delete this user?</p>
                 <div class="m-footer text-center">
                 <b-button @click="deleteUser($data.editId)" class="btn btn-danger p-2 m-3">
                             Delete
