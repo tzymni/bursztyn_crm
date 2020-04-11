@@ -22,7 +22,7 @@ class UserControllerTest extends BaseTestCase
      *  and all assets have is_active = true.
      *
      */
-    public function testGetUsers__whenValidToken_and_all_Users_are_Active()
+    public function testGetUsers__whenValidTokenAndAllUsersAreActive__ResponseSuccess()
     {
         $token = $this->getValidToken();
 
