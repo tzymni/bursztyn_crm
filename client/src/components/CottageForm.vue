@@ -1,0 +1,120 @@
+<template>
+    <div>
+        <form @submit.prevent="handleSubmit">
+
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" v-model="name" name="name"
+                       class="form-control"
+                       :class="{ 'is-invalid': submitted && !name }"/>
+                <div v-show="submitted && !name" class="invalid-feedback">Cottages' name is required</div>
+            </div>
+
+            <div class="form-group">
+                <label for="capacity">Capacity</label>
+                <input type="text" v-model="capacity" name="capacity"
+                       class="form-control"
+                       :class="{ 'is-invalid': submitted && !capacity }"/>
+                <div v-show="submitted && !name" class="invalid-feedback">Cottages' capacity is required</div>
+            </div>
+
+            <div class="form-group">
+                <label htmlFor="color">Colour</label>
+                <input type="last_name" v-model="color" name="color" class="form-control"
+                       :class="{ 'is-invalid': submitted && !color }"/>
+            </div>
+
+            <div class="form-group">
+                <label htmlFor="extra_info">Other Information</label>
+                <input type="last_name" v-model="extra_info" name="extra_info" class="form-control"
+                       :class="{ 'is-invalid': submitted && !extra_info }"/>
+            </div>
+
+            <div class="form-group">
+                <button class="btn btn-primary" :disabled="loading">Save and close</button>
+                <img v-show="loading"
+                     src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA=="/>
+            </div>
+            <div v-if="errorNotify" class="alert alert-danger">{{errorNotify}}</div>
+        </form>
+    </div>
+</template>
+
+<script>
+    import {cottageService} from "../_services/cottage.service";
+
+    export default {
+        name: "cottageForm",
+        data() {
+            return {
+                childMessage: '',
+                id: null,
+                name: "",
+                capacity: "",
+                color: "",
+                extra_info: "",
+                submitted: false,
+                returnUrl: "",
+                errorNotify: "",
+                loading: false,                
+            };
+        },
+        mounted() {
+            if (typeof this.editId != 'undefined' && this.editId != null) {
+                this.getCottageById(this.editId);
+            }
+        },
+        props: {
+            editId: Number,
+        },
+        methods: {
+            handleSubmit() {
+                this.submitted = true;
+                let id = this.id;
+                const {name, capacity, color, extra_info} = this;
+
+                // stop here if form is invalid
+                if (!(name && capacity) && !id) {
+                    return;
+                }
+
+                const data = {name, capacity, color, extra_info, id};
+
+                var self = this;
+
+                cottageService.saveCottage(data).then(function () {
+                        self.$bvModal.hide("cottage-form-modal");
+                    }
+                )
+                    .catch(function (error) {
+                        if (error) {
+                            self.errorNotify = error;
+                        }
+                    });
+            },
+            getCottageById(id) {
+
+                var self = this;
+                cottageService.getCottage(id).then(function (data) {
+
+                        self.name = data.name;
+                        self.capacity = data.capacity;
+                        self.color = data.color;
+                        self.id = data.id;
+                    }
+                )
+                    .catch(function (error) {
+                        if (error) {
+                            self.errorNotify = error;
+                        }
+                    });
+
+            }
+
+        }
+    }
+</script>
+
+<style scoped>
+
+</style>

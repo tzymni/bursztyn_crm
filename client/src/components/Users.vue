@@ -1,6 +1,6 @@
 <template>
     <div class="users">
-        <h1>Users list</h1>
+        <h1><font-awesome-icon icon="user"/> || {{ header }}</h1>
         <div class="container">
 
             <div>
@@ -8,19 +8,7 @@
                 <b-modal @hide="setUsers()" id="user-form-modal" title="User form" hide-footer>
                     <UserForm :editId="$data.editId" v-on:childToParent="showModal"/>
                 </b-modal>
-                <b-modal id="delete-form"
-                hide-footer 
-                title="Removing user">
-                <p>Are you sure you want to delete this user?</p>
-                <div class="m-footer text-center">
-                <b-button @click="deleteUser($data.editId)" class="btn btn-danger p-2 m-3">
-                            Delete
-                </b-button>
-                <b-button @click="$bvModal.hide('delete-form')" class="btn p-2 m-3">
-                            Cancel
-                </b-button>
-                    </div>
-                </b-modal>
+
             </div>
 
             <div class="table-wrap">
@@ -34,8 +22,8 @@
                     </template>
                     <template v-slot:cell(id)="data">
                         <p class="hide">{{data.item.id}}</p>
-                        <p class="icon">
-                            <font-awesome-icon icon="user"/>
+                        <p class="text-center">
+                            <font-awesome-icon class="icon" icon="user"/>
                         </p>
                     </template>
                     <template v-slot:head(is_active)="data">
@@ -45,7 +33,7 @@
                     <template v-slot:cell(is_active)="data">
                         <p class="hide">{{data.item.is_active}}</p>
                         <a @click="show(data.item.id)"  class="btn btn-danger">
-                            <font-awesome-icon icon="trash-alt"/>
+                            <font-awesome-icon  icon="trash-alt"/>
                         </a>
                         <a @click="showModal(data.item.id)" class="btn btn-primary">
                             <font-awesome-icon icon="edit"/>
@@ -60,6 +48,19 @@
                 ></b-pagination>
             </div>
         </div>
+            <b-modal id="delete-form"
+                hide-footer 
+                title="Removing user">
+                <p>Are you sure you want to delete this user?</p>
+                <div class="m-footer text-center">
+                <b-button @click="deleteUser($data.editId)" class="btn btn-danger p-2 m-3">
+                            Delete
+                </b-button>
+                <b-button @click="$bvModal.hide('delete-form')" class="btn p-2 m-3">
+                            Cancel
+                </b-button>
+                    </div>
+            </b-modal>
     </div>
 
 </template>
@@ -73,6 +74,7 @@
         components: {UserForm},
         data: function () {
             return {
+                header: "Users",
                 users: [],
                 perPage: 10,
                 currentPage: 1,
@@ -135,7 +137,6 @@
     .users {
         width: 100%;
         height: 100%;
-       /* min-height: 91.5vh;*/
         max-width: 50vw;
     }
 
@@ -167,9 +168,9 @@
     }
 
     .icon {
-        width: 10px;
-        height: 10px;
-        padding: 0;
+        width: 20px;
+        height:  20px;
+        padding: 0px;
         margin: 0 auto;
     }
 
