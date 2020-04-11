@@ -16,7 +16,7 @@
                 <b-table id="Cottages"
                          :per-page="perPage"
                          :current-page="currentPage" striped small bordered class="table-cottages" :fields="fields"
-                         :items="Cottages"
+                         :items="cottages"
                          thead-class="thead-dark">
                     <template v-slot:head(id)="data">
                         <p class="hide">{{data.field.id}}</p>
@@ -97,7 +97,7 @@
                 this.editId = id;
                 this.$bvModal.show('delete-form');
             },
-            setCottages() {
+            setCottage() {
                 var self = this;
                 cottageService.getCottage().then(function (response) {
                         self.Cottages = response;
