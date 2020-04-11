@@ -2,8 +2,6 @@
 
 namespace App\Controller;
 
-
-
 use App\Entity\Cottages;
 use App\Service\CottageService;
 use App\Service\ResponseErrorDecoratorService;
@@ -14,9 +12,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-class CottagesController extends AbstractController implements TokenAuthenticatedController  {
-
-
+class CottagesController extends AbstractController implements TokenAuthenticatedController
+{
 
     /**
      * Creates new user by given data
@@ -28,23 +25,25 @@ class CottagesController extends AbstractController implements TokenAuthenticate
      * @param ResponseErrorDecoratorService $errorDecorator
      * @return JsonResponse
      */
-    public function addCottage(Request $request, CottageService $cottageService, ResponseErrorDecoratorService $errorDecorator) {
+    public function addCottage(
+        Request $request,
+        CottageService $cottageService,
+        ResponseErrorDecoratorService $errorDecorator
+    ) {
         $body = $request->getContent();
         $data = json_decode($body, true);
-
-
 
         if (is_null($data) || !isset($data['name']) || !isset($data['color'])) {
             $status = JsonResponse::HTTP_BAD_REQUEST;
             $data = $errorDecorator->decorateError(
-                    JsonResponse::HTTP_BAD_REQUEST, "Test"
+                JsonResponse::HTTP_BAD_REQUEST,
+                "Test"
             );
 
             return new JsonResponse($data, $status);
         }
 
         $result = $cottageService->createCottage($data);
-
 
         if ($result instanceof Cottages) {
             $status = JsonResponse::HTTP_CREATED;
@@ -67,37 +66,34 @@ class CottagesController extends AbstractController implements TokenAuthenticate
      * @param ResponseErrorDecoratorService $errorDecorator
      */
     public function getCottagesList(
-    ResponseErrorDecoratorService $errorDecorator
+        ResponseErrorDecoratorService $errorDecorator
     ) {
-
         try {
-            $users = $this->getDoctrine()->getRepository(Cottages::class)->findAllActive();
+            $cottagesResponse = $this->getDoctrine()->getRepository(Cottages::class)->findAllActive();
             $status = JsonResponse::HTTP_OK;
-            throw new \Exception("TEST");
-        }
-        catch (\Exception $exception) {
-           $status = JsonResponse::HTTP_NOT_FOUND;
-            $users = null;
-
+        } catch (\Exception $exception) {
+            $status = JsonResponse::HTTP_NOT_FOUND;
+            $cottagesResponse = $exception->getMessage();
         }
 
-        return new JsonResponse($users, $status);
+        return new JsonResponse($cottagesResponse, $status);
     }
 
-        /**
+    /**
      * @Route("/api/cottage/{id}")
      * @Method("GET")
      * @param ResponseErrorDecoratorService $errorDecorator
      */
-    public function getCottage(Request $request, CottageService $cottageService, ResponseErrorDecoratorService $errorDecorator) {
+    public function getCottage(
+        Request $request,
+        CottageService $cottageService,
+        ResponseErrorDecoratorService $errorDecorator
+    ) {
         $id = $request->get('id');
-
 
         if (!empty($id)) {
             $cottage = $cottageService->getCottage($id);
         }
-
-
 
         if ($cottage instanceof Cottages) {
             $status = JsonResponse::HTTP_CREATED;
@@ -112,20 +108,19 @@ class CottagesController extends AbstractController implements TokenAuthenticate
             $data = $errorDecorator->decorateError($status);
         }
 
-
         return new JsonResponse($data, $status);
     }
-    
-    
-    
-    
-        /**
+
+    /**
      * @Route("/api/cottage/{id}")
      * @Method("PUT")
      */
-    public function updateCottage(Cottages $cottage, Request $request, CottageService $cottageService, ResponseErrorDecoratorService $errorDecorator) {
-   
-
+    public function updateCottage(
+        Cottages $cottage,
+        Request $request,
+        CottageService $cottageService,
+        ResponseErrorDecoratorService $errorDecorator
+    ) {
 //
         $body = $request->getContent();
         $data = json_decode($body, true);
@@ -133,7 +128,8 @@ class CottagesController extends AbstractController implements TokenAuthenticate
         if (is_null($data)) {
             $status = JsonResponse::HTTP_BAD_REQUEST;
             $data = $errorDecorator->decorateError(
-                JsonResponse::HTTP_BAD_REQUEST, "Invalid JSON format"
+                JsonResponse::HTTP_BAD_REQUEST,
+                "Invalid JSON format"
             );
 
             return new JsonResponse($data, $status);
@@ -159,16 +155,12 @@ class CottagesController extends AbstractController implements TokenAuthenticate
 //        
 //
     }
-    
-    
-    
-    
-
 
     /**
      * @Route("/{id}", name="cottages_delete", methods="DELETE")
      */
-    public function delete(Request $request, Cottages $cottage): Response {
+    public function delete(Request $request, Cottages $cottage): Response
+    {
         if ($this->isCsrfTokenValid('delete' . $cottage->getId(), $request->request->get('_token'))) {
             $em = $this->getDoctrine()->getManager();
             $em->remove($cottage);

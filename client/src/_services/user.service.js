@@ -55,6 +55,8 @@ function createUser(data) {
 }
 
 function getUsers() {
+    const token = sessionStorage.getItem('token');
+    const AuthStr = 'Bearer '.concat(token);
 
     return axios.get('http://localhost:8000/api/users', {headers: {Authorization: AuthStr}})
         .then(function (response) {
