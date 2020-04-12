@@ -11,17 +11,17 @@
             </div>
 
             <div class="form-group">
-                <label for="capacity">Capacity</label>
-                <input type="text" v-model="capacity" name="capacity"
+                <label for="max_guests_number">Capacity</label>
+                <input type="text" v-model="max_guests_number" name="max_guests_number"
                        class="form-control"
-                       :class="{ 'is-invalid': submitted && !capacity }"/>
-                <div v-show="submitted && !capacity" class="invalid-feedback">Cottages' capacity is required</div>
+                       :class="{ 'is-invalid': submitted && !max_guests_number }"/>
+                <div v-show="submitted && !max_guests_number" class="invalid-feedback">Cottages' max_guests_number is required</div>
             </div>
 
             <div class="form-group">
                 <label htmlFor="color">Colour</label>
-                <input type="last_name" v-model="color" name="color" class="form-control"
-                       :class="{ 'is-invalid': submitted && !color }"/>
+                <compact-picker v-model="color" name="color"
+                :class="{ 'is-invalid': submitted && !color }" @input="updateValue" :value="color" />
             </div>
 
             <div class="form-group">
@@ -42,15 +42,20 @@
 
 <script>
     import {cottageService} from "../_services/cottage.service";
+    import {Compact} from 'vue-color'
 
     export default {
         name: "cottageForm",
+        components: {
+      'compact-picker': Compact
+    },
+        
         data() {
             return {
                 childMessage: '',
                 id: null,
                 name: "",
-                capacity: 0,
+                max_guests_number: 0,
                 color: "",
                 extra_info: "",
                 submitted: false,
@@ -71,14 +76,14 @@
             handleSubmit() {
                 this.submitted = true;
                 let id = this.id;
-                const {name, capacity, color, extra_info} = this;
+                const {name, max_guests_number, color, extra_info} = this;
 
                 // stop here if form is invalid
                 if (!(name && color) && !id) {
                     return;
                 }
 
-                const data = {name, capacity, color, extra_info, id};
+                const data = {name, max_guests_number, color, extra_info, id};
 
                 var self = this;
 
@@ -111,6 +116,9 @@
                         }
                     });
 
+            },
+            updateValue (value) {
+                this.color = value.hex
             }
 
         }

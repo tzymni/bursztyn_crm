@@ -17,6 +17,7 @@ import DaySpanVuetify from 'dayspan-vuetify'
 import 'tui-calendar/dist/tui-calendar.css'
 
 
+
 // If you use the default popups, use this.
 import 'tui-date-picker/dist/tui-date-picker.css';
 import 'tui-time-picker/dist/tui-time-picker.css';
@@ -52,10 +53,12 @@ library.add(faCoffee)
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.config.productionTip = false
 
+
 new Vue({
   el: '#app',
   router,
-  components: { App },
+  components: { App,
+  },
   template: '<App/>',
   render: h => h(App),
 }).$mount('#app')

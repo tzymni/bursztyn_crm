@@ -3,7 +3,7 @@
                     dark
                     flex
                     sticky
-                class="footer p-3 text-center"
+                class="p-3 text-center footer"
 
         >
         <v-card-text padless class="text-left footer-div">
@@ -66,6 +66,7 @@
     .footer {
         position:sticky;
         width: 100%;
+        min-height: 47px !important;
         overflow: hidden;
         z-index: 666;
         
