@@ -37,7 +37,7 @@ function updateCottage(data) {
 }
 
 function createCottage(data) {
-    return axios.post('http://localhost:8000/cottages/create', data, {headers: {Authorization: AuthStr}})
+    return axios.post('http://localhost:8000/cottage/add', data, {headers: {Authorization: AuthStr}})
         .then(function (response) {
             return response.data;
         })
@@ -56,7 +56,10 @@ function createCottage(data) {
 
 function getCottages() {
 
-    return axios.get('http://localhost:8000/api/cottages', {headers: {Authorization: AuthStr}})
+    const token = sessionStorage.getItem('token');
+    const AuthStr = 'Bearer '.concat(token);
+
+    return axios.get('http://localhost:8000/cottage/list', {headers: {Authorization: AuthStr}})
         .then(function (response) {
             return response.data;
         })

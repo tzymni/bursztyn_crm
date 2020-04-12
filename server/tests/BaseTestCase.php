@@ -2,6 +2,7 @@
 
 namespace App\Tests;
 
+use App\Entity\Cottages;
 use App\Entity\FootballLeague;
 use App\Entity\FootballTeam;
 use App\Entity\User;
@@ -36,12 +37,24 @@ class BaseTestCase extends KernelTestCase
      */
     protected $testInactiveUser;
 
+    /**
+     * @var Cottages
+     */
+    protected $testCottage;
+
+    /**
+     * @var string
+     */
+    const testCottageName = 'CottageTest';
+
     public function setUp()
     {
-        $this->client = new \GuzzleHttp\Client([
-            'base_uri' => 'http://localhost:8000/api/',
-            'exceptions' => false
-        ]);
+        $this->client = new \GuzzleHttp\Client(
+            [
+                'base_uri' => 'http://localhost:8000/api/',
+                'exceptions' => false
+            ]
+        );
 
         $container = $this->getPrivateContainer();
 
@@ -50,10 +63,31 @@ class BaseTestCase extends KernelTestCase
             ->getManager();
 
         $this->truncateTestUsers();
-
+        $this->truncateTestCottages(self::testCottageName);
         $this->testUser = $this->createTestUser();
-        $this->testInactiveUser = $this->createTestUser(self::TEST_INACTIVE_USER_EMAIL,
-            self::TEST_INACTIVE_USER_PASSWORD);
+        $this->testInactiveUser = $this->createTestUser(
+            self::TEST_INACTIVE_USER_EMAIL,
+            self::TEST_INACTIVE_USER_PASSWORD
+        );
+
+        $this->testCottage = $this->createTestCottage(self::testCottageName);
+    }
+
+    protected function truncateTestCottages($testCottageName)
+    {
+        $em = $this->em;
+        $testNames = array($testCottageName);
+
+        $testNamesString = "'" . implode("','", $testNames) . "'";
+        $query = $em->createQuery(
+            "DELETE App:Cottages u WHERE u.name IN ({$testNamesString})"
+        );
+        $query->execute();
+        parent::tearDown();
+
+        $this->em->close();
+        $this->em = null; // avoid memory leaks
+
     }
 
     protected function truncateTestUsers()
@@ -62,12 +96,11 @@ class BaseTestCase extends KernelTestCase
         $testEmails = array(self::TEST_USER_EMAIL, self::TEST_INACTIVE_USER_EMAIL);
 
         $testEmailsString = "'" . implode("','", $testEmails) . "'";
-        $query = $em->createQuery("DELETE App:User u WHERE u.email IN ({$testEmailsString})  OR u.email LIKE '%@test-create.pl'");
+        $query = $em->createQuery(
+            "DELETE App:User u WHERE u.email IN ({$testEmailsString})  OR u.email LIKE '%@test-create.pl'"
+        );
         $query->execute();
         parent::tearDown();
-
-        $this->em->close();
-        $this->em = null; // avoid memory leaks
     }
 
     protected function createTestUser($email = self::TEST_USER_EMAIL, $password = self::TEST_USER_PASSWORD)
@@ -95,6 +128,20 @@ class BaseTestCase extends KernelTestCase
     }
 
     /**
+     * @param $name
+     * @return mixed
+     */
+    protected function createTestCottage($name)
+    {
+        $container = $this->getPrivateContainer();
+
+        $cottageService = $container->get('App\Service\CottageService');
+
+        $cottageData = array('name' => $name, 'color' => '#f8fc00');
+        return $cottageService->createCottage($cottageData);
+    }
+
+    /**
      * @param string $name
      * @return FootballLeague|string
      */
@@ -104,9 +151,11 @@ class BaseTestCase extends KernelTestCase
         $leagueService = $container
             ->get('App\Service\FootballLeagueService');
 
-        return $leagueService->createLeague([
-            'name' => $name
-        ]);
+        return $leagueService->createLeague(
+            [
+                'name' => $name
+            ]
+        );
     }
 
     /**
@@ -124,11 +173,13 @@ class BaseTestCase extends KernelTestCase
         $teamService = $container
             ->get('App\Service\FootballTeamService');
 
-        return $teamService->createTeam([
-            'name' => $name,
-            'strip' => 'Strip 1',
-            'league_id' => $league->getId()
-        ]);
+        return $teamService->createTeam(
+            [
+                'name' => $name,
+                'strip' => 'Strip 1',
+                'league_id' => $league->getId()
+            ]
+        );
     }
 
     /**
@@ -147,9 +198,11 @@ class BaseTestCase extends KernelTestCase
         $authService = $container
             ->get('App\Service\AuthService');
 
-        $jwt = $authService->authenticate([
-            'email' => $user->getEmail()
-        ]);
+        $jwt = $authService->authenticate(
+            [
+                'email' => $user->getEmail()
+            ]
+        );
 
         return $jwt;
     }
@@ -171,4 +224,5 @@ class BaseTestCase extends KernelTestCase
     {
         parent::tearDown();
     }
+
 }

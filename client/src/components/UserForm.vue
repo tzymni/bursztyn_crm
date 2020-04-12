@@ -79,7 +79,6 @@
                     return;
                 }
 
-
                 const data = {email, password, first_name, last_name, id};
 
                 var self = this;

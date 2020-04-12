@@ -15,7 +15,7 @@
                 <input type="text" v-model="capacity" name="capacity"
                        class="form-control"
                        :class="{ 'is-invalid': submitted && !capacity }"/>
-                <div v-show="submitted && !name" class="invalid-feedback">Cottages' capacity is required</div>
+                <div v-show="submitted && !capacity" class="invalid-feedback">Cottages' capacity is required</div>
             </div>
 
             <div class="form-group">
@@ -26,7 +26,7 @@
 
             <div class="form-group">
                 <label htmlFor="extra_info">Other Information</label>
-                <input type="last_name" v-model="extra_info" name="extra_info" class="form-control"
+                <input type="extra_info" v-model="extra_info" name="extra_info" class="form-control"
                        :class="{ 'is-invalid': submitted && !extra_info }"/>
             </div>
 
@@ -50,7 +50,7 @@
                 childMessage: '',
                 id: null,
                 name: "",
-                capacity: "",
+                capacity: 0,
                 color: "",
                 extra_info: "",
                 submitted: false,
@@ -74,7 +74,7 @@
                 const {name, capacity, color, extra_info} = this;
 
                 // stop here if form is invalid
-                if (!(name && capacity) && !id) {
+                if (!(name && color) && !id) {
                     return;
                 }
 
@@ -97,9 +97,11 @@
                 var self = this;
                 cottageService.getCottage(id).then(function (data) {
 
+                    console.log(data);
                         self.name = data.name;
-                        self.capacity = data.capacity;
+                        self.max_guests_number = data.max_guests_number;
                         self.color = data.color;
+                        self.extra_info = data.extra_info;
                         self.id = data.id;
                     }
                 )

@@ -1,6 +1,9 @@
 <template>
     <div class="users">
-        <h1><font-awesome-icon icon="user"/> || {{ header }}</h1>
+        <h1>
+            <font-awesome-icon icon="user"/>
+            || {{ header }}
+        </h1>
         <div class="container">
 
             <div>
@@ -32,8 +35,8 @@
                     </template>
                     <template v-slot:cell(is_active)="data">
                         <p class="hide">{{data.item.is_active}}</p>
-                        <a @click="show(data.item.id)"  class="btn btn-danger">
-                            <font-awesome-icon  icon="trash-alt"/>
+                        <a @click="show(data.item.id)" class="btn btn-danger">
+                            <font-awesome-icon icon="trash-alt"/>
                         </a>
                         <a @click="showModal(data.item.id)" class="btn btn-primary">
                             <font-awesome-icon icon="edit"/>
@@ -48,19 +51,22 @@
                 ></b-pagination>
             </div>
         </div>
-            <b-modal id="delete-form"
-                hide-footer 
-                title="Removing user">
-                <p>Are you sure you want to delete this user?</p>
-                <div class="m-footer text-center">
+
+
+        <!--    TODO:    CHANGE TO EXTERNAL WIDGET OR SINGLE COMPONENT-->
+        <b-modal id="delete-form"
+                 hide-footer
+                 title="Removing user">
+            <p>Are you sure you want to delete this user?</p>
+            <div class="m-footer text-center">
                 <b-button @click="deleteUser($data.editId)" class="btn btn-danger p-2 m-3">
-                            Delete
+                    Delete
                 </b-button>
                 <b-button @click="$bvModal.hide('delete-form')" class="btn p-2 m-3">
-                            Cancel
+                    Cancel
                 </b-button>
-                    </div>
-            </b-modal>
+            </div>
+        </b-modal>
     </div>
 
 </template>
@@ -91,7 +97,7 @@
                 this.editId = id;
                 this.$bvModal.show("user-form-modal");
             },
-            show (id) {
+            show(id) {
                 this.editId = id;
                 this.$bvModal.show('delete-form');
             },
@@ -111,7 +117,7 @@
             deleteUser(id) {
                 var self = this;
                 userService.deleteUser(id).then(function () {
-                       self.setUsers();
+                        self.setUsers();
                     }
                 )
                     .catch(function (error) {
@@ -128,7 +134,7 @@
             rows() {
                 return this.users.length
             },
-        
+
         }
     }
     export {UserForm}
@@ -169,7 +175,7 @@
 
     .icon {
         width: 20px;
-        height:  20px;
+        height: 20px;
         padding: 0px;
         margin: 0 auto;
     }

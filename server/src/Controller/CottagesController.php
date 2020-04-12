@@ -18,7 +18,7 @@ class CottagesController extends AbstractController implements TokenAuthenticate
     /**
      * Creates new user by given data
      *
-     * @Route("/cottage/new")
+     * @Route("/cottage/add")
      * @Method("POST")
      * @param Request $request
      * @param CottageService $cottageService
@@ -36,8 +36,8 @@ class CottagesController extends AbstractController implements TokenAuthenticate
         if (is_null($data) || !isset($data['name']) || !isset($data['color'])) {
             $status = JsonResponse::HTTP_BAD_REQUEST;
             $data = $errorDecorator->decorateError(
-                JsonResponse::HTTP_BAD_REQUEST,
-                "Test"
+                $status,
+                "Invalid data!"
             );
 
             return new JsonResponse($data, $status);
@@ -46,12 +46,8 @@ class CottagesController extends AbstractController implements TokenAuthenticate
         $result = $cottageService->createCottage($data);
 
         if ($result instanceof Cottages) {
-            $status = JsonResponse::HTTP_CREATED;
-            $data = [
-                'data' => [
-                    'id' => $result->getId()
-                ]
-            ];
+            $status = JsonResponse::HTTP_OK;
+            $data = array();
         } else {
             $status = JsonResponse::HTTP_BAD_REQUEST;
             $data = $errorDecorator->decorateError($status, $result);
@@ -61,7 +57,7 @@ class CottagesController extends AbstractController implements TokenAuthenticate
     }
 
     /**
-     * @Route("/api/cottages")
+     * @Route("/cottage/list")
      * @Method("GET")
      * @param ResponseErrorDecoratorService $errorDecorator
      */
@@ -80,7 +76,7 @@ class CottagesController extends AbstractController implements TokenAuthenticate
     }
 
     /**
-     * @Route("/api/cottage/{id}")
+     * @Route("/cottage/{id}")
      * @Method("GET")
      * @param ResponseErrorDecoratorService $errorDecorator
      */
