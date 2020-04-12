@@ -89,7 +89,7 @@ class Cottages
         return $this;
     }
 
-    public function getExtraInfo(): string
+    public function getExtraInfo()
     {
         return $this->extra_info;
     }

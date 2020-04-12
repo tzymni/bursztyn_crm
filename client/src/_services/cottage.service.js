@@ -19,7 +19,7 @@ function saveCottage(data) {
 }
 
 function updateCottage(data) {
-    return axios.put('http://localhost:8000/api/cottage/' + data.id, data, {headers: {Authorization: AuthStr}})
+    return axios.put('http://localhost:8000/cottage/' + data.id, data, {headers: {Authorization: AuthStr}})
         .then(function (response) {
             return response.data;
         })
@@ -37,7 +37,7 @@ function updateCottage(data) {
 }
 
 function createCottage(data) {
-    return axios.post('http://localhost:8000/cottage/add', data, {headers: {Authorization: AuthStr}})
+    return axios.post('http://localhost:8000/cottage', data, {headers: {Authorization: AuthStr}})
         .then(function (response) {
             return response.data;
         })
@@ -79,7 +79,7 @@ function getCottages() {
 
 function deleteCottage(id) {
 
-    return axios.delete('http://localhost:8000/api/cottage/' + id, {headers: {Authorization: AuthStr}})
+    return axios.delete('http://localhost:8000/cottage/' + id, {headers: {Authorization: AuthStr}})
         .then(function (response) {
             return response.data;
         })
@@ -98,7 +98,7 @@ function deleteCottage(id) {
 
 function getCottage(id) {
 
-    return axios.get('http://localhost:8000/api/cottage/' + id, {headers: {Authorization: AuthStr}})
+    return axios.get('http://localhost:8000/cottage/' + id, {headers: {Authorization: AuthStr}})
         .then(function (response) {
             return response.data;
         })

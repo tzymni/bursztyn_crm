@@ -60,6 +60,7 @@ class CottageService
         $color = empty($data['color']) ? null : $data['color'];
         $extra_info = empty($data['extra_info']) ? null : $data['extra_info'];
         $maxGuestsNumber = empty($data['max_guests_number']) ? null : $data['max_guests_number'];
+        $isActive = isset($data['is_active']) ? $data['is_active'] : true;
 
         if (!empty($color) && !$this->validHexColor($color)) {
             return 'Invalid hex color!';
@@ -70,7 +71,7 @@ class CottageService
         $cottage->setName($name);
         $cottage->setColor($color);
         $cottage->setExtraInfo($extra_info);
-        $cottage->setIsActive(true);
+        $cottage->setIsActive($isActive);
         $cottage->setMaxGuestsNumber($maxGuestsNumber);
 
         try {
@@ -84,7 +85,7 @@ class CottageService
         }
     }
 
-    public function getCottage($id)
+    public function getCottageById($id)
     {
         $cottage = $this->em->getRepository('App:Cottages')
             ->findOneBy(['id' => $id]);
@@ -96,19 +97,43 @@ class CottageService
         }
     }
 
+    /**
+     * Find active cottage by id.
+     *
+     * @param $id
+     * @return object|string
+     */
+    public function getActiveCottageById($id)
+    {
+        $cottage = $this->em->getRepository('App:Cottages')->findBy(
+            array("is_active" => true, "id" => $id),
+            array(),
+            array(1)
+        );
+
+        if (isset($cottage) && isset($cottage[0])) {
+            return $cottage[0];
+        } else {
+            return sprintf("Can't find cottage!");
+        }
+    }
+
     public function updateCottage(Cottages $cottage, array $data)
     {
         try {
-            if (isset($data['name'])) {
+            if (!empty($data['name'])) {
                 $cottage->setName($data['name']);
             }
 
-            if (isset($data['color'])) {
+            if (!empty($data['color'])) {
                 $cottage->setColor($data['color']);
             }
 
-            if (isset($data['extra_info'])) {
+            if (!empty($data['extra_info'])) {
                 $cottage->setExtraInfo($data['extra_info']);
+            }
+            if (!empty($data['max_guests_number'])) {
+                $cottage->setMaxGuestsNumber($data['max_guests_number']);
             }
 
             $this->em->persist($cottage);
@@ -117,6 +142,25 @@ class CottageService
             return $cottage;
         } catch (\Exception $ex) {
             return "Unable to update cottage " . $ex->getMessage();
+        }
+    }
+
+    /**
+     * Soft delete user (change is_active = 0).
+     *
+     * @param Cottages $cottages
+     * @return Cottagesr|string
+     */
+    public function deleteCottage(Cottages $cottages)
+    {
+        $cottages->setIsActive(false);
+
+        try {
+            $this->em->persist($cottages);
+            $this->em->flush();
+            return $cottages;
+        } catch (Exception $ex) {
+            return "Cant remove cottager!";
         }
     }
 

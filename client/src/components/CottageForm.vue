@@ -11,17 +11,18 @@
             </div>
 
             <div class="form-group">
-                <label for="capacity">Capacity</label>
-                <input type="text" v-model="capacity" name="capacity"
+                <label for="max_guests_number">Capacity</label>
+                <input type="text" v-model="max_guests_number" name="capacity"
                        class="form-control"
-                       :class="{ 'is-invalid': submitted && !capacity }"/>
-                <div v-show="submitted && !capacity" class="invalid-feedback">Cottages' capacity is required</div>
+                       :class="{ 'is-invalid': submitted && !max_guests_number }"/>
+
             </div>
 
             <div class="form-group">
                 <label htmlFor="color">Colour</label>
-                <input type="last_name" v-model="color" name="color" class="form-control"
+                <input type="color" v-model="color" name="color" class="form-control"
                        :class="{ 'is-invalid': submitted && !color }"/>
+                <div v-show="submitted && !color" class="invalid-feedback">Cottages' color is required</div>
             </div>
 
             <div class="form-group">
@@ -50,13 +51,13 @@
                 childMessage: '',
                 id: null,
                 name: "",
-                capacity: 0,
+                max_guests_number: null,
                 color: "",
                 extra_info: "",
                 submitted: false,
                 returnUrl: "",
                 errorNotify: "",
-                loading: false,                
+                loading: false,
             };
         },
         mounted() {
@@ -71,14 +72,14 @@
             handleSubmit() {
                 this.submitted = true;
                 let id = this.id;
-                const {name, capacity, color, extra_info} = this;
+                const {name, max_guests_number, color, extra_info} = this;
 
                 // stop here if form is invalid
                 if (!(name && color) && !id) {
                     return;
                 }
 
-                const data = {name, capacity, color, extra_info, id};
+                const data = {name, max_guests_number, color, extra_info, id};
 
                 var self = this;
 
@@ -97,7 +98,6 @@
                 var self = this;
                 cottageService.getCottage(id).then(function (data) {
 
-                    console.log(data);
                         self.name = data.name;
                         self.max_guests_number = data.max_guests_number;
                         self.color = data.color;

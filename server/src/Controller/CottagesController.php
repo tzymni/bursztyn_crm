@@ -88,82 +88,94 @@ class CottagesController extends AbstractController implements TokenAuthenticate
         $id = $request->get('id');
 
         if (!empty($id)) {
-            $cottage = $cottageService->getCottage($id);
+            $cottageResponse = $cottageService->getActiveCottageById($id);
         }
 
-        if ($cottage instanceof Cottages) {
-            $status = JsonResponse::HTTP_CREATED;
+        if ($cottageResponse instanceof Cottages) {
+            $status = JsonResponse::HTTP_OK;
             $data = [
-                'id' => $cottage->getId(),
-                'name' => $cottage->getName(),
-                'color' => $cottage->getColor(),
-                'extra_info' => $cottage->getExtraInfo()
+                'id' => $cottageResponse->getId(),
+                'name' => $cottageResponse->getName(),
+                'color' => $cottageResponse->getColor(),
+                'extra_info' => $cottageResponse->getExtraInfo(),
+                'max_guests_number' => $cottageResponse->getMaxGuestsNumber()
             ];
         } else {
             $status = JsonResponse::HTTP_BAD_REQUEST;
-            $data = $errorDecorator->decorateError($status);
+            $data = $errorDecorator->decorateError($status, $cottageResponse);
         }
 
         return new JsonResponse($data, $status);
     }
 
     /**
-     * @Route("/api/cottage/{id}")
+     * @Route("/cottage/{id}")
      * @Method("PUT")
      */
     public function updateCottage(
-        Cottages $cottage,
         Request $request,
         CottageService $cottageService,
         ResponseErrorDecoratorService $errorDecorator
     ) {
-//
         $body = $request->getContent();
         $data = json_decode($body, true);
 
-        if (is_null($data)) {
+        if (is_null($data) || empty($data['name']) || empty($data['color'])) {
             $status = JsonResponse::HTTP_BAD_REQUEST;
             $data = $errorDecorator->decorateError(
                 JsonResponse::HTTP_BAD_REQUEST,
-                "Invalid JSON format"
+                "Invalid data!"
             );
 
             return new JsonResponse($data, $status);
         }
 
+        $cottage = $cottageService->getActiveCottageById($data);
+
         $result = $cottageService->updateCottage($cottage, $data);
         if ($result instanceof Cottages) {
             $status = JsonResponse::HTTP_OK;
-            $data = [
-                'data' => [
-                    'id' => $result->getId(),
-                    'name' => $result->getName(),
-                    'color' => $result->getColor(),
-                    'extra_info' => $result->getExtraInfo(),
-                ]
-            ];
+            $data = array();
         } else {
             $status = JsonResponse::HTTP_BAD_REQUEST;
             $data = $errorDecorator->decorateError($status, $result);
         }
 
         return new JsonResponse($data, $status);
-//        
-//
     }
 
     /**
-     * @Route("/{id}", name="cottages_delete", methods="DELETE")
+     * @Route("/cottage/{id}")
+     * @Method({"DELETE"})
+     * @param Request $request
      */
-    public function delete(Request $request, Cottages $cottage): Response
-    {
-        if ($this->isCsrfTokenValid('delete' . $cottage->getId(), $request->request->get('_token'))) {
-            $em = $this->getDoctrine()->getManager();
-            $em->remove($cottage);
-            $em->flush();
+    public function deleteUser(
+        Request $request,
+        CottageService $cottageService,
+        ResponseErrorDecoratorService $errorDecorator
+    ) {
+        $id = $request->get('id');
+        $deletedCottageResponse = null;
+
+        if (!empty($id)) {
+            $cottage = $cottageService->getActiveCottageById($id);
+
+            if ($cottage instanceof Cottages) {
+                $deletedCottageResponse = $cottageService->deleteCottage($cottage);
+            } else {
+                $deletedCottageResponse = $cottage;
+            }
         }
 
-        return $this->redirectToRoute('cottages_index');
+        if ($deletedCottageResponse instanceof Cottages) {
+            $status = JsonResponse::HTTP_OK;
+            $data = array();
+        } else {
+            $status = JsonResponse::HTTP_BAD_REQUEST;
+            $data = $errorDecorator->decorateError($status, $deletedCottageResponse);
+        }
+
+        return new JsonResponse($data, $status);
     }
 
 }

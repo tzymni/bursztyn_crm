@@ -19,7 +19,7 @@ function saveUser(data) {
 }
 
 function updateUser(data) {
-    return axios.put('http://localhost:8000/api/user/' + data.id, data, {headers: {Authorization: AuthStr}})
+    return axios.put('http://localhost:8000/user/' + data.id, data, {headers: {Authorization: AuthStr}})
         .then(function (response) {
             return response.data;
         })
@@ -37,7 +37,7 @@ function updateUser(data) {
 }
 
 function createUser(data) {
-    return axios.post('http://localhost:8000/users/create', data, {headers: {Authorization: AuthStr}})
+    return axios.post('http://localhost:8000/user', data, {headers: {Authorization: AuthStr}})
         .then(function (response) {
             return response.data;
         })
@@ -58,7 +58,7 @@ function getUsers() {
     const token = sessionStorage.getItem('token');
     const AuthStr = 'Bearer '.concat(token);
 
-    return axios.get('http://localhost:8000/api/users', {headers: {Authorization: AuthStr}})
+    return axios.get('http://localhost:8000/user/list', {headers: {Authorization: AuthStr}})
         .then(function (response) {
             return response.data;
         })
@@ -78,7 +78,7 @@ function getUsers() {
 
 function deleteUser(id) {
 
-    return axios.delete('http://localhost:8000/api/user/' + id, {headers: {Authorization: AuthStr}})
+    return axios.delete('http://localhost:8000/user/' + id, {headers: {Authorization: AuthStr}})
         .then(function (response) {
             return response.data;
         })
@@ -97,7 +97,7 @@ function deleteUser(id) {
 
 function getUser(id) {
 
-    return axios.get('http://localhost:8000/api/user/' + id, {headers: {Authorization: AuthStr}})
+    return axios.get('http://localhost:8000/user/' + id, {headers: {Authorization: AuthStr}})
         .then(function (response) {
             return response.data;
         })

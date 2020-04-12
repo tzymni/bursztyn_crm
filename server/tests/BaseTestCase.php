@@ -43,6 +43,11 @@ class BaseTestCase extends KernelTestCase
     protected $testCottage;
 
     /**
+     * @var Cottages
+     */
+    protected $testInactiveCottage;
+
+    /**
      * @var string
      */
     const testCottageName = 'CottageTest';
@@ -70,7 +75,10 @@ class BaseTestCase extends KernelTestCase
             self::TEST_INACTIVE_USER_PASSWORD
         );
 
-        $this->testCottage = $this->createTestCottage(self::testCottageName);
+        $this->testCottage = $this->createTestCottage(array('name' => self::testCottageName, 'color' => '#f8fc00'));
+        $this->testInactiveCottage = $this->createTestCottage(
+            array('name' => self::testCottageName, 'color' => '#f8fc00', 'is_active' => false)
+        );
     }
 
     protected function truncateTestCottages($testCottageName)
@@ -131,13 +139,12 @@ class BaseTestCase extends KernelTestCase
      * @param $name
      * @return mixed
      */
-    protected function createTestCottage($name)
+    protected function createTestCottage($cottageData)
     {
         $container = $this->getPrivateContainer();
 
         $cottageService = $container->get('App\Service\CottageService');
 
-        $cottageData = array('name' => $name, 'color' => '#f8fc00');
         return $cottageService->createCottage($cottageData);
     }
 

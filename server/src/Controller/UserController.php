@@ -23,7 +23,7 @@ class UserController extends AbstractController implements TokenAuthenticatedCon
     /**
      * Creates new user by given data
      *
-     * @Route("/users/create")
+     * @Route("/user")
      * @Method("POST")
      * @param Request $request
      * @param UserService $userService
@@ -65,7 +65,7 @@ class UserController extends AbstractController implements TokenAuthenticatedCon
     /**
      * Get active user list.
      *
-     * @Route("/api/users")
+     * @Route("/user/list")
      * @Method("GET")
      * @param ResponseErrorDecoratorService $errorDecorator
      */
@@ -79,7 +79,7 @@ class UserController extends AbstractController implements TokenAuthenticatedCon
     }
 
     /**
-     * @Route("/api/user/{id}")
+     * @Route("/user/{id}")
      * @Method("GET")
      * @param ResponseErrorDecoratorService $errorDecorator
      */
@@ -115,7 +115,7 @@ class UserController extends AbstractController implements TokenAuthenticatedCon
     }
 
     /**
-     * @Route("/api/user/{id}")
+     * @Route("/user/{id}")
      * @Method({"DELETE"})
      * @param Request $request
      */
@@ -149,7 +149,7 @@ class UserController extends AbstractController implements TokenAuthenticatedCon
     }
 
     /**
-     * @Route("/api/user/{id}")
+     * @Route("/user/{id}")
      * @Method("PUT")
      */
     public function updateUser(

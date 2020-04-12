@@ -3,6 +3,7 @@ export const Settings = {
     getUserFromSession
 };
 
+// TODO add global variable with main API url
 const systemVersion = '0.9.0';
 
 function getSystemVersion() {
