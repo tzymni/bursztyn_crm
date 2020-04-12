@@ -3,29 +3,34 @@
         <form @submit.prevent="handleSubmit">
 
             <div class="form-group">
-                <label for="email">Email</label>
-                <input :disabled="disabledEmailField == true" type="text" v-model="email" name="email"
+                <label for="name">Name</label>
+                <input type="text" v-model="name" name="name"
                        class="form-control"
-                       :class="{ 'is-invalid': submitted && !email }"/>
-                <div v-show="submitted && !email" class="invalid-feedback">Email is required</div>
+                       :class="{ 'is-invalid': submitted && !name }"/>
+                <div v-show="submitted && !name" class="invalid-feedback">Cottages' name is required</div>
             </div>
+
             <div class="form-group">
-                <label htmlFor="password">Password</label>
-                <input type="password" v-model="password" name="password" class="form-control"
-                       :class="{ 'is-invalid': submitted && !password }"/>
-                <div v-show="submitted && !password" class="invalid-feedback">Password is required</div>
-            </div>
-            <div class="form-group">
-                <label htmlFor="first_name">First name</label>
-                <input type="first_name" v-model="first_name" name="first_name" class="form-control"
-                       :class="{ 'is-invalid': submitted && !first_name }"/>
+                <label for="max_guests_number">Capacity</label>
+                <input type="text" v-model="max_guests_number" name="capacity"
+                       class="form-control"
+                       :class="{ 'is-invalid': submitted && !max_guests_number }"/>
 
             </div>
+
             <div class="form-group">
-                <label htmlFor="last_name">Last name</label>
-                <input type="last_name" v-model="last_name" name="last_name" class="form-control"
-                       :class="{ 'is-invalid': submitted && !last_name }"/>
+                <label htmlFor="color">Colour</label>
+                <input type="color" v-model="color" name="color" class="form-control"
+                       :class="{ 'is-invalid': submitted && !color }"/>
+                <div v-show="submitted && !color" class="invalid-feedback">Cottages' color is required</div>
             </div>
+
+            <div class="form-group">
+                <label htmlFor="extra_info">Other Information</label>
+                <input type="extra_info" v-model="extra_info" name="extra_info" class="form-control"
+                       :class="{ 'is-invalid': submitted && !extra_info }"/>
+            </div>
+
             <div class="form-group">
                 <button class="btn btn-primary" :disabled="loading">Save and close</button>
                 <img v-show="loading"
@@ -37,29 +42,28 @@
 </template>
 
 <script>
-    import {userService} from "../_services/user.service";
-
+    import {cottageService} from "../_services/cottage.service";
+   
     export default {
-        name: "UserForm",
+        name: "cottageForm",
+
         data() {
             return {
                 childMessage: '',
                 id: null,
-                email: "",
-                password: "",
-                first_name: "",
-                last_name: "",
+                name: "",
+                max_guests_number: null,
+                color: "",
+                extra_info: "",
                 submitted: false,
                 returnUrl: "",
                 errorNotify: "",
                 loading: false,
-                disabledEmailField: false,
-                reg: /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
             };
         },
         mounted() {
             if (typeof this.editId != 'undefined' && this.editId != null) {
-                this.getUserById(this.editId);
+                this.getCottageById(this.editId);
             }
         },
         props: {
@@ -69,22 +73,19 @@
             handleSubmit() {
                 this.submitted = true;
                 let id = this.id;
-                const {email, password, first_name, last_name} = this;
+                const {name, max_guests_number, color, extra_info} = this;
 
                 // stop here if form is invalid
-                if (!(email && password) && !id) {
-                    return;
-                } else if (!this.reg.test(email)) {
-                    this.errorNotify = "Please Enter Correct Email";
+                if (!(name && color) && !id) {
                     return;
                 }
 
-                const data = {email, password, first_name, last_name, id};
+                const data = {name, max_guests_number, color, extra_info, id};
 
                 var self = this;
 
-                userService.saveUser(data).then(function () {
-                        self.$bvModal.hide("user-form-modal");
+                cottageService.saveCottage(data).then(function () {
+                        self.$bvModal.hide("cottage-form-modal");
                     }
                 )
                     .catch(function (error) {
@@ -93,16 +94,16 @@
                         }
                     });
             },
-            getUserById(id) {
+            getCottageById(id) {
 
                 var self = this;
-                userService.getUser(id).then(function (data) {
+                cottageService.getCottage(id).then(function (data) {
 
-                        self.first_name = data.first_name;
-                        self.last_name = data.last_name;
-                        self.email = data.email;
+                        self.name = data.name;
+                        self.max_guests_number = data.max_guests_number;
+                        self.color = data.color;
+                        self.extra_info = data.extra_info;
                         self.id = data.id;
-                        self.disabledEmailField = true;
                     }
                 )
                     .catch(function (error) {
@@ -111,6 +112,9 @@
                         }
                     });
 
+            },
+            updateValue(value) {
+                this.color = value.hex
             }
 
         }

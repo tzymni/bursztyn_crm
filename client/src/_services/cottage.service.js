@@ -1,25 +1,25 @@
-export const userService = {
-    saveUser,
-    getUser,
-    deleteUser,
-    getUsers,
+export const cottageService = {
+    saveCottage,
+    getCottage,
+    deleteCottage,
+    getCottages,
 };
 
 const axios = require('axios');
 const token = sessionStorage.getItem('token');
 const AuthStr = 'Bearer '.concat(token);
 
-function saveUser(data) {
+function saveCottage(data) {
 
     if (data.id > 0) {
-        return updateUser(data);
+        return updateCottage(data);
     } else {
-        return createUser(data);
+        return createCottage(data);
     }
 }
 
-function updateUser(data) {
-    return axios.put('http://localhost:8000/user/' + data.id, data, {headers: {Authorization: AuthStr}})
+function updateCottage(data) {
+    return axios.put('http://localhost:8000/cottage/' + data.id, data, {headers: {Authorization: AuthStr}})
         .then(function (response) {
             return response.data;
         })
@@ -36,8 +36,8 @@ function updateUser(data) {
         });
 }
 
-function createUser(data) {
-    return axios.post('http://localhost:8000/user', data, {headers: {Authorization: AuthStr}})
+function createCottage(data) {
+    return axios.post('http://localhost:8000/cottage', data, {headers: {Authorization: AuthStr}})
         .then(function (response) {
             return response.data;
         })
@@ -54,11 +54,12 @@ function createUser(data) {
         });
 }
 
-function getUsers() {
+function getCottages() {
+
     const token = sessionStorage.getItem('token');
     const AuthStr = 'Bearer '.concat(token);
 
-    return axios.get('http://localhost:8000/user/list', {headers: {Authorization: AuthStr}})
+    return axios.get('http://localhost:8000/cottage/list', {headers: {Authorization: AuthStr}})
         .then(function (response) {
             return response.data;
         })
@@ -76,9 +77,9 @@ function getUsers() {
 
 }
 
-function deleteUser(id) {
+function deleteCottage(id) {
 
-    return axios.delete('http://localhost:8000/user/' + id, {headers: {Authorization: AuthStr}})
+    return axios.delete('http://localhost:8000/cottage/' + id, {headers: {Authorization: AuthStr}})
         .then(function (response) {
             return response.data;
         })
@@ -95,9 +96,9 @@ function deleteUser(id) {
         });
 }
 
-function getUser(id) {
+function getCottage(id) {
 
-    return axios.get('http://localhost:8000/user/' + id, {headers: {Authorization: AuthStr}})
+    return axios.get('http://localhost:8000/cottage/' + id, {headers: {Authorization: AuthStr}})
         .then(function (response) {
             return response.data;
         })

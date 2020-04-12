@@ -22,12 +22,12 @@ class UserControllerTest extends BaseTestCase
      *  and all assets have is_active = true.
      *
      */
-    public function testGetUsers__whenValidToken_and_all_Users_are_Active()
+    public function testGetUsers__whenValidTokenAndAllUsersAreActive__ResponseSuccess()
     {
         $token = $this->getValidToken();
 
         $response = $this->client->get(
-            "/api/users",
+            "/user/list",
             [
                 'headers' => [
                     'Authorization' => 'Bearer ' . $token
@@ -53,7 +53,7 @@ class UserControllerTest extends BaseTestCase
     {
         $token = sha1(time());
         $response = $this->client->get(
-            "/api/users",
+            "/user/list",
             [
                 'headers' => [
                     'Authorization' => 'Bearer ' . $token
@@ -70,7 +70,7 @@ class UserControllerTest extends BaseTestCase
         $id = $this->testUser->getId();
 
         $response = $this->client->get(
-            "/api/user/{$id}",
+            "/user/{$id}",
             [
                 'headers' => [
                     'Authorization' => 'Bearer ' . $token
@@ -93,7 +93,7 @@ class UserControllerTest extends BaseTestCase
         $token = $this->getValidToken();
         $id = $this->testInactiveUser->getId();
         $response = $this->client->get(
-            "/api/user/{$id}",
+            "/user/{$id}",
             [
                 'headers' => [
                     'Authorization' => 'Bearer ' . $token
@@ -119,7 +119,7 @@ class UserControllerTest extends BaseTestCase
 
         $token = $this->getValidToken();
         $response = $this->client->post(
-            "/users/create",
+            "/user",
             [
                 'body' => json_encode($data),
                 'headers' => [
@@ -140,7 +140,7 @@ class UserControllerTest extends BaseTestCase
 
         $token = $this->getValidToken();
         $response = $this->client->post(
-            "/users/create",
+            "/user",
             [
                 'body' => json_encode($data),
                 'headers' => [
@@ -165,7 +165,7 @@ class UserControllerTest extends BaseTestCase
 
         $token = $this->getValidToken();
         $response = $this->client->post(
-            "/users/create",
+            "/user",
             [
                 'body' => json_encode($data),
                 'headers' => [
@@ -191,7 +191,7 @@ class UserControllerTest extends BaseTestCase
 
         $token = $this->getValidToken();
         $response = $this->client->post(
-            "/users/create",
+            "/user",
             [
                 'body' => json_encode($data),
                 'headers' => [
@@ -222,7 +222,7 @@ class UserControllerTest extends BaseTestCase
 
         $token = $this->getValidToken();
         $response = $this->client->put(
-            "/api/user/" . $this->testUser->getId(),
+            "/user/" . $this->testUser->getId(),
             [
                 'body' => json_encode($data),
                 'headers' => [
@@ -259,7 +259,7 @@ class UserControllerTest extends BaseTestCase
 
         $token = $this->getValidToken();
         $response = $this->client->put(
-            "/api/user/" . $this->testUser->getId(),
+            "/user/" . $this->testUser->getId(),
             [
                 'body' => json_encode($data),
                 'headers' => [
@@ -292,7 +292,7 @@ class UserControllerTest extends BaseTestCase
 
         $token = $this->getValidToken();
         $response = $this->client->put(
-            "/api/user/" . $this->testUser->getId(),
+            "/user/" . $this->testUser->getId(),
             [
                 'body' => json_encode($data),
                 'headers' => [
@@ -314,7 +314,7 @@ class UserControllerTest extends BaseTestCase
 
         $token = $this->getValidToken();
         $response = $this->client->delete(
-            "/api/user/" . $this->testUser->getId(),
+            "/user/" . $this->testUser->getId(),
             [
                 'headers' => [
                     'Authorization' => 'Bearer ' . $token
@@ -337,7 +337,7 @@ class UserControllerTest extends BaseTestCase
 
         $token = $this->getValidToken();
         $response = $this->client->delete(
-            "/api/user/" . $testUserId,
+            "/user/" . $testUserId,
             [
                 'headers' => [
                     'Authorization' => 'Bearer ' . $token
@@ -351,7 +351,7 @@ class UserControllerTest extends BaseTestCase
 
         // remove one more time
         $newResponse = $this->client->delete(
-            "/api/user/" . $testUserId,
+            "/user/" . $testUserId,
             [
                 'headers' => [
                     'Authorization' => 'Bearer ' . $token

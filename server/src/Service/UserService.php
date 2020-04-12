@@ -183,7 +183,7 @@ class UserService
             $this->em->flush();
             return $user;
         } catch (Exception $ex) {
-            return "Nie udało się usunąć użytkownika";
+            return "Cant remove user!";
         }
     }
 

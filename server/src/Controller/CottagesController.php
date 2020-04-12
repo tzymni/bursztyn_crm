@@ -2,8 +2,6 @@
 
 namespace App\Controller;
 
-
-
 use App\Entity\Cottages;
 use App\Service\CottageService;
 use App\Service\ResponseErrorDecoratorService;
@@ -14,30 +12,32 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-class CottagesController extends AbstractController implements TokenAuthenticatedController  {
-
-
+class CottagesController extends AbstractController implements TokenAuthenticatedController
+{
 
     /**
      * Creates new user by given data
      *
-     * @Route("/cottage/new")
+     * @Route("/cottage/add")
      * @Method("POST")
      * @param Request $request
      * @param CottageService $cottageService
      * @param ResponseErrorDecoratorService $errorDecorator
      * @return JsonResponse
      */
-    public function addCottage(Request $request, CottageService $cottageService, ResponseErrorDecoratorService $errorDecorator) {
+    public function addCottage(
+        Request $request,
+        CottageService $cottageService,
+        ResponseErrorDecoratorService $errorDecorator
+    ) {
         $body = $request->getContent();
         $data = json_decode($body, true);
-
-
 
         if (is_null($data) || !isset($data['name']) || !isset($data['color'])) {
             $status = JsonResponse::HTTP_BAD_REQUEST;
             $data = $errorDecorator->decorateError(
-                    JsonResponse::HTTP_BAD_REQUEST, "Test"
+                $status,
+                "Invalid data!"
             );
 
             return new JsonResponse($data, $status);
@@ -45,14 +45,9 @@ class CottagesController extends AbstractController implements TokenAuthenticate
 
         $result = $cottageService->createCottage($data);
 
-
         if ($result instanceof Cottages) {
-            $status = JsonResponse::HTTP_CREATED;
-            $data = [
-                'data' => [
-                    'id' => $result->getId()
-                ]
-            ];
+            $status = JsonResponse::HTTP_OK;
+            $data = array();
         } else {
             $status = JsonResponse::HTTP_BAD_REQUEST;
             $data = $errorDecorator->decorateError($status, $result);
@@ -62,120 +57,125 @@ class CottagesController extends AbstractController implements TokenAuthenticate
     }
 
     /**
-     * @Route("/api/cottages")
+     * @Route("/cottage/list")
      * @Method("GET")
      * @param ResponseErrorDecoratorService $errorDecorator
      */
     public function getCottagesList(
-    ResponseErrorDecoratorService $errorDecorator
+        ResponseErrorDecoratorService $errorDecorator
     ) {
-
         try {
-            $users = $this->getDoctrine()->getRepository(Cottages::class)->findAllActive();
+            $cottagesResponse = $this->getDoctrine()->getRepository(Cottages::class)->findAllActive();
             $status = JsonResponse::HTTP_OK;
-            throw new \Exception("TEST");
-        }
-        catch (\Exception $exception) {
-           $status = JsonResponse::HTTP_NOT_FOUND;
-            $users = null;
-
+        } catch (\Exception $exception) {
+            $status = JsonResponse::HTTP_NOT_FOUND;
+            $cottagesResponse = $exception->getMessage();
         }
 
-        return new JsonResponse($users, $status);
+        return new JsonResponse($cottagesResponse, $status);
     }
 
-        /**
-     * @Route("/api/cottage/{id}")
+    /**
+     * @Route("/cottage/{id}")
      * @Method("GET")
      * @param ResponseErrorDecoratorService $errorDecorator
      */
-    public function getCottage(Request $request, CottageService $cottageService, ResponseErrorDecoratorService $errorDecorator) {
+    public function getCottage(
+        Request $request,
+        CottageService $cottageService,
+        ResponseErrorDecoratorService $errorDecorator
+    ) {
         $id = $request->get('id');
 
-
         if (!empty($id)) {
-            $cottage = $cottageService->getCottage($id);
+            $cottageResponse = $cottageService->getActiveCottageById($id);
         }
 
-
-
-        if ($cottage instanceof Cottages) {
-            $status = JsonResponse::HTTP_CREATED;
+        if ($cottageResponse instanceof Cottages) {
+            $status = JsonResponse::HTTP_OK;
             $data = [
-                'id' => $cottage->getId(),
-                'name' => $cottage->getName(),
-                'color' => $cottage->getColor(),
-                'extra_info' => $cottage->getExtraInfo()
+                'id' => $cottageResponse->getId(),
+                'name' => $cottageResponse->getName(),
+                'color' => $cottageResponse->getColor(),
+                'extra_info' => $cottageResponse->getExtraInfo(),
+                'max_guests_number' => $cottageResponse->getMaxGuestsNumber()
             ];
         } else {
             $status = JsonResponse::HTTP_BAD_REQUEST;
-            $data = $errorDecorator->decorateError($status);
+            $data = $errorDecorator->decorateError($status, $cottageResponse);
         }
-
 
         return new JsonResponse($data, $status);
     }
-    
-    
-    
-    
-        /**
-     * @Route("/api/cottage/{id}")
+
+    /**
+     * @Route("/cottage/{id}")
      * @Method("PUT")
      */
-    public function updateCottage(Cottages $cottage, Request $request, CottageService $cottageService, ResponseErrorDecoratorService $errorDecorator) {
-   
-
-//
+    public function updateCottage(
+        Request $request,
+        CottageService $cottageService,
+        ResponseErrorDecoratorService $errorDecorator
+    ) {
         $body = $request->getContent();
         $data = json_decode($body, true);
 
-        if (is_null($data)) {
+        if (is_null($data) || empty($data['name']) || empty($data['color'])) {
             $status = JsonResponse::HTTP_BAD_REQUEST;
             $data = $errorDecorator->decorateError(
-                JsonResponse::HTTP_BAD_REQUEST, "Invalid JSON format"
+                JsonResponse::HTTP_BAD_REQUEST,
+                "Invalid data!"
             );
 
             return new JsonResponse($data, $status);
         }
 
+        $cottage = $cottageService->getActiveCottageById($data);
+
         $result = $cottageService->updateCottage($cottage, $data);
         if ($result instanceof Cottages) {
             $status = JsonResponse::HTTP_OK;
-            $data = [
-                'data' => [
-                    'id' => $result->getId(),
-                    'name' => $result->getName(),
-                    'color' => $result->getColor(),
-                    'extra_info' => $result->getExtraInfo(),
-                ]
-            ];
+            $data = array();
         } else {
             $status = JsonResponse::HTTP_BAD_REQUEST;
             $data = $errorDecorator->decorateError($status, $result);
         }
 
         return new JsonResponse($data, $status);
-//        
-//
     }
-    
-    
-    
-    
-
 
     /**
-     * @Route("/{id}", name="cottages_delete", methods="DELETE")
+     * @Route("/cottage/{id}")
+     * @Method({"DELETE"})
+     * @param Request $request
      */
-    public function delete(Request $request, Cottages $cottage): Response {
-        if ($this->isCsrfTokenValid('delete' . $cottage->getId(), $request->request->get('_token'))) {
-            $em = $this->getDoctrine()->getManager();
-            $em->remove($cottage);
-            $em->flush();
+    public function deleteUser(
+        Request $request,
+        CottageService $cottageService,
+        ResponseErrorDecoratorService $errorDecorator
+    ) {
+        $id = $request->get('id');
+        $deletedCottageResponse = null;
+
+        if (!empty($id)) {
+            $cottage = $cottageService->getActiveCottageById($id);
+
+            if ($cottage instanceof Cottages) {
+                $deletedCottageResponse = $cottageService->deleteCottage($cottage);
+            } else {
+                $deletedCottageResponse = $cottage;
+            }
         }
 
-        return $this->redirectToRoute('cottages_index');
+        if ($deletedCottageResponse instanceof Cottages) {
+            $status = JsonResponse::HTTP_OK;
+            $data = array();
+        } else {
+            $status = JsonResponse::HTTP_BAD_REQUEST;
+            $data = $errorDecorator->decorateError($status, $deletedCottageResponse);
+        }
+
+        return new JsonResponse($data, $status);
     }
 
 }

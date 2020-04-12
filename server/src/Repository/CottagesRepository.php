@@ -7,10 +7,10 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method Cottages|null find($id, $lockMode = null, $lockVersion = null)
- * @method Cottages|null findOneBy(array $criteria, array $orderBy = null)
- * @method Cottages[]    findAll()
- * @method Cottages[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * Class CottagesRepository
+ * @package App\Repository
+ *
+ * @author Tomasz Zymni <tomasz.zymni@gmail.com>
  */
 class CottagesRepository extends ServiceEntityRepository
 {
@@ -18,26 +18,21 @@ class CottagesRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Cottages::class);
     }
-    
-    
-        /**
-     * 
-     * @return Cottages[]
+
+    /**
+     * Find all active cottages/
+     *
+     * @return array
      */
     public function findAllActive(): array
     {
-        // automatically knows to select Products
-        // the "p" is an alias you'll use in the rest of the query
         $qb = $this->createQueryBuilder('p')
-            ->select('p.name, p.color, p.extra_info, p.id')
+            ->select('p.id,p.name, p.color, p.extra_info, p.max_guests_number, p.is_active')
             ->andWhere('p.is_active = :active')
             ->setParameter('active', 1)
             ->getQuery();
 
         return $qb->execute();
-
-        // to get just one result:
-        // $product = $qb->setMaxResults(1)->getOneOrNullResult();
     }
 
 //    /**

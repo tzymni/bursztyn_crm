@@ -38,7 +38,10 @@ class Cottages
      */
     private $extra_info;
 
-
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $max_guests_number;
 
     public function __construct()
     {
@@ -86,18 +89,32 @@ class Cottages
         return $this;
     }
 
-    public function getExtraInfo(): string
+    public function getExtraInfo()
     {
         return $this->extra_info;
     }
 
-    public function setExtraInfo(string $extra_info): self
+    public function setExtraInfo($extra_info): self
     {
         $this->extra_info = $extra_info;
 
         return $this;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getMaxGuestsNumber()
+    {
+        return $this->max_guests_number;
+    }
 
+    /**
+     * @param mixed $max_guests_number
+     */
+    public function setMaxGuestsNumber($max_guests_number): void
+    {
+        $this->max_guests_number = $max_guests_number;
+    }
 
 }
