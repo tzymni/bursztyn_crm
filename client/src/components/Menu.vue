@@ -38,7 +38,7 @@
                     },
                     {
                         href: '/',
-                        title: 'Reservations',
+                        title: 'Calendar',
                         icon: 'fa fa-calendar-alt'
                     },
                     {

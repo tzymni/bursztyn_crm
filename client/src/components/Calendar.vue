@@ -1,6 +1,11 @@
 <template>
-    <div id="app">
+    <div id="calendar">
         <div class="calendar-controls">
+            <div>
+                <b-button class="btn btn-info" id="add-reservation" >Add reservation</b-button><br/><br/>
+                <b-button class="btn btn-info" id="add-cleaning" >Add cleaning</b-button>
+
+            </div>
             <div v-if="message" class="notification is-success">{{ message }}</div>
 
             <div class="box">
@@ -143,7 +148,7 @@
     } from "vue-simple-calendar" // published version
     //} from "../../vue-simple-calendar/src/components/bundle.js" // local repo
     export default {
-        name: "App",
+        name: "Calendar",
         components: {
             CalendarView,
             CalendarViewHeader,
@@ -294,14 +299,14 @@
         margin: 0;
         background-color: #f7fcff;
     }
-    #app {
+    #calendar {
         display: flex;
         flex-direction: row;
         font-family: Calibri, sans-serif;
         width: 95vw;
         min-width: 30rem;
-        max-width: 100rem;
-        min-height: 40rem;
+        max-width: 100%;
+        min-height: 55rem;
         margin-left: auto;
         margin-right: auto;
     }

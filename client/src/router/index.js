@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Users from "../components/Users.vue";
-import Reservations from "../components/Reservations";
+import Calendar from "../components/Calendar";
 import Cottages from "../components/Cottages";
 import LoginPanel from "../components/LoginPanel";
 import Logout from "../components/Logout";
@@ -13,9 +13,9 @@ export const router = new Router({
 
         {
             path: '/',
-            component: Reservations,
+            component: Calendar,
             meta: {
-            title: 'Bursztyn - Reservations'
+            title: 'Bursztyn - Calendar'
             }
         },
         {
