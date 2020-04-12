@@ -30,6 +30,14 @@
                             <font-awesome-icon class="icon" icon="home"/>
                         </p>
                     </template>
+                    <template v-slot:cell(color)="data">
+                        <p class="hide">{{data.item.color}}</p>
+                        <v-btn inactive block small tile depressed :color="data.item.color"></v-btn>
+                    </template>
+                    <template v-slot:head(max_guests_number)="data">
+                        <p class="hide">{{data.field.max_guests_number}}</p>
+                        <p>Capacity</p>
+                    </template>
                     <template v-slot:head(is_active)="data">
                         <p class="hide">{{data.field.is_active}}</p>
                         <p>Operations</p>
@@ -179,6 +187,11 @@
         height: 20px;
         padding: 0px;
         margin: 0 auto;
+    }
+
+    .color-rectangle {
+        width: 3em;
+        height: 1.5em;
     }
 
 </style>

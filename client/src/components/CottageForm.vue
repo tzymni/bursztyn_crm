@@ -43,9 +43,10 @@
 
 <script>
     import {cottageService} from "../_services/cottage.service";
-
+   
     export default {
         name: "cottageForm",
+
         data() {
             return {
                 childMessage: '',
@@ -111,6 +112,9 @@
                         }
                     });
 
+            },
+            updateValue(value) {
+                this.color = value.hex
             }
 
         }

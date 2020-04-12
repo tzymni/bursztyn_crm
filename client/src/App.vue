@@ -10,10 +10,11 @@
 
     require('@/assets/css/global.css');
 
+
     export default {
         data() {
             return {
-                component: "LoginPanel"
+                component: "LoginPanel",
             }
         },
         created() {
@@ -26,7 +27,7 @@
         name: 'app',
         components: {
             Menu,
-            LoginPanel
+            LoginPanel,
         },
         methods: {
             toggleComponent() {
