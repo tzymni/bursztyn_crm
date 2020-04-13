@@ -134,14 +134,14 @@
                                 }
                         });
                     })     
-            },
+            }},
         computed: {
             rows() {
                 return this.cottages.length
             },
 
         }
-    }}
+    }
     export {CottageForm}
 </script>
 <style scoped>

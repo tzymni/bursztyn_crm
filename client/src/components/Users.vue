@@ -110,14 +110,14 @@
                         }});
                 })
             
-        },
+        }},
         computed: {
             rows() {
                 return this.users.length
             },
 
         }
-    }}
+    }
     export {UserForm}
 </script>
 <style scoped>
