@@ -32,7 +32,7 @@
                     </template>
                     <template v-slot:cell(color)="data">
                         <p class="hide">{{data.item.color}}</p>
-                        <v-btn inactive block small tile depressed :color="data.item.color"></v-btn>
+                        <v-btn inactive block small tile depressed :color="data.item.color" class="color-rectangle"></v-btn>
                     </template>
                     <template v-slot:head(max_guests_number)="data">
                         <p class="hide">{{data.field.max_guests_number}}</p>
@@ -186,8 +186,12 @@
     }
 
     .color-rectangle {
-        width: 3em;
-        height: 1.5em;
+        padding: 0;
+        margin: 0;
+        width:100%;
+        max-width: 1em !important;
+        height: 1em;
+        cursor: default !important;
     }
 
 </style>
