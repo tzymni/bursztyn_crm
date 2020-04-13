@@ -35,7 +35,7 @@
                     </template>
                     <template v-slot:cell(is_active)="data">
                         <p class="hide">{{data.item.is_active}}</p>
-                        <a @click="show(data.item.id)" class="btn btn-danger">
+                        <a @click="deleteUser(data.item.id)" class="btn btn-danger">
                             <font-awesome-icon icon="trash-alt"/>
                         </a>
                         <a @click="showModal(data.item.id)" class="btn btn-primary">
@@ -51,22 +51,6 @@
                 ></b-pagination>
             </div>
         </div>
-
-
-        <!--    TODO:    CHANGE TO EXTERNAL WIDGET OR SINGLE COMPONENT-->
-        <b-modal id="delete-form"
-                 hide-footer
-                 title="Removing user">
-            <p>Are you sure you want to delete this user?</p>
-            <div class="m-footer text-center">
-                <b-button @click="deleteUser($data.editId)" class="btn btn-danger p-2 m-3">
-                    Delete
-                </b-button>
-                <b-button @click="$bvModal.hide('delete-form')" class="btn p-2 m-3">
-                    Cancel
-                </b-button>
-            </div>
-        </b-modal>
     </div>
 
 </template>
@@ -97,10 +81,7 @@
                 this.editId = id;
                 this.$bvModal.show("user-form-modal");
             },
-            show(id) {
-                this.editId = id;
-                this.$bvModal.show('delete-form');
-            },
+            
             setUsers() {
                 var self = this;
                 userService.getUsers().then(function (response) {
@@ -115,6 +96,8 @@
                     });
             },
             deleteUser(id) {
+                this.$confirm("Are you sure you want to delete this user?", "Delete user", 'error').then(() => {
+
                 var self = this;
                 userService.deleteUser(id).then(function () {
                         self.setUsers();
@@ -124,11 +107,9 @@
                         if (error) {
                             self.errorNotify = error;
                             self.loading = false;
-                        }
-                    });
-
-                this.$bvModal.hide('delete-form');
-            }
+                        }});
+                })
+            
         },
         computed: {
             rows() {
@@ -136,7 +117,7 @@
             },
 
         }
-    }
+    }}
     export {UserForm}
 </script>
 <style scoped>

@@ -15,7 +15,9 @@ import 'dayspan-vuetify/dist/lib/dayspan-vuetify.min.css'
 import Vuetify from 'vuetify'
 import DaySpanVuetify from 'dayspan-vuetify'
 import 'tui-calendar/dist/tui-calendar.css'
+import VueSimpleAlert from "vue-simple-alert";
 
+Vue.use(VueSimpleAlert);
 
 
 // If you use the default popups, use this.
@@ -44,6 +46,7 @@ Vue.use(BootstrapVue)
 // Optionally install the BootstrapVue icon components plugin
 Vue.use(IconsPlugin)
 Vue.use(Calendar);
+Vue.use(VueSimpleAlert);
 
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faCoffee } from '@fortawesome/free-solid-svg-icons'

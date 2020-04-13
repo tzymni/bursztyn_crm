@@ -44,7 +44,7 @@
                     </template>
                     <template v-slot:cell(is_active)="data">
                         <p class="hide">{{data.item.is_active}}</p>
-                        <a @click="show(data.item.id)" class="btn btn-danger">
+                        <a @click="deleteCottage(data.item.id)" class="btn btn-danger">
                             <font-awesome-icon icon="trash-alt"/>
                         </a>
                         <a @click="showModal(data.item.id)" class="btn btn-primary">
@@ -61,7 +61,7 @@
             </div>
         </div>
 
-        <!--       TODO CHANGE TO EXTERNAL WIDGET OR SINGLE COMPONENT-->
+        <!--       TODO CHANGE TO EXTERNAL WIDGET OR SINGLE COMPONENT
         <b-modal id="delete-form"
                  hide-footer
                  title="Removing cottage">
@@ -74,7 +74,7 @@
                     Cancel
                 </b-button>
             </div>
-        </b-modal>
+        </b-modal> -->
 
 
     </div>
@@ -106,10 +106,6 @@
                 this.editId = id;
                 this.$bvModal.show("cottage-form-modal");
             },
-            show(id) {
-                this.editId = id;
-                this.$bvModal.show('delete-form');
-            },
             setCottages() {
                 var self = this;
                 cottageService.getCottages().then(function (response) {
@@ -124,28 +120,28 @@
                     });
             },
             deleteCottage(id) {
-                var self = this;
-                cottageService.deleteCottage(id).then(function () {
-                        self.setCottages();
-                    }
-                )
-                    .catch(function (error) {
-                        if (error) {
-                            self.errorNotify = error;
-                            self.loading = false;
-                        }
-                    });
-
-                this.$bvModal.hide('delete-form');
-            }
-        },
+                this.$confirm("Are you sure you want to delete this cottage?", "Delete cottage", 'error').then(() => {
+                 
+                        var self = this;
+                        cottageService.deleteCottage(id).then(function () {
+                                self.setCottages();
+                            }
+                        )
+                            .catch(function (error) {
+                                if (error) {
+                                    self.errorNotify = error;
+                                    self.loading = false;
+                                }
+                        });
+                    })     
+            },
         computed: {
             rows() {
                 return this.cottages.length
             },
 
         }
-    }
+    }}
     export {CottageForm}
 </script>
 <style scoped>
