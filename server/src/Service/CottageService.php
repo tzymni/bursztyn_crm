@@ -23,8 +23,15 @@ use Doctrine\ORM\EntityManager;
 class CottageService
 {
 
+    /**
+     * @var EntityManagerInterface
+     */
     private $em;
 
+    /**
+     * CottageService constructor.
+     * @param EntityManagerInterface $em
+     */
     public function __construct(EntityManagerInterface $em)
     {
         $this->em = $em;

@@ -9,6 +9,12 @@ use App\Entity\User;
 use GuzzleHttp\Client;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
+/**
+ * Class BaseTestCase
+ * @package App\Tests
+ *
+ * @author Tomasz Zymni <tomasz.zymni@gmail.com>
+ */
 class BaseTestCase extends KernelTestCase
 {
     const TEST_USER_PASSWORD = "test";
@@ -67,6 +73,8 @@ class BaseTestCase extends KernelTestCase
             ->get('doctrine')
             ->getManager();
 
+        $this->truncateTestReservations();
+        $this->truncateTestEvents();
         $this->truncateTestUsers();
         $this->truncateTestCottages(self::testCottageName);
         $this->testUser = $this->createTestUser();
@@ -79,6 +87,17 @@ class BaseTestCase extends KernelTestCase
         $this->testInactiveCottage = $this->createTestCottage(
             array('name' => self::testCottageName, 'color' => '#f8fc00', 'is_active' => false)
         );
+    }
+
+    protected function truncateTestReservations()
+    {
+        $em = $this->em;
+
+        $query = $em->createQuery(
+            "DELETE App:Reservations u WHERE u.guest_first_name Like '" . self::TEST_USER_EMAIL . "'"
+        );
+        $query->execute();
+        parent::tearDown();
     }
 
     protected function truncateTestCottages($testCottageName)
@@ -96,6 +115,17 @@ class BaseTestCase extends KernelTestCase
         $this->em->close();
         $this->em = null; // avoid memory leaks
 
+    }
+
+    protected function truncateTestEvents()
+    {
+        $em = $this->em;
+
+        $query = $em->createQuery(
+            "DELETE from App:Events u WHERE u.created_by IS NOT NULL "
+        );
+        $query->execute();
+        parent::tearDown();
     }
 
     protected function truncateTestUsers()

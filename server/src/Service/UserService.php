@@ -20,12 +20,10 @@ class UserService
 {
 
     private $em;
-    private $encoder;
 
-    public function __construct(EntityManagerInterface $em, UserPasswordEncoderInterface $encoder)
+    public function __construct(EntityManagerInterface $em)
     {
         $this->em = $em;
-        $this->encoder = $encoder;
     }
 
     /**
@@ -45,7 +43,7 @@ class UserService
                 array(1)
             );
         } catch (\Exception $exception) {
-                return $exception->getMessage();
+            return $exception->getMessage();
         }
 
         if (isset($user) && isset($user[0])) {

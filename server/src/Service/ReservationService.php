@@ -8,36 +8,76 @@
 
 namespace App\Service;
 
+use App\Entity\Cottages;
+use App\Entity\Events;
 use App\Entity\Reservations;
-use App\Repository\ReservationsRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Symfony\Bridge\Doctrine\RegistryInterface;
-use Doctrine\ORM\EntityManager;
 
 /**
- * Description of ReservationService
+ * Class ReservationService
+ * @package App\Service
  *
- * @author tzymni
+ * @author Tomasz Zymni <tomasz.zymni@gmail.com>
  */
-class ReservationService {
+class ReservationService
+{
+    /**
+     * @var EntityManagerInterface
+     */
+    private $em;
 
-    public function prepareEventsData($events_active) {
-        $events = [];
+    /**
+     * ReservationService constructor.
+     * @param EntityManagerInterface $em
+     */
+    public function __construct(EntityManagerInterface $em)
+    {
+        $this->em = $em;
+    }
 
-        $x = 0;
+    /**
+     * @param $data
+     * @return string
+     */
+    public function generateTitle($data): string
+    {
+        $firstName = $data['guest_first_name'];
+        $lastName = $data['guest_last_name'];
 
-        foreach ($events_active as $event) {
+        return 'Reservation for ' . $firstName . ' ' . $lastName;
+    }
 
-            $events[$x]['title'] = "Rezerwacja " . $event['name']." ".$event['tourist_name']." (".$event['tourist_num']." osób/osoby)";
-            $events[$x]['start_date'] = $event['date_from']->format('Y-m-d');
-            $events[$x]['end_date'] = $event['date_to']->format('Y-m-d');
-            $events[$x]['color'] = $event['color'];
-            $events[$x]['id'] = $event['reservation_id'];
-            $x++;
+    /**
+     * Create reservation by Events.
+     *
+     * @param Events $event
+     * @param array $data
+     */
+    public function createReservation(Events $event, array $data)
+    {
+        $cottageService = new CottageService($this->em);
+        $cottageResponse = $cottageService->getActiveCottageById($data['cottage_id']);
+
+        if (!$cottageResponse instanceof Cottages) {
+            throw new \Exception($cottageResponse);
         }
 
-        return $events;
+        $guestsNumber = empty($data['guests_number']) ? 0 : intval($data['guests_number']);
+        $extraInfo = empty($data['extra_info']) ? null :$data['extra_info'];
+
+        $reservation = new Reservations();
+        $reservation->setCottage($cottageResponse);
+        $reservation->setEvent($event);
+        $reservation->setGuestFirstName($data['guest_first_name']);
+        $reservation->setGuestLastName($data['guest_last_name']);
+        $reservation->setGuestPhoneNumber($data['guest_phone_number']);
+        $reservation->setIsActive(true);
+        $reservation->setGuestsNumber($guestsNumber);
+        $reservation->setAdvancePayment($data['advance_payment']);
+        $reservation->setExtraInfo($extraInfo);
+        $this->em->persist($reservation);
+
+        $this->em->flush();
     }
 
 }

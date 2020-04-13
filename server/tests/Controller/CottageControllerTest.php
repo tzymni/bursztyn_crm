@@ -188,10 +188,10 @@ class CottageControllerTest extends BaseTestCase
         $updatedCottage = $cottageService->getActiveCottageById($testId);
 
         $this->assertEquals($this->testCottage->getId(), $updatedCottage->getId());
-        $this->assertEquals($this->testCottage->getName(), $updatedCottage->getName());
-        $this->assertEquals($this->testCottage->getMaxGuestsNumber(), $updatedCottage->getMaxGuestsNumber());
-        $this->assertEquals($this->testCottage->getExtraInfo(), $updatedCottage->getExtraInfo());
-        $this->assertEquals($this->testCottage->getColor(), $updatedCottage->getColor());
+        $this->assertNotEquals($this->testCottage->getName(), $updatedCottage->getName());
+        $this->assertEquals($data['max_guests_number'], $updatedCottage->getMaxGuestsNumber());
+        $this->assertEquals($data['extra_info'], $updatedCottage->getExtraInfo());
+        $this->assertEquals($data['color'], $updatedCottage->getColor());
     }
 
     public function testUpdateCottage__WhenNameAndColorNotProviden__ReturnsError()

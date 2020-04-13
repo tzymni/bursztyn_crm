@@ -43,6 +43,11 @@ class Cottages
      */
     private $max_guests_number;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Reservations", mappedBy="cottage")
+     */
+    private $reservations;
+
     public function __construct()
     {
         $this->reservations = new ArrayCollection();
@@ -115,6 +120,37 @@ class Cottages
     public function setMaxGuestsNumber($max_guests_number): void
     {
         $this->max_guests_number = $max_guests_number;
+    }
+
+    /**
+     * @return Collection|Reservations[]
+     */
+    public function getReservations(): Collection
+    {
+        return $this->reservations;
+    }
+
+    public function addReservation(Reservations $reservation): self
+    {
+        if (!$this->reservations->contains($reservation)) {
+            $this->reservations[] = $reservation;
+            $reservation->setCottage($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReservation(Reservations $reservation): self
+    {
+        if ($this->reservations->contains($reservation)) {
+            $this->reservations->removeElement($reservation);
+            // set the owning side to null (unless already changed)
+            if ($reservation->getCottage() === $this) {
+                $reservation->setCottage(null);
+            }
+        }
+
+        return $this;
     }
 
 }
