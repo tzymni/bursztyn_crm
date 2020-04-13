@@ -12,7 +12,7 @@
 
             <div class="form-group">
                 <label for="max_guests_number">Capacity</label>
-                <input type="text" v-model="max_guests_number" name="capacity"
+                <input type="text" v-model="max_guests_number" name="max_guests_number"
                        class="form-control"
                        :class="{ 'is-invalid': submitted && !max_guests_number }"/>
 
@@ -20,9 +20,7 @@
 
             <div class="form-group">
                 <label htmlFor="color">Colour</label>
-                <input type="color" v-model="color" name="color" class="form-control"
-                       :class="{ 'is-invalid': submitted && !color }"/>
-                <div v-show="submitted && !color" class="invalid-feedback">Cottages' color is required</div>
+                <compact-picker v-model="color" :value="color" @input="updateValue" name="color" />
             </div>
 
             <div class="form-group">
@@ -43,10 +41,12 @@
 
 <script>
     import {cottageService} from "../_services/cottage.service";
-   
+    import {Compact} from 'vue-color'
     export default {
         name: "cottageForm",
-
+        components: {
+            'compact-picker': Compact,
+        },
         data() {
             return {
                 childMessage: '',

@@ -37,7 +37,7 @@ function updateCottage(data) {
 }
 
 function createCottage(data) {
-    return axios.post('http://localhost:8000/cottage', data, {headers: {Authorization: AuthStr}})
+    return axios.post('http://localhost:8000/cottage/add', data, {headers: {Authorization: AuthStr}})
         .then(function (response) {
             return response.data;
         })
