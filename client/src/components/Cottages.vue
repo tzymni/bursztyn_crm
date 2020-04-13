@@ -18,7 +18,7 @@
             <div class="table-wrap">
                 <b-table id="Cottages"
                          :per-page="perPage"
-                         :current-page="currentPage" striped small bordered class="table-cottages" :fields="fields"
+                         :current-page="currentPage" striped small bordered class="table-cottages text-uppercase" :fields="fields"
                          :items="cottages"
                          thead-class="thead-dark">
                     <template v-slot:head(id)="data">
@@ -60,23 +60,6 @@
                 ></b-pagination>
             </div>
         </div>
-
-        <!--       TODO CHANGE TO EXTERNAL WIDGET OR SINGLE COMPONENT
-        <b-modal id="delete-form"
-                 hide-footer
-                 title="Removing cottage">
-            <p>Are you sure you want to delete this cottage?</p>
-            <div class="m-footer text-center">
-                <b-button @click="deleteCottage($data.editId)" class="btn btn-danger p-2 m-3">
-                    Delete
-                </b-button>
-                <b-button @click="$bvModal.hide('delete-form')" class="btn p-2 m-3">
-                    Cancel
-                </b-button>
-            </div>
-        </b-modal> -->
-
-
     </div>
 </template>
 
@@ -159,10 +142,6 @@
         width: 100%;
         max-width: 40vw;
         text-align: left;
-    }
-
-    .table-head-cottages {
-        text-transform: uppercase;
     }
 
     .table-btn {

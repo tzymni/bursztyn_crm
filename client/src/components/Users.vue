@@ -19,7 +19,7 @@
                          :per-page="perPage"
                          :current-page="currentPage" striped small bordered class="table-users" :fields="fields"
                          :items="users"
-                         thead-class="thead-dark">
+                         thead-class="thead-dark text-uppercase">
                     <template v-slot:head(id)="data">
                         <p class="hide">{{data.field.id}}</p>
                     </template>
@@ -135,10 +135,6 @@
         width: 100%;
         max-width: 40vw;
         text-align: left;
-    }
-
-    .table-head-users {
-        text-transform: uppercase;
     }
 
     .table-btn {
