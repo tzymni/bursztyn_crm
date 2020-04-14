@@ -2,8 +2,18 @@
     <div id="calendar">
         <div class="calendar-controls">
             <div>
-                <b-button class="btn btn-info" id="add-reservation" >Add reservation</b-button><br/><br/>
-                <b-button class="btn btn-info" id="add-cleaning" >Add cleaning</b-button>
+
+
+                <div>
+                    <b-button class="btn btn-info" id="show-reservation-form-modal" @click="showReservationFormModal()">
+                        Add reservation
+                    </b-button>
+                    <b-modal id="cottage-form-modal" title="Reservation form" hide-footer>
+                        <ReservationForm :editId="$data.editId"/>
+                    </b-modal>
+                </div>
+
+                <b-button class="btn btn-info" id="add-cleaning">Add cleaning</b-button>
 
             </div>
             <div v-if="message" class="notification is-success">{{ message }}</div>
@@ -57,7 +67,7 @@
                 <div class="field">
                     <label class="label">Today Button</label>
                     <label class="checkbox">
-                        <input v-model="useTodayIcons" type="checkbox" />
+                        <input v-model="useTodayIcons" type="checkbox"/>
                         Icons
                     </label>
                 </div>
@@ -65,14 +75,14 @@
                 <div class="field">
                     <label class="label">Themes</label>
                     <label class="checkbox">
-                        <input v-model="useDefaultTheme" type="checkbox" />
+                        <input v-model="useDefaultTheme" type="checkbox"/>
                         Default
                     </label>
                 </div>
 
                 <div class="field">
                     <label class="checkbox">
-                        <input v-model="useHolidayTheme" type="checkbox" />
+                        <input v-model="useHolidayTheme" type="checkbox"/>
                         Holidays
                     </label>
                 </div>
@@ -82,21 +92,21 @@
                 <div class="field">
                     <label class="label">Title</label>
                     <div class="control">
-                        <input v-model="newItemTitle" class="input" type="text" />
+                        <input v-model="newItemTitle" class="input" type="text"/>
                     </div>
                 </div>
 
                 <div class="field">
                     <label class="label">Start date</label>
                     <div class="control">
-                        <input v-model="newItemStartDate" class="input" type="date" />
+                        <input v-model="newItemStartDate" class="input" type="date"/>
                     </div>
                 </div>
 
                 <div class="field">
                     <label class="label">End date</label>
                     <div class="control">
-                        <input v-model="newItemEndDate" class="input" type="date" />
+                        <input v-model="newItemEndDate" class="input" type="date"/>
                     </div>
                 </div>
 
@@ -136,20 +146,21 @@
 </template>
 <script>
     // Load CSS from the published version
+    import ReservationForm from "./ReservationForm";
+
     require("vue-simple-calendar/static/css/default.css")
     require("vue-simple-calendar/static/css/holidays-us.css")
-    // Load CSS from the local repo
-    //require("../../vue-simple-calendar/static/css/default.css")
-    //require("../../vue-simple-calendar/static/css/holidays-us.css")
+
     import {
         CalendarView,
         CalendarViewHeader,
         CalendarMathMixin,
     } from "vue-simple-calendar" // published version
-    //} from "../../vue-simple-calendar/src/components/bundle.js" // local repo
+
     export default {
         name: "Calendar",
         components: {
+            ReservationForm,
             CalendarView,
             CalendarViewHeader,
         },
@@ -246,6 +257,10 @@
             this.newItemEndDate = this.isoYearMonthDay(this.today())
         },
         methods: {
+            showReservationFormModal() {
+
+                this.$bvModal.show("cottage-form-modal");
+            },
             periodChanged() {
                 // range, eventSource) {
                 // Demo does nothing with this information, just including the method to demonstrate how
@@ -259,6 +274,7 @@
             },
             onClickDay(d) {
                 this.message = `You clicked: ${d.toLocaleDateString()}`
+                this.$bvModal.show("cottage-form-modal");
             },
             onClickItem(e) {
                 this.message = `You clicked: ${e.title}`
@@ -299,6 +315,7 @@
         margin: 0;
         background-color: #f7fcff;
     }
+
     #calendar {
         display: flex;
         flex-direction: row;
@@ -310,11 +327,13 @@
         margin-left: auto;
         margin-right: auto;
     }
+
     .calendar-controls {
         margin-right: 1rem;
         min-width: 14rem;
         max-width: 14rem;
     }
+
     .calendar-parent {
         display: flex;
         flex-direction: column;
@@ -324,18 +343,21 @@
         max-height: 80vh;
         background-color: white;
     }
+
     /* For long calendars, ensure each week gets sufficient height. The body of the calendar will scroll if needed */
     .cv-wrapper.period-month.periodCount-2 .cv-week,
     .cv-wrapper.period-month.periodCount-3 .cv-week,
     .cv-wrapper.period-year .cv-week {
         min-height: 6rem;
     }
+
     /* These styles are optional, to illustrate the flexbility of styling the calendar purely with CSS. */
     /* Add some styling for items tagged with the "birthday" class */
     .theme-default .cv-event.birthday {
         background-color: #e0f0e0;
         border-color: #d7e7d7;
     }
+
     .theme-default .cv-event.birthday::before {
         content: "\1F382"; /* Birthday cake */
         margin-right: 0.5em;

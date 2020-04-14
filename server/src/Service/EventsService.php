@@ -88,11 +88,19 @@ class EventsService
                 throw new \Exception($userResponse);
             }
 
-            if (!$this->isTimestamp($dateFrom) || !$this->isTimestamp($dateTo)) {
+            if (!$this->isTimestamp($dateFrom)) {
+                $dateFrom = strtotime($dateFrom, 'UTC');
+            }
+
+            if (!$this->isTimestamp($dateTo)) {
+                $dateTo = strtotime($dateTo, 'UTC');
+            }
+
+            if (empty($dateFrom || empty($dateTo))) {
                 throw new \Exception('Wrong date format!');
             }
 
-            if(!$this->isValidType($type)) {
+            if (!$this->isValidType($type)) {
                 throw new \Exception('Wrong type!');
             }
 

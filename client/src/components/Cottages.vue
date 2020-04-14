@@ -12,13 +12,13 @@
                 <b-modal @hide="setCottages()" id="cottage-form-modal" title="Cottage form" hide-footer>
                     <CottageForm :editId="$data.editId" v-on:childToParent="showModal"/>
                 </b-modal>
-
             </div>
 
             <div class="table-wrap">
                 <b-table id="Cottages"
                          :per-page="perPage"
-                         :current-page="currentPage" striped small bordered class="table-cottages text-uppercase" :fields="fields"
+                         :current-page="currentPage" striped small bordered class="table-cottages text-uppercase"
+                         :fields="fields"
                          :items="cottages"
                          thead-class="thead-dark">
                     <template v-slot:head(id)="data">
@@ -32,7 +32,8 @@
                     </template>
                     <template v-slot:cell(color)="data">
                         <p class="hide">{{data.item.color}}</p>
-                        <v-btn inactive block small tile depressed :color="data.item.color" class="color-rectangle"></v-btn>
+                        <v-btn inactive block small tile depressed :color="data.item.color"
+                               class="color-rectangle"></v-btn>
                     </template>
                     <template v-slot:head(max_guests_number)="data">
                         <p class="hide">{{data.field.max_guests_number}}</p>
@@ -94,30 +95,30 @@
                 cottageService.getCottages().then(function (response) {
                         self.cottages = response;
                     }
-                )
-                    .catch(function (error) {
-                        if (error) {
-                            self.errorNotify = error;
-                            self.loading = false;
-                        }
-                    });
+                ).catch(function (error) {
+                    if (error) {
+                        self.errorNotify = error;
+                        self.loading = false;
+                    }
+                });
             },
             deleteCottage(id) {
                 this.$confirm("Are you sure you want to delete this cottage?", "Delete cottage", 'error').then(() => {
-                 
-                        var self = this;
-                        cottageService.deleteCottage(id).then(function () {
-                                self.setCottages();
+
+                    var self = this;
+                    cottageService.deleteCottage(id).then(function () {
+                            self.setCottages();
+                        }
+                    )
+                        .catch(function (error) {
+                            if (error) {
+                                self.errorNotify = error;
+                                self.loading = false;
                             }
-                        )
-                            .catch(function (error) {
-                                if (error) {
-                                    self.errorNotify = error;
-                                    self.loading = false;
-                                }
                         });
-                    })     
-            }},
+                })
+            }
+        },
         computed: {
             rows() {
                 return this.cottages.length
@@ -167,7 +168,7 @@
     .color-rectangle {
         padding: 0;
         margin: 0;
-        width:100%;
+        width: 100%;
         max-width: 1em !important;
         height: 1em;
         cursor: default !important;
