@@ -18,7 +18,7 @@
             <div class="table-wrap">
                 <b-table id="Cottages"
                          :per-page="perPage"
-                         :current-page="currentPage" striped small bordered class="table-cottages" :fields="fields"
+                         :current-page="currentPage" striped small bordered class="table-cottages text-uppercase" :fields="fields"
                          :items="cottages"
                          thead-class="thead-dark">
                     <template v-slot:head(id)="data">
@@ -32,7 +32,7 @@
                     </template>
                     <template v-slot:cell(color)="data">
                         <p class="hide">{{data.item.color}}</p>
-                        <v-btn inactive block small tile depressed :color="data.item.color"></v-btn>
+                        <v-btn inactive block small tile depressed :color="data.item.color" class="color-rectangle"></v-btn>
                     </template>
                     <template v-slot:head(max_guests_number)="data">
                         <p class="hide">{{data.field.max_guests_number}}</p>
@@ -44,7 +44,7 @@
                     </template>
                     <template v-slot:cell(is_active)="data">
                         <p class="hide">{{data.item.is_active}}</p>
-                        <a @click="show(data.item.id)" class="btn btn-danger">
+                        <a @click="deleteCottage(data.item.id)" class="btn btn-danger">
                             <font-awesome-icon icon="trash-alt"/>
                         </a>
                         <a @click="showModal(data.item.id)" class="btn btn-primary">
@@ -60,23 +60,6 @@
                 ></b-pagination>
             </div>
         </div>
-
-        <!--       TODO CHANGE TO EXTERNAL WIDGET OR SINGLE COMPONENT-->
-        <b-modal id="delete-form"
-                 hide-footer
-                 title="Removing cottage">
-            <p>Are you sure you want to delete this cottage?</p>
-            <div class="m-footer text-center">
-                <b-button @click="deleteCottage($data.editId)" class="btn btn-danger p-2 m-3">
-                    Delete
-                </b-button>
-                <b-button @click="$bvModal.hide('delete-form')" class="btn p-2 m-3">
-                    Cancel
-                </b-button>
-            </div>
-        </b-modal>
-
-
     </div>
 </template>
 
@@ -106,10 +89,6 @@
                 this.editId = id;
                 this.$bvModal.show("cottage-form-modal");
             },
-            show(id) {
-                this.editId = id;
-                this.$bvModal.show('delete-form');
-            },
             setCottages() {
                 var self = this;
                 cottageService.getCottages().then(function (response) {
@@ -124,21 +103,21 @@
                     });
             },
             deleteCottage(id) {
-                var self = this;
-                cottageService.deleteCottage(id).then(function () {
-                        self.setCottages();
-                    }
-                )
-                    .catch(function (error) {
-                        if (error) {
-                            self.errorNotify = error;
-                            self.loading = false;
-                        }
-                    });
-
-                this.$bvModal.hide('delete-form');
-            }
-        },
+                this.$confirm("Are you sure you want to delete this cottage?", "Delete cottage", 'error').then(() => {
+                 
+                        var self = this;
+                        cottageService.deleteCottage(id).then(function () {
+                                self.setCottages();
+                            }
+                        )
+                            .catch(function (error) {
+                                if (error) {
+                                    self.errorNotify = error;
+                                    self.loading = false;
+                                }
+                        });
+                    })     
+            }},
         computed: {
             rows() {
                 return this.cottages.length
@@ -165,10 +144,6 @@
         text-align: left;
     }
 
-    .table-head-cottages {
-        text-transform: uppercase;
-    }
-
     .table-btn {
         width: 15px;
         height: 15px;
@@ -190,8 +165,12 @@
     }
 
     .color-rectangle {
-        width: 3em;
-        height: 1.5em;
+        padding: 0;
+        margin: 0;
+        width:100%;
+        max-width: 1em !important;
+        height: 1em;
+        cursor: default !important;
     }
 
 </style>
