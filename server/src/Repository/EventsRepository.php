@@ -19,6 +19,23 @@ class EventsRepository extends ServiceEntityRepository
         parent::__construct($registry, Events::class);
     }
 
+    /**
+     * Find all active cottages/
+     *
+     * @return array
+     */
+    public function findAllActive(): array
+    {
+        $qb = $this->createQueryBuilder('p')
+            ->select('p.id,p.date_from_unix_utc, p.date_to_unix_utc, p.title, p.is_active, p.type')
+            ->andWhere('p.is_active = :active')
+            ->setParameter('active', true)
+            ->getQuery();
+
+        return $qb->execute();
+    }
+
+
     // /**
     //  * @return Events[] Returns an array of Events objects
     //  */

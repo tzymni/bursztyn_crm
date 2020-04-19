@@ -39,9 +39,9 @@ class EventsController extends AbstractController implements TokenAuthenticatedC
         $body = $request->getContent();
         $data = json_decode($body, true);
 
-        $dataDateEmpty = (empty($data['date_from']) || empty($data['date_to'])) ? true : false;
-        $dateGuestsEmpty = (empty($data['guest_first_name']) || empty($data['guest_last_name'])) ? true : false;
-        $dataRelationParamsEmpty = (empty($data['user_id']) || empty($data['cottage_id'])) ? true : false;
+        $dataDateEmpty = empty($data['date_from']) || empty($data['date_to']);
+        $dateGuestsEmpty = empty($data['guest_first_name']) || empty($data['guest_last_name']);
+        $dataRelationParamsEmpty = empty($data['user_id']) || empty($data['cottage_id']);
 
         if (is_null($data) || $dataDateEmpty || $dateGuestsEmpty || $dataRelationParamsEmpty) {
             $status = JsonResponse::HTTP_BAD_REQUEST;
@@ -64,5 +64,44 @@ class EventsController extends AbstractController implements TokenAuthenticatedC
         }
 
         return new JsonResponse($data, $status);
+    }
+
+    /**
+     * @Route("/event/list")
+     * @Method("GET")
+     * @param ResponseErrorDecoratorService $errorDecorator
+     */
+    public function getEventList(
+        ResponseErrorDecoratorService $errorDecorator,
+        EventsService $eventsService
+    ) {
+        try {
+            $events = $eventsService->getActiveEvents();
+
+            if (!empty($events)) {
+                $responseData = array();
+                foreach ($events as $event) {
+                    $tmp = array();
+                    $tmp['id'] = $event->getId();
+                    $tmp['title'] = $event->getTitle();
+                    $tmp['date_from'] = $event->getDateFromUnixUtc();
+                    $tmp['date_to'] = $event->getDateToUnixUtc();
+                    $reservation = $event->getReservations();
+
+                    if (!empty($reservation)) {
+                        $cottage = $reservation->getCottage();
+                        $tmp['color'] = $cottage->getColor();
+                    } else {
+                        $tmp['color']  = null;
+                    }
+                    $responseData[] = $tmp;
+                }
+            }
+            $status = JsonResponse::HTTP_OK;
+        } catch (\Exception $exception) {
+            $status = JsonResponse::HTTP_OK;
+            $responseData = $exception->getMessage();
+        }
+        return new JsonResponse($responseData, $status);
     }
 }

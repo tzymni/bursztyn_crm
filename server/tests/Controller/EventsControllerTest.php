@@ -111,7 +111,7 @@ class EventsControllerTest extends BaseTestCase
             'user_id' => $this->testUser->getId(),
             'cottage_id' => $this->testCottage->getId(),
             'date_from' => '2020-04-11',
-            'date_to' => '2020-04-18',
+            'date_to' => 'DUPKA',
             'type' => EventsService::RESERVATION_EVENT,
             'guest_first_name' => self::TEST_USER_EMAIL,
             'guest_last_name' => 'Test last name',
@@ -230,4 +230,33 @@ class EventsControllerTest extends BaseTestCase
         $this->assertEquals($responseData['error']['message'], 'Wrong type!');
     }
 
+    public function testGetActiveEvents__WhenValidToken__ReturnSuccess()
+    {
+
+        $this->testCreateReservationEvent__When_All_Data_Is_Provided___Returns_Success();
+
+        $token = $this->getValidToken();
+
+        $response = $this->client->get(
+            "/event/list",
+            [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $token
+                ]
+            ]
+        );
+        $responseData = json_decode($response->getBody(), true);
+        print_r($responseData);
+//        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+//        $this->assertArrayHasKey("id", $responseData[0]);
+//        $this->assertArrayHasKey("title", $responseData[0]);
+//        $this->assertArrayHasKey("color", $responseData[0]);
+//        $this->assertArrayHasKey("date_from_unix_utc", $responseData[0]);
+//        $this->assertArrayHasKey("date_to_unix_utc", $responseData[0]);
+//        $this->assertArrayHasKey("type", $responseData[0]);
+
+        foreach ($responseData as $data) {
+            $this->assertEquals(true, $data['is_active']);
+        }
+    }
 }

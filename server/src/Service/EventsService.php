@@ -89,14 +89,14 @@ class EventsService
             }
 
             if (!$this->isTimestamp($dateFrom)) {
-                $dateFrom = strtotime($dateFrom, 'UTC');
+                $dateFrom = strtotime($dateFrom . ' UTC');
             }
 
             if (!$this->isTimestamp($dateTo)) {
-                $dateTo = strtotime($dateTo, 'UTC');
+                $dateTo = strtotime($dateTo . ' UTC');
             }
 
-            if (empty($dateFrom || empty($dateTo))) {
+            if (empty($dateFrom) || empty($dateTo)) {
                 throw new \Exception('Wrong date format!');
             }
 
@@ -122,6 +122,14 @@ class EventsService
         } catch (\Exception $exception) {
             return $exception->getMessage();
         }
+    }
+
+    public function getActiveEvents()
+    {
+        return $this->em->getRepository('App:Events')->findBy(
+            array("is_active" => true),
+            array()
+        );
     }
 
 }

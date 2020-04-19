@@ -43,8 +43,10 @@ class ReservationService
     {
         $firstName = $data['guest_first_name'];
         $lastName = $data['guest_last_name'];
+        $dateFrom = $data['date_from'];
+        $dateTo = $data['date_to'];
 
-        return 'Reservation for ' . $firstName . ' ' . $lastName;
+        return 'Reservation for ' . $firstName . ' ' . $lastName . ' (' . $dateFrom . ' - ' . $dateTo . ')';
     }
 
     /**
@@ -63,7 +65,7 @@ class ReservationService
         }
 
         $guestsNumber = empty($data['guests_number']) ? 0 : intval($data['guests_number']);
-        $extraInfo = empty($data['extra_info']) ? null :$data['extra_info'];
+        $extraInfo = empty($data['extra_info']) ? null : $data['extra_info'];
 
         $reservation = new Reservations();
         $reservation->setCottage($cottageResponse);

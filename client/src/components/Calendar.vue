@@ -2,20 +2,21 @@
     <div id="calendar">
         <div class="calendar-controls">
             <div>
-
-
                 <div>
                     <b-button class="btn btn-info" id="show-reservation-form-modal" @click="showReservationFormModal()">
                         Add reservation
                     </b-button>
-                    <b-modal id="cottage-form-modal" title="Reservation form" hide-footer>
+                    <b-modal @hide="setEvents()" id="cottage-form-modal" title="Reservation form" hide-footer>
                         <ReservationForm :editId="$data.editId"/>
                     </b-modal>
                 </div>
+                <br/>
 
                 <b-button class="btn btn-info" id="add-cleaning">Add cleaning</b-button>
 
             </div>
+
+            <div id="trial-of-options" style="display: none">
             <div v-if="message" class="notification is-success">{{ message }}</div>
 
             <div class="box">
@@ -115,6 +116,7 @@
                 </button>
             </div>
         </div>
+        </div>
         <div class="calendar-parent">
             <calendar-view
                     :events="items"
@@ -123,7 +125,6 @@
                     :enable-drag-drop="true"
                     :disable-past="disablePast"
                     :disable-future="disableFuture"
-                    :show-event-times="showEventTimes"
                     :display-period-uom="displayPeriodUom"
                     :display-period-count="displayPeriodCount"
                     :starting-day-of-week="startingDayOfWeek"
@@ -147,6 +148,7 @@
 <script>
     // Load CSS from the published version
     import ReservationForm from "./ReservationForm";
+    import {reservationService} from "../_services/reservation.service";
 
     require("vue-simple-calendar/static/css/default.css")
     require("vue-simple-calendar/static/css/holidays-us.css")
@@ -155,7 +157,7 @@
         CalendarView,
         CalendarViewHeader,
         CalendarMathMixin,
-    } from "vue-simple-calendar" // published version
+    } from "vue-simple-calendar"
 
     export default {
         name: "Calendar",
@@ -184,50 +186,6 @@
                 useTodayIcons: true,
                 items: [
                     {
-                        id: "e0",
-                        startDate: "2018-01-05",
-                    },
-                    {
-                        id: "e1",
-                        startDate: this.thisMonth(15, 18, 30),
-                    },
-                    {
-                        id: "1",
-                        startDate: this.thisMonth(15),
-                        title: "Single-day item with a long title",
-                        style: 'background-color: red'
-
-                    },
-
-                    {
-                        id: "2",
-                        startDate: this.thisMonth(7, 9, 25),
-                        endDate: this.thisMonth(10, 16, 30),
-                        title: "Multi-day item with a long title and times",
-                        style: 'background-color: red'
-                    },
-                    {
-                        id: "3",
-                        startDate: this.thisMonth(7, 9, 25),
-                        endDate: this.thisMonth(10, 16, 30),
-                        title: "Multi-day item with a long title and times",
-                        style: 'background-color: green'
-                    },
-                    {
-                        id: "4",
-                        startDate: this.thisMonth(7, 9, 25),
-                        endDate: this.thisMonth(10, 16, 30),
-                        title: "Multi-day item with a long title and times",
-                        style: 'background-color: brown'
-                    },
-                    {
-                        id: "5",
-                        startDate: this.thisMonth(7, 9, 25),
-                        endDate: this.thisMonth(10, 16, 30),
-                        title: "Multi-day item with a long title and times",
-                        style: 'background-color: grey'
-                    },
-                    {
                         id: "e4",
                         startDate: this.thisMonth(20),
                         title: "My Birthday!",
@@ -255,12 +213,40 @@
         mounted() {
             this.newItemStartDate = this.isoYearMonthDay(this.today())
             this.newItemEndDate = this.isoYearMonthDay(this.today())
+            this.setEvents()
         },
         methods: {
             showReservationFormModal() {
 
                 this.$bvModal.show("cottage-form-modal");
             },
+            setEvents() {
+                var self = this;
+                reservationService.getEvents().then(function (response) {
+
+                        let list = [];
+                        response.map(function (value) {
+
+                            let newEvent = {
+                                id: value.id,
+                                startDate: new Date(value.date_from * 1000),
+                                endDate: new Date(value.date_to * 1000),
+                                title: value.title,
+                                style: 'background-color: '+value.color
+                            }
+                            list.push(newEvent)
+                        });
+
+                        self.items = list
+                    }
+                ).catch(function (error) {
+                    if (error) {
+                        self.errorNotify = error;
+                        self.loading = false;
+                    }
+                });
+            },
+
             periodChanged() {
                 // range, eventSource) {
                 // Demo does nothing with this information, just including the method to demonstrate how
@@ -315,7 +301,18 @@
         margin: 0;
         background-color: #f7fcff;
     }
+.cv-event {
+    height: 18%;
+    padding: 2px;
+}
+    .dow6 {
+        background-color: #fefec8 !important;
+    }
 
+
+    .dow0 {
+        background-color: #ffb2ae !important;
+    }
     #calendar {
         display: flex;
         flex-direction: row;

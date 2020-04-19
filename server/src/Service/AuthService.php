@@ -45,6 +45,7 @@ class AuthService
         $payload = array(
             'sub' => $userData['email'],
             'email' => $userData['email'],
+            'extra_info' => 'DyzioToKrolWszechswiata',
             'iat' => $issuedAt,
             'exp' => $expirationTime
         );

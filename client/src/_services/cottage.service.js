@@ -5,9 +5,9 @@ export const cottageService = {
     getCottages,
 };
 
-const axios = require('axios');
-const token = sessionStorage.getItem('token');
-const AuthStr = 'Bearer '.concat(token);
+var axios = require('axios');
+var token = sessionStorage.getItem('token');
+var AuthStr = 'Bearer '.concat(token);
 
 function saveCottage(data) {
 
@@ -37,6 +37,9 @@ function updateCottage(data) {
 }
 
 function createCottage(data) {
+    var token = sessionStorage.getItem('token');
+    var AuthStr = 'Bearer '.concat(token);
+
     return axios.post('http://localhost:8000/cottage/add', data, {headers: {Authorization: AuthStr}})
         .then(function (response) {
             return response.data;
