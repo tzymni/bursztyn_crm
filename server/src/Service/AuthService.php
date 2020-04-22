@@ -83,8 +83,7 @@ class AuthService
     {
         $token = $this->_getBearerToken();
         $decoded_array = $this->_validateJWT($token);
-        print_r($decoded_array);
-        die();
+
         if (!empty($decoded_array)) {
             return $decoded_array;
         } else {

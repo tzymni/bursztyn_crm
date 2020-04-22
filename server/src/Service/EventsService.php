@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Entity\Cottages;
 use App\Entity\Events;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
@@ -63,6 +64,53 @@ class EventsService
     }
 
     /**
+     * Check cottage availability between two given dates.
+     * Throws error if reservation for given cottage exist between given dates.
+     * TODO Move to reservation service?
+     *
+     * @param $cottageId
+     * @param $dateFrom
+     * @param $dateTo
+     * @return bool
+     * @throws \Exception
+     */
+    public function checkCottageAvailability($cottageId, $dateFrom, $dateTo)
+    {
+        $cottageService = new CottageService($this->em);
+        $cottageResponse = $cottageService->getActiveCottageById($cottageId);
+
+        if (!$cottageResponse instanceof Cottages) {
+            throw new \Exception($cottageResponse);
+        }
+
+        $result = $this->em->createQueryBuilder()
+            ->select('e.id, r.id')
+            ->from('App:Reservations', 'r')
+            ->leftJoin('r.event', 'e')
+            ->andWhere('(e.date_from_unix_utc >= :dateFrom AND e.date_from_unix_utc < :dateTo)')
+            ->orWhere('(e.date_to_unix_utc <= :dateTo AND e.date_to_unix_utc > :dateFrom)')
+            ->andWhere('r.cottage=:cottageId')
+            ->setParameter('cottageId', $cottageId)
+            ->setParameter('dateFrom', $dateFrom)
+            ->setParameter('dateTo', $dateTo)
+            ->getQuery()->getResult();
+
+        if (empty($result)) {
+            return true;
+        } else {
+            $dateFrom = gmdate("Y-m-d", $dateFrom);
+            $dateTo = gmdate("Y-m-d", $dateTo);
+            $message = sprintf(
+                "There is a reservation between %s and %s for cottage %s",
+                $dateFrom,
+                $dateTo,
+                $cottageResponse->getName()
+            );
+            throw new \Exception($message);
+        }
+    }
+
+    /**
      * Create event and reservation.
      *
      * TODO Use single responsibility and move creating reservations.
@@ -104,11 +152,18 @@ class EventsService
                 throw new \Exception('Wrong type!');
             }
 
+            $dateFrom += 12 * 3600;
+            $dateTo += 9 * 3600;
+
+            $this->checkCottageAvailability($data['cottage_id'], $dateFrom, $dateTo);
+
             $event = new Events();
             $event->setCreatedBy($userResponse);
             $event->setType($type);
             $event->setTitle($title);
             $event->setDateFromUnixUtc($dateFrom);
+            $event->setDateFrom(gmdate("Y-m-d h:i", $dateFrom));
+            $event->setDateTo(gmdate("Y-m-d h:i", $dateTo));
             $event->setDateToUnixUtc($dateTo);
             $event->setIsActive($isActive);
             $this->em->persist($event);

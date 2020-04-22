@@ -40,10 +40,10 @@ class EventsController extends AbstractController implements TokenAuthenticatedC
         $data = json_decode($body, true);
 
         $dataDateEmpty = empty($data['date_from']) || empty($data['date_to']);
-        $dateGuestsEmpty = empty($data['guest_first_name']) || empty($data['guest_last_name']);
+        $dataGuestsEmpty = empty($data['guest_first_name']) || empty($data['guest_last_name']);
         $dataRelationParamsEmpty = empty($data['user_id']) || empty($data['cottage_id']);
 
-        if (is_null($data) || $dataDateEmpty || $dateGuestsEmpty || $dataRelationParamsEmpty) {
+        if (is_null($data) || $dataDateEmpty || $dataGuestsEmpty || $dataRelationParamsEmpty) {
             $status = JsonResponse::HTTP_BAD_REQUEST;
             $data = $errorDecoratorService->decorateError(
                 $status,
@@ -53,7 +53,11 @@ class EventsController extends AbstractController implements TokenAuthenticatedC
             return new JsonResponse($data, $status);
         }
 
-        $result = $eventsService->createEvent($data);
+
+
+        if (empty($result)) {
+            $result = $eventsService->createEvent($data);
+        }
 
         if ($result instanceof Events) {
             $status = JsonResponse::HTTP_OK;
@@ -92,7 +96,7 @@ class EventsController extends AbstractController implements TokenAuthenticatedC
                         $cottage = $reservation->getCottage();
                         $tmp['color'] = $cottage->getColor();
                     } else {
-                        $tmp['color']  = null;
+                        $tmp['color'] = null;
                     }
                     $responseData[] = $tmp;
                 }

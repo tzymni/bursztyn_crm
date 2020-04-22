@@ -74,9 +74,11 @@ class BaseTestCase extends KernelTestCase
             ->getManager();
 
         $this->truncateTestReservations();
+        $this->truncateTestCottages(self::testCottageName);
         $this->truncateTestEvents();
         $this->truncateTestUsers();
-        $this->truncateTestCottages(self::testCottageName);
+
+
         $this->testUser = $this->createTestUser();
         $this->testInactiveUser = $this->createTestUser(
             self::TEST_INACTIVE_USER_EMAIL,
@@ -94,7 +96,8 @@ class BaseTestCase extends KernelTestCase
         $em = $this->em;
 
         $query = $em->createQuery(
-            "DELETE App:Reservations u WHERE u.guest_first_name Like '" . self::TEST_USER_EMAIL . "'"
+//            "DELETE App:Reservations u WHERE u.guest_first_name Like '" . self::TEST_USER_EMAIL . "'"
+            "DELETE from App:Reservations"
         );
         $query->execute();
         parent::tearDown();
@@ -111,9 +114,9 @@ class BaseTestCase extends KernelTestCase
         );
         $query->execute();
         parent::tearDown();
-
-        $this->em->close();
-        $this->em = null; // avoid memory leaks
+//
+//        $this->em->close();
+//        $this->em = null; // avoid memory leaks
 
     }
 
@@ -122,7 +125,8 @@ class BaseTestCase extends KernelTestCase
         $em = $this->em;
 
         $query = $em->createQuery(
-            "DELETE from App:Events u WHERE u.created_by IS NOT NULL "
+//            "DELETE from App:Events u WHERE u.created_by IS NOT NULL "
+            "DELETE from App:Events "
         );
         $query->execute();
         parent::tearDown();

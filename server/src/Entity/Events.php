@@ -51,6 +51,16 @@ class Events
      */
     private $reservations;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $date_from;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $date_to;
+
 
     public function getId(): ?int
     {
@@ -143,6 +153,30 @@ class Events
         if ($reservations->getEvent() !== $newEvent) {
             $reservations->setEvent($newEvent);
         }
+
+        return $this;
+    }
+
+    public function getDateFrom(): ?string
+    {
+        return $this->date_from;
+    }
+
+    public function setDateFrom(?string $date_from): self
+    {
+        $this->date_from = $date_from;
+
+        return $this;
+    }
+
+    public function getDateTo(): ?string
+    {
+        return $this->date_to;
+    }
+
+    public function setDateTo(?string $date_to): self
+    {
+        $this->date_to = $date_to;
 
         return $this;
     }

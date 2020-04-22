@@ -5,7 +5,7 @@
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     locale: 'en'
-    jwt_secret: my_jwt_secret
+    jwt_secret: tomaszBursztyn2020
 
 services:
     # default configuration for services in *this* file

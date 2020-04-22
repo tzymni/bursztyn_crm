@@ -17,105 +17,105 @@
             </div>
 
             <div id="trial-of-options" style="display: none">
-            <div v-if="message" class="notification is-success">{{ message }}</div>
+                <div v-if="message" class="notification is-success">{{ message }}</div>
 
-            <div class="box">
-                <h4 class="title is-5">Play with the options!</h4>
+                <div class="box">
+                    <h4 class="title is-5">Play with the options!</h4>
 
-                <div class="field">
-                    <label class="label">Period UOM</label>
-                    <div class="control">
-                        <div class="select">
-                            <select v-model="displayPeriodUom">
-                                <option>month</option>
-                                <option>week</option>
-                                <option>year</option>
-                            </select>
+                    <div class="field">
+                        <label class="label">Period UOM</label>
+                        <div class="control">
+                            <div class="select">
+                                <select v-model="displayPeriodUom">
+                                    <option>month</option>
+                                    <option>week</option>
+                                    <option>year</option>
+                                </select>
+                            </div>
                         </div>
+                    </div>
+
+                    <div class="field">
+                        <label class="label">Period Count</label>
+                        <div class="control">
+                            <div class="select">
+                                <select v-model="displayPeriodCount">
+                                    <option :value="1">1</option>
+                                    <option :value="2">2</option>
+                                    <option :value="3">3</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label class="label">Starting day of the week</label>
+                        <div class="control">
+                            <div class="select">
+                                <select v-model="startingDayOfWeek">
+                                    <option
+                                            v-for="(d, index) in dayNames"
+                                            :key="index"
+                                            :value="index"
+                                    >
+                                        {{ d }}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label class="label">Today Button</label>
+                        <label class="checkbox">
+                            <input v-model="useTodayIcons" type="checkbox"/>
+                            Icons
+                        </label>
+                    </div>
+
+                    <div class="field">
+                        <label class="label">Themes</label>
+                        <label class="checkbox">
+                            <input v-model="useDefaultTheme" type="checkbox"/>
+                            Default
+                        </label>
+                    </div>
+
+                    <div class="field">
+                        <label class="checkbox">
+                            <input v-model="useHolidayTheme" type="checkbox"/>
+                            Holidays
+                        </label>
                     </div>
                 </div>
 
-                <div class="field">
-                    <label class="label">Period Count</label>
-                    <div class="control">
-                        <div class="select">
-                            <select v-model="displayPeriodCount">
-                                <option :value="1">1</option>
-                                <option :value="2">2</option>
-                                <option :value="3">3</option>
-                            </select>
+                <div class="box">
+                    <div class="field">
+                        <label class="label">Title</label>
+                        <div class="control">
+                            <input v-model="newItemTitle" class="input" type="text"/>
                         </div>
                     </div>
-                </div>
 
-                <div class="field">
-                    <label class="label">Starting day of the week</label>
-                    <div class="control">
-                        <div class="select">
-                            <select v-model="startingDayOfWeek">
-                                <option
-                                        v-for="(d, index) in dayNames"
-                                        :key="index"
-                                        :value="index"
-                                >
-                                    {{ d }}
-                                </option>
-                            </select>
+                    <div class="field">
+                        <label class="label">Start date</label>
+                        <div class="control">
+                            <input v-model="newItemStartDate" class="input" type="date"/>
                         </div>
                     </div>
-                </div>
 
-                <div class="field">
-                    <label class="label">Today Button</label>
-                    <label class="checkbox">
-                        <input v-model="useTodayIcons" type="checkbox"/>
-                        Icons
-                    </label>
-                </div>
+                    <div class="field">
+                        <label class="label">End date</label>
+                        <div class="control">
+                            <input v-model="newItemEndDate" class="input" type="date"/>
+                        </div>
+                    </div>
 
-                <div class="field">
-                    <label class="label">Themes</label>
-                    <label class="checkbox">
-                        <input v-model="useDefaultTheme" type="checkbox"/>
-                        Default
-                    </label>
-                </div>
-
-                <div class="field">
-                    <label class="checkbox">
-                        <input v-model="useHolidayTheme" type="checkbox"/>
-                        Holidays
-                    </label>
+                    <button class="button is-info" @click="clickTestAddItem">
+                        Add Item
+                    </button>
                 </div>
             </div>
-
-            <div class="box">
-                <div class="field">
-                    <label class="label">Title</label>
-                    <div class="control">
-                        <input v-model="newItemTitle" class="input" type="text"/>
-                    </div>
-                </div>
-
-                <div class="field">
-                    <label class="label">Start date</label>
-                    <div class="control">
-                        <input v-model="newItemStartDate" class="input" type="date"/>
-                    </div>
-                </div>
-
-                <div class="field">
-                    <label class="label">End date</label>
-                    <div class="control">
-                        <input v-model="newItemEndDate" class="input" type="date"/>
-                    </div>
-                </div>
-
-                <button class="button is-info" @click="clickTestAddItem">
-                    Add Item
-                </button>
-            </div>
-        </div>
         </div>
         <div class="calendar-parent">
             <calendar-view
@@ -232,7 +232,7 @@
                                 startDate: new Date(value.date_from * 1000),
                                 endDate: new Date(value.date_to * 1000),
                                 title: value.title,
-                                style: 'background-color: '+value.color
+                                style: 'background-color: ' + value.color
                             }
                             list.push(newEvent)
                         });
@@ -301,10 +301,12 @@
         margin: 0;
         background-color: #f7fcff;
     }
-.cv-event {
-    height: 18%;
-    padding: 2px;
-}
+
+    .cv-event {
+        height: 18%;
+        padding: 2px;
+    }
+
     .dow6 {
         background-color: #fefec8 !important;
     }
@@ -313,6 +315,7 @@
     .dow0 {
         background-color: #ffb2ae !important;
     }
+
     #calendar {
         display: flex;
         flex-direction: row;
