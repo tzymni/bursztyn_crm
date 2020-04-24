@@ -60,6 +60,11 @@
                         ]
                     },
                     {
+                        href: '/',
+                        title: 'Management',
+                        icon: 'fa fa-tasks'
+                    },
+                    {
                         href: '/logout',
                         title: 'Logout',
                         icon: 'fa fa-sign-out-alt',

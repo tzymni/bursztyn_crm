@@ -5,9 +5,7 @@ export const userService = {
     getUsers,
 };
 
-const axios = require('axios');
-const token = sessionStorage.getItem('token');
-const AuthStr = 'Bearer '.concat(token);
+// TODO make axios, token, AuthStr as global variable
 
 function saveUser(data) {
 
@@ -19,6 +17,9 @@ function saveUser(data) {
 }
 
 function updateUser(data) {
+    const axios = require('axios');
+    const token = sessionStorage.getItem('token');
+    const AuthStr = 'Bearer '.concat(token);
     return axios.put('http://localhost:8000/user/' + data.id, data, {headers: {Authorization: AuthStr}})
         .then(function (response) {
             return response.data;
@@ -37,6 +38,9 @@ function updateUser(data) {
 }
 
 function createUser(data) {
+    const axios = require('axios');
+    const token = sessionStorage.getItem('token');
+    const AuthStr = 'Bearer '.concat(token);
     return axios.post('http://localhost:8000/user', data, {headers: {Authorization: AuthStr}})
         .then(function (response) {
             return response.data;
@@ -55,6 +59,7 @@ function createUser(data) {
 }
 
 function getUsers() {
+    const axios = require('axios');
     const token = sessionStorage.getItem('token');
     const AuthStr = 'Bearer '.concat(token);
 
@@ -77,7 +82,9 @@ function getUsers() {
 }
 
 function deleteUser(id) {
-
+    const axios = require('axios');
+    const token = sessionStorage.getItem('token');
+    const AuthStr = 'Bearer '.concat(token);
     return axios.delete('http://localhost:8000/user/' + id, {headers: {Authorization: AuthStr}})
         .then(function (response) {
             return response.data;
@@ -96,7 +103,9 @@ function deleteUser(id) {
 }
 
 function getUser(id) {
-
+    const axios = require('axios');
+    const token = sessionStorage.getItem('token');
+    const AuthStr = 'Bearer '.concat(token);
     return axios.get('http://localhost:8000/user/' + id, {headers: {Authorization: AuthStr}})
         .then(function (response) {
             return response.data;

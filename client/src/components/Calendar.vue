@@ -7,7 +7,7 @@
                         Add reservation
                     </b-button>
                     <b-modal @hide="setEvents()" id="cottage-form-modal" title="Reservation form" hide-footer>
-                        <ReservationForm :editId="$data.editId"/>
+                        <ReservationForm :clickedStartDate="$data.clickedStartDate" :editId="$data.editId"/>
                     </b-modal>
                 </div>
                 <br/>
@@ -193,6 +193,7 @@
                         url: "https://en.wikipedia.org/wiki/Birthday",
                     }
                 ],
+                clickedStartDate: null,
             }
         },
         computed: {
@@ -221,6 +222,7 @@
                 this.$bvModal.show("cottage-form-modal");
             },
             setEvents() {
+                this.clickedStartDate = null;
                 var self = this;
                 reservationService.getEvents().then(function (response) {
 
@@ -259,7 +261,8 @@
                 return new Date(t.getFullYear(), t.getMonth(), d, h || 0, m || 0)
             },
             onClickDay(d) {
-                this.message = `You clicked: ${d.toLocaleDateString()}`
+                console.log(`You clicked: ${d.toLocaleDateString()}`);
+                this.clickedStartDate = d.toLocaleDateString();
                 this.$bvModal.show("cottage-form-modal");
             },
             onClickItem(e) {

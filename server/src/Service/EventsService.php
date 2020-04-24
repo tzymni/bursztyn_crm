@@ -89,6 +89,7 @@ class EventsService
             ->leftJoin('r.event', 'e')
             ->andWhere('(e.date_from_unix_utc >= :dateFrom AND e.date_from_unix_utc < :dateTo)')
             ->orWhere('(e.date_to_unix_utc <= :dateTo AND e.date_to_unix_utc > :dateFrom)')
+            ->orWhere('(e.date_from_unix_utc < :dateFrom AND e.date_to_unix_utc > :dateTo)')
             ->andWhere('r.cottage=:cottageId')
             ->setParameter('cottageId', $cottageId)
             ->setParameter('dateFrom', $dateFrom)
