@@ -11,9 +11,19 @@
             </div>
             <div class="form-group">
                 <label htmlFor="password">Password</label>
-                <input type="password" v-model="password" name="password" class="form-control"
+                <label class="switch">
+                <input type="checkbox" v-on:click="showPassword()">
+                <i id="eye" class="far fa-eye-slash eye"></i>
+                </label>
+                <input id="password" type="password" v-model="password" name="password" class="form-control"
                        :class="{ 'is-invalid': submitted && !password }"/>
                 <div v-show="submitted && !password" class="invalid-feedback">Password is required</div>
+            </div>
+            <div class="form-group">
+                <label htmlFor="c_password">Comfirm password</label>
+                <input id="c_password" type="password" v-model="c_password" name="c_password" class="form-control"
+                       :class="{ 'is-invalid': submitted && c_password!=password }"/>
+                <div v-show="submitted && c_password!=password" class="invalid-feedback">Both fields needs to be the same</div>
             </div>
             <div class="form-group">
                 <label htmlFor="first_name">First name</label>
@@ -47,6 +57,7 @@
                 id: null,
                 email: "",
                 password: "",
+                c_password: "",
                 first_name: "",
                 last_name: "",
                 submitted: false,
@@ -54,6 +65,7 @@
                 errorNotify: "",
                 loading: false,
                 disabledEmailField: false,
+                reg_p: /^[A-Za-z]\w{5,15}$/,
                 reg: /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
             };
         },
@@ -69,7 +81,7 @@
             handleSubmit() {
                 this.submitted = true;
                 let id = this.id;
-                const {email, password, first_name, last_name} = this;
+                const {email, password,c_password, first_name, last_name} = this;
 
                 // stop here if form is invalid
                 if (!(email && password) && !id) {
@@ -77,9 +89,15 @@
                 } else if (!this.reg.test(email)) {
                     this.errorNotify = "Please Enter Correct Email";
                     return;
+                } else if (!this.reg_p.test(password)) {
+                    this.errorNotify = "Password needs to be at least 6 characters";
+                    return;
+                } else if (password!=c_password) {
+                    this.errorNotify = "Password fields need to match";
+                    return;
                 }
 
-                const data = {email, password, first_name, last_name, id};
+                const data = {email, password,c_password, first_name, last_name, id};
 
                 var self = this;
 
@@ -111,12 +129,59 @@
                         }
                     });
 
-            }
-
-        }
+            },
+            showPassword() {
+                var x = document.getElementById("password");
+                var y = document.getElementById("c_password");
+                var e = document.getElementById("eye");
+                if (x.type === "password") {
+                    x.type = "text";
+                    y.type = "text";
+                    e.className ="far fa-eye eye";
+                } else {
+                    x.type = "password";
+                    y.type = "password";
+                    e.className ="far fa-eye-slash eye";
+                }
+            },
+        },
     }
 </script>
 
 <style scoped>
+/* clear toggle */
+.switch {
+  position: absolute;
+  display: inline-block;
+}
 
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.hide {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.show {
+    opacity: 100;
+    width: 20px;
+    height: 20px;
+}
+
+/* The eye */
+.eye {
+    color: darkgray;
+}
+input:checked + .eye {
+    color: black;
+}
+input:hover + .eye {
+    color: #2196F3;
+}
 </style>
