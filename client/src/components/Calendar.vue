@@ -266,7 +266,7 @@
                 this.$bvModal.show("cottage-form-modal");
             },
             onClickItem(e) {
-                this.message = `You clicked: ${e.title}`
+                this.message = `You clicked: ${e.id}`
             },
             setShowDate(d) {
                 this.message = `Changing calendar view to ${d.toLocaleDateString()}`
