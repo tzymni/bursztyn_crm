@@ -3,6 +3,7 @@
         <form @submit.prevent="handleSubmit">
 
             <div class="container">
+                <div id="square" class="square mb-3"><i class="fas fa-home fa-5x"></i></div>
                 <div class="row form-group">
                     <div class="col">
                         <label for="date_from">Date from</label>
@@ -48,21 +49,24 @@
             </div>
             <div class="row form-group">
                 <div class="col">
-                    <label for="cottage_id">Cottage</label>
-                    <b-form-select v-model="cottage_id" :options="options"
-                                class="form-control"
-                                :class="{ 'is-invalid': submitted && !cottage_id }"
-                                 @input="changeColor"/>
-                    <div id="square" class="square"><i class="fas fa-home"></i></div>
-                    <div v-show="submitted && !cottage_id" class="invalid-feedback">Cottage is required</div>
-                </div>
-                <div class="col">
                     <label for="guests_number">Number of guests</label>
                     <input type="number" min="1" value="1" max="10" v-model="guests_number" name="guests_number"
                         class="form-control"
                         :class="{ 'is-invalid': submitted && !guests_number }"/>
                 </div>
+                <div class="col">
+                    <label for="cottage_id">Cottage</label>
+                    <b-form-select v-model="cottage_id" :options="options"
+                                class="form-control"
+                                :class="{ 'is-invalid': submitted && !cottage_id }"
+                                 @change="changeColor()"/>
+                    <div v-show="submitted && !cottage_id" class="invalid-feedback">Cottage is required</div>
+                </div>
+
+                
+
             </div>
+            
                 <div class="form-group">
                     <b-form-checkbox
                         id="advance_payment"
@@ -121,7 +125,8 @@
                 errorNotify: "",
                 loading: false,
                 selected: null,
-                options: []
+                options: [],
+                selectedIndex: 0,
             };
         },
         mounted() {
@@ -191,14 +196,17 @@
             },
             changeColor: function() {
                 var s = document.getElementById("square");
-                s.style.color = this.scolor;
+                s.style.color = this.scolor();
             },
             scolor: function() {
                 if (this.cottage_id===null){
-                    return "#000";
+                    return "#fff";
                 } else {
                     let y = this.cottage_id;
-                    let x = this.options.indexOf(y);
+                    let x = this.options.findIndex(x => x.value === y);
+                    console.log(x);
+                    //let x = this.options.value.indexOf(y);
+
                     return this.options[x].color;
                 }
             }
@@ -211,7 +219,6 @@
 </script>
 <style scoped>
 .square {
-    width: 20px;
-    height: 20px;
+    text-align: center;
 }
 </style>

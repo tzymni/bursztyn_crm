@@ -13,7 +13,8 @@
                 <label htmlFor="password">Password</label>
                 <label class="switch">
                 <input type="checkbox" v-on:click="showPassword()">
-                <i id="eye" class="far fa-eye-slash eye"></i>
+                <i class="far fa-eye-slash eye-show"></i>
+                <i class="far fa-eye eye"></i>
                 </label>
                 <input id="password" type="password" v-model="password" name="password" class="form-control"
                        :class="{ 'is-invalid': submitted && !password }"/>
@@ -162,26 +163,23 @@
   height: 0;
 }
 
-.hide {
-    opacity: 0;
+/* The eye */
+.eye {
+    visibility: hidden;
+}
+
+input:checked ~ .eye {
+    visibility: visible;
+    color: black;
+}
+
+input:checked + .eye-show {
+    visibility: hidden;
     width: 0;
     height: 0;
 }
 
-.show {
-    opacity: 100;
-    width: 20px;
-    height: 20px;
-}
-
-/* The eye */
-.eye {
-    color: darkgray;
-}
-input:checked + .eye {
-    color: black;
-}
-input:hover + .eye {
+input:hover + .eye-show, input:hover ~ .eye {
     color: #2196F3;
 }
 </style>
