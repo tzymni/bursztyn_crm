@@ -134,15 +134,12 @@
             showPassword() {
                 var x = document.getElementById("password");
                 var y = document.getElementById("c_password");
-                var e = document.getElementById("eye");
                 if (x.type === "password") {
                     x.type = "text";
                     y.type = "text";
-                    e.className ="far fa-eye eye";
                 } else {
                     x.type = "password";
                     y.type = "password";
-                    e.className ="far fa-eye-slash eye";
                 }
             },
         },
