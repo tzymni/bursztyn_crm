@@ -5,9 +5,7 @@ export const cottageService = {
     getCottages,
 };
 
-var axios = require('axios');
-var token = sessionStorage.getItem('token');
-var AuthStr = 'Bearer '.concat(token);
+
 
 function saveCottage(data) {
 
@@ -19,6 +17,9 @@ function saveCottage(data) {
 }
 
 function updateCottage(data) {
+    var axios = require('axios');
+    var token = sessionStorage.getItem('token');
+    var AuthStr = 'Bearer '.concat(token);
     return axios.put('http://localhost:8000/cottage/' + data.id, data, {headers: {Authorization: AuthStr}})
         .then(function (response) {
             return response.data;
@@ -59,8 +60,9 @@ function createCottage(data) {
 
 function getCottages() {
 
-    const token = sessionStorage.getItem('token');
-    const AuthStr = 'Bearer '.concat(token);
+    var axios = require('axios');
+    var token = sessionStorage.getItem('token');
+    var AuthStr = 'Bearer '.concat(token);
 
     return axios.get('http://localhost:8000/cottage/list', {headers: {Authorization: AuthStr}})
         .then(function (response) {
@@ -81,7 +83,9 @@ function getCottages() {
 }
 
 function deleteCottage(id) {
-
+    var axios = require('axios');
+    var token = sessionStorage.getItem('token');
+    var AuthStr = 'Bearer '.concat(token);
     return axios.delete('http://localhost:8000/cottage/' + id, {headers: {Authorization: AuthStr}})
         .then(function (response) {
             return response.data;
@@ -101,8 +105,9 @@ function deleteCottage(id) {
 
 function getCottage(id) {
 
-    const token = sessionStorage.getItem('token');
-    const AuthStr = 'Bearer '.concat(token);
+    var axios = require('axios');
+    var token = sessionStorage.getItem('token');
+    var AuthStr = 'Bearer '.concat(token);
     return axios.get('http://localhost:8000/cottage/' + id, {headers: {Authorization: AuthStr}})
         .then(function (response) {
             return response.data;
