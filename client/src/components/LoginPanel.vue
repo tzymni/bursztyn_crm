@@ -94,14 +94,13 @@
     height: 100%;
     min-height:100vh;
     margin: 0;
-    padding: 15vh;
+    padding: 15vh 0;
     font-size: 1.5rem;
     font-weight: 300;
     line-height: 1.5;
-    color: ##343a40;
+    color: #343a40;
     background-color: #ededee;
 }
-
 
 .card {
     margin: 0 auto;

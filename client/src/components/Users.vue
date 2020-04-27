@@ -124,7 +124,7 @@
     .users {
         width: 100%;
         height: 100%;
-        max-width: 50vw;
+        max-width: 900px;
     }
 
     .table-wrap {
@@ -133,7 +133,6 @@
 
     .table-users {
         width: 100%;
-        max-width: 40vw;
         text-align: left;
     }
 

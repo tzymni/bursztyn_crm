@@ -132,7 +132,7 @@
     .cottages {
         width: 100%;
         height: 100%;
-        max-width: 50vw;
+        max-width: 900px;
     }
 
     .table-wrap {
@@ -141,7 +141,7 @@
 
     .table-cottages {
         width: 100%;
-        max-width: 40vw;
+        max-width: 800px;
         text-align: left;
     }
 
