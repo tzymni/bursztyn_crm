@@ -134,12 +134,25 @@
                 this.getCottageById(this.editId);
             }
 
+            if (typeof this.clickedStartDate != 'undefined' && this.clickedStartDate != null) {
+
+                this.date_from = this.formatClickedDate();
+            }
             this.getCottages();
         },
         props: {
             editId: Number,
+            clickedStartDate: String,
         },
         methods: {
+
+            formatClickedDate() {
+                let changedDate = this.clickedStartDate.replace(/\./g, '-');
+                var parts = changedDate.split('-');
+                let newDate = parts[2] + '-' + parts[1] + '-' + ('0' + parts[0]).slice(-2);
+                return newDate;
+            },
+
             handleSubmit() {
                 this.submitted = true;
                 let id = this.id;
