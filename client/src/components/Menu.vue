@@ -53,9 +53,15 @@ export default {
           ],
         },
         {
-          href: "/",
           title: "Management",
           icon: "fa fa-tasks",
+          child: [
+            {
+              href: "/reservations",
+              title: "Reservations",
+              icon: "fa fa-calendar-check",
+            },
+          ],
         },
         {
           href: "/logout",

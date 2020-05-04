@@ -7,8 +7,15 @@
 
     <div class="container">
       <div class="col">
-        <b-button class="btn btn-info" id="show-modal" @click="showModal()">Add cottage</b-button>
-        <b-modal @hide="setCottages()" id="cottage-form-modal" title="Cottage form" hide-footer>
+        <b-button class="btn btn-info" id="show-modal" @click="showModal()"
+          >Add cottage</b-button
+        >
+        <b-modal
+          @hide="setCottages()"
+          id="cottage-form-modal"
+          title="Cottage form"
+          hide-footer
+        >
           <CottageForm :editId="$data.editId" v-on:childToParent="showModal" />
         </b-modal>
       </div>
@@ -22,9 +29,7 @@
             selectable
             :select-mode="selectMode"
             @row-selected="onRowSelected"
-            striped
             small
-            bordered
             class="table-cottages text-uppercase"
             :fields="fields"
             :items="cottages"
@@ -80,8 +85,8 @@
           ></b-pagination>
         </div>
         <div class="col extra-info">
-          <h3 id="desc-title">{{selected_title}}</h3>
-          <p id="extra-info" class="description">{{selected_info}}</p>
+          <h3 id="desc-title">{{ selected_title }}</h3>
+          <p id="extra-info" class="description">{{ selected_info }}</p>
         </div>
       </div>
     </div>
@@ -104,11 +109,11 @@ export default {
       fields: [],
       selectMode: "single",
       selected: [
-        { name: "Extra Information", extra_info: "About your cottage..." }
+        { name: "Extra Information", extra_info: "About your cottage..." },
       ],
       selected_title: "Extra Information",
       selected_info: "About your cottage...",
-      editId: null
+      editId: null,
     };
   },
   mounted() {
@@ -168,13 +173,13 @@ export default {
         x.innerHTML = this.selected[0].name;
         y.innerHTML = this.selected[0].extra_info;
       }
-    }
+    },
   },
   computed: {
     rows() {
       return this.cottages.length;
-    }
-  }
+    },
+  },
 };
 export { CottageForm };
 </script>

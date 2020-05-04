@@ -33,66 +33,7 @@
           </div>
         </div>
       </div>
-
       <div class="row form-group">
-        <div class="col">
-          <label for="guest_first_name">Guest first name</label>
-          <input
-            type="text"
-            v-model="guest_first_name"
-            name="guest_first_name"
-            class="form-control"
-            :class="{ 'is-invalid': submitted && !guest_first_name }"
-          />
-          <div v-show="submitted && !guest_first_name" class="invalid-feedback">
-            Guest first name is required
-          </div>
-        </div>
-        <div class="col">
-          <label for="guest_last_name">Guest last name</label>
-          <input
-            type="text"
-            v-model="guest_last_name"
-            name="guest_last_name"
-            class="form-control"
-            :class="{ 'is-invalid': submitted && !guest_last_name }"
-            color="color"
-          />
-          <div v-show="submitted && !guest_last_name" class="invalid-feedback">
-            Guest last name is required
-          </div>
-        </div>
-        <div class="col">
-          <label for="guest_phone_number">Guest phone number</label>
-          <input
-            type="text"
-            v-model="guest_phone_number"
-            name="guest_first_name"
-            class="form-control"
-            :class="{ 'is-invalid': submitted && !guest_phone_number }"
-          />
-          <div
-            v-show="submitted && !guest_phone_number"
-            class="invalid-feedback"
-          >
-            Guest phone number is required
-          </div>
-        </div>
-      </div>
-      <div class="row form-group">
-        <div class="col">
-          <label for="guests_number">Number of guests</label>
-          <input
-            type="number"
-            min="1"
-            value="1"
-            max="10"
-            v-model="guests_number"
-            name="guests_number"
-            class="form-control"
-            :class="{ 'is-invalid': submitted && !guests_number }"
-          />
-        </div>
         <div class="col">
           <label for="cottage_id">Cottage</label>
           <b-form-select
@@ -109,33 +50,8 @@
       </div>
 
       <div class="form-group">
-        <b-form-checkbox
-          id="advance_payment"
-          v-model="advance_payment"
-          name="advance_payment"
-          switch
-        >
-          Advanced Payment?
-        </b-form-checkbox>
-        <!--<label class="custom-checkbox" for="advance_payment">Advance payment?
-                        <input type="checkbox" v-model="advance_payment" name="advance_payment"
-                        class="custom-checkbox"
-                        :class="{ 'is-invalid': submitted && !advance_payment }"/>
-                        
-                    </label>-->
-      </div>
-      <div class="form-group">
-        <label for="extra_info">Extra info</label>
-        <textarea
-          v-model="extra_info"
-          name="extra_info"
-          class="form-control"
-        ></textarea>
-      </div>
-
-      <div class="form-group">
         <button class="btn btn-primary" :disabled="loading">
-          Save and close
+          Saarch
         </button>
         <img
           v-show="loading"
@@ -151,10 +67,9 @@
 
 <script>
 import { cottageService } from "../_services/cottage.service";
-import { reservationService } from "../_services/reservation.service";
 
 export default {
-  name: "ReservationForm",
+  name: "CheckAvaliabilityForm",
   data() {
     return {
       // childMessage: '',
@@ -162,13 +77,7 @@ export default {
       date_from: "",
       date_to: "",
       cottage_id: null,
-      guest_first_name: "",
-      guest_last_name: "",
-      guest_phone_number: "",
-      guests_number: 1,
       submitted: false,
-      extra_info: null,
-      advance_payment: false,
       returnUrl: "",
       errorNotify: "",
       loading: false,
@@ -178,21 +87,7 @@ export default {
     };
   },
   mounted() {
-    if (typeof this.editId != "undefined" && this.editId != null) {
-      this.getCottageById(this.editId);
-    }
-
-    if (
-      typeof this.clickedStartDate != "undefined" &&
-      this.clickedStartDate != null
-    ) {
-      this.date_from = this.formatClickedDate();
-    }
     this.getCottages();
-  },
-  props: {
-    editId: Number,
-    clickedStartDate: String,
   },
   methods: {
     formatClickedDate() {
@@ -203,52 +98,7 @@ export default {
       return newDate;
     },
 
-    handleSubmit() {
-      this.submitted = true;
-      let id = this.id;
-      const {
-        date_from,
-        date_to,
-        cottage_id,
-        guest_first_name,
-        guest_last_name,
-        guest_phone_number,
-        guests_number,
-        extra_info,
-        advance_payment,
-      } = this;
-
-      // stop here if form is invalid
-      if (!(date_from && date_to && cottage_id) && !id) {
-        return;
-      }
-
-      const data = {
-        date_from,
-        date_to,
-        cottage_id,
-        guest_first_name,
-        guest_last_name,
-        guest_phone_number,
-        guests_number,
-        extra_info,
-        advance_payment,
-        id,
-      };
-
-      var self = this;
-
-      reservationService
-        .saveReservation(data)
-        .then(function() {
-          self.$bvModal.hide("cottage-form-modal");
-        })
-        .catch(function(error) {
-          if (error) {
-            self.errorNotify = error;
-          }
-        });
-    },
+    handleSubmit() {},
     getCottages() {
       var self = this;
       cottageService
