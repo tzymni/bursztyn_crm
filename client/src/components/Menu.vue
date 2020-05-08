@@ -70,7 +70,7 @@ export default {
           meta: { hideNavigation: true },
         },
       ],
-      collapsed: true,
+      collapsed: false,
     };
   },
   methods: {

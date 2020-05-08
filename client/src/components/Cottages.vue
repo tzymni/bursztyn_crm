@@ -57,7 +57,7 @@
               ></v-btn>
             </template>
             <template v-slot:cell(extra_info)="data">
-              <p class>{{ data.item.extra_info.substr(0, 50) }}</p>
+              <p class>{{ typeof data.item.extra_info == 'string' ? data.item.extra_info.substr(0, 50) : '' }}</p>
             </template>
             <template v-slot:head(max_guests_number)="data">
               <p class="hide">{{ data.field.max_guests_number }}</p>
