@@ -27,7 +27,7 @@ class EventsControllerTest extends BaseTestCase
 
         $token = $this->getValidToken();
         $response = $this->client->post(
-            "/event/addReservation",
+            "/event/reservation",
             [
                 'body' => json_encode($data),
                 'headers' => [
@@ -59,7 +59,7 @@ class EventsControllerTest extends BaseTestCase
 
         $token = $this->getValidToken();
         $response = $this->client->post(
-            "/event/addReservation",
+            "/event/reservation",
             [
                 'body' => json_encode($data),
                 'headers' => [
@@ -91,7 +91,7 @@ class EventsControllerTest extends BaseTestCase
 
         $token = $this->getValidToken();
         $response = $this->client->post(
-            "/event/addReservation",
+            "/event/reservation",
             [
                 'body' => json_encode($data),
                 'headers' => [
@@ -123,7 +123,7 @@ class EventsControllerTest extends BaseTestCase
 
         $token = $this->getValidToken();
         $response = $this->client->post(
-            "/event/addReservation",
+            "/event/reservation",
             [
                 'body' => json_encode($data),
                 'headers' => [
@@ -155,7 +155,7 @@ class EventsControllerTest extends BaseTestCase
 
         $token = $this->getValidToken();
         $response = $this->client->post(
-            "/event/addReservation",
+            "/event/reservation",
             [
                 'body' => json_encode($data),
                 'headers' => [
@@ -185,7 +185,7 @@ class EventsControllerTest extends BaseTestCase
 
         $token = $this->getValidToken();
         $response = $this->client->post(
-            "/event/addReservation",
+            "/event/reservation",
             [
                 'body' => json_encode($data),
                 'headers' => [
@@ -215,7 +215,7 @@ class EventsControllerTest extends BaseTestCase
 
         $token = $this->getValidToken();
         $response = $this->client->post(
-            "/event/addReservation",
+            "/event/reservation",
             [
                 'body' => json_encode($data),
                 'headers' => [
@@ -273,7 +273,7 @@ class EventsControllerTest extends BaseTestCase
 
         $token = $this->getValidToken();
         $response = $this->client->post(
-            "/event/addReservation",
+            "/event/reservation",
             [
                 'body' => json_encode($data),
                 'headers' => [
@@ -296,7 +296,7 @@ class EventsControllerTest extends BaseTestCase
 
         $token = $this->getValidToken();
         $response = $this->client->post(
-            "/event/addReservation",
+            "/event/reservation",
             [
                 'body' => json_encode($data),
                 'headers' => [
@@ -307,6 +307,77 @@ class EventsControllerTest extends BaseTestCase
 
         $responseData = json_decode($response->getBody(), true);
         $this->assertEquals(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
-        $this->assertEquals($responseData['error']['message'], 'There is a reservation between 2020-04-18 and 2020-04-25 for cottage CottageTest');
+
+        $this->assertEquals(
+            $responseData['error']['message'],
+            'There is a reservation between 2020-04-18 and 2020-04-25 for cottage CottageTest'
+        );
     }
+
+    public function testGetReservationByIdEvent__WhenIdIsProvided__ReturnSuccess()
+    {
+        $testReservation = $this->testReservation;
+        $token = $this->getValidToken();
+
+        $response = $this->client->get(
+            "/event/" . $testReservation->getId() . "/type/" . EventsService::RESERVATION_EVENT,
+            [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $token
+                ]
+            ]
+        );
+
+        $responseData = json_decode($response->getBody(), true);
+        $this->assertArrayHasKey('event', $responseData);
+        $this->assertArrayHasKey('event_id', $responseData['event']);
+        $this->assertArrayHasKey('date_from_unix_utc', $responseData['event']);
+        $this->assertArrayHasKey('date_from', $responseData['event']);
+        $this->assertArrayHasKey('date_to', $responseData['event']);
+        $this->assertArrayHasKey('date_to_unix_utc', $responseData['event']);
+        $this->assertArrayHasKey('reservation_id', $responseData['details']);
+        $this->assertArrayHasKey('guest_first_name', $responseData['details']);
+        $this->assertArrayHasKey('guest_last_name', $responseData['details']);
+        $this->assertArrayHasKey('guest_phone_number', $responseData['details']);
+        $this->assertArrayHasKey('guests_number', $responseData['details']);
+        $this->assertArrayHasKey('advance_payment', $responseData['details']);
+        $this->assertArrayHasKey('extra_info', $responseData['details']);
+        $this->assertArrayHasKey('cottage_id', $responseData['details']);
+        $this->assertNotNull($responseData['details']['cottage_id']);
+        $this->assertNotNull($responseData['details']['reservation_id']);
+        $this->assertEquals($testReservation->getId(), $responseData['event']['event_id']);
+
+        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+    }
+
+    public function testUpdateEvent__WhenAllDataIsProvided__ReturnSuccess()
+    {
+        $data = array(
+            'user_id' => $this->testUser->getId(),
+            'cottage_id' => $this->testCottage->getId(),
+            'date_from' => '2020-05-31',
+            'date_to' => '2020-06-06',
+            'type' => 'reservation',
+            'guest_first_name' => self::TEST_USER_EMAIL,
+            'guest_last_name' => 'Test last name',
+            'guest_phone_number' => '111 222 333',
+            'advance_payment' => true,
+        );
+
+        $testReservation = $this->testReservation;
+
+        $token = $this->getValidToken();
+        $response = $this->client->put(
+            "/event/reservation/" . $testReservation->getId(),
+            [
+                'body' => json_encode($data),
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $token
+                ]
+            ]
+        );
+
+        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+    }
+
 }

@@ -6,7 +6,7 @@
                     <b-button class="btn btn-info" id="show-reservation-form-modal" @click="showReservationFormModal()">
                         Add reservation
                     </b-button>
-                    <b-modal @hide="setEvents()" id="cottage-form-modal" title="Reservation form" hide-footer>
+                    <b-modal @hide="setEvents()" id="reservation-form-modal" title="Reservation form" hide-footer>
                         <ReservationForm :clickedStartDate="$data.clickedStartDate" :editId="$data.editId"/>
                     </b-modal>
                 </div>
@@ -184,6 +184,7 @@
                 useDefaultTheme: true,
                 useHolidayTheme: true,
                 useTodayIcons: true,
+                editId: null,
                 items: [
                     {
                         id: "e4",
@@ -218,8 +219,7 @@
         },
         methods: {
             showReservationFormModal() {
-
-                this.$bvModal.show("cottage-form-modal");
+                this.$bvModal.show("reservation-form-modal");
             },
             setEvents() {
                 this.clickedStartDate = null;
@@ -263,10 +263,13 @@
             onClickDay(d) {
                 console.log(`You clicked: ${d.toLocaleDateString()}`);
                 this.clickedStartDate = d.toLocaleDateString();
-                this.$bvModal.show("cottage-form-modal");
+                this.$bvModal.show("reservation-form-modal");
             },
             onClickItem(e) {
                 this.message = `You clicked: ${e.id}`
+                this.editId = e.id
+                console.log('Edycja '+this.editId);
+                this.$bvModal.show("reservation-form-modal");
             },
             setShowDate(d) {
                 this.message = `Changing calendar view to ${d.toLocaleDateString()}`

@@ -102,8 +102,11 @@
             };
         },
         mounted() {
+
+            console.log(this.editId);
             if (typeof this.editId != 'undefined' && this.editId != null) {
-                this.getCottageById(this.editId);
+                console.log('EDIT ID '+this.editId)
+                this.getReservationById(this.editId);
             }
 
             if (typeof this.clickedStartDate != 'undefined' && this.clickedStartDate != null) {
@@ -127,7 +130,7 @@
 
             handleSubmit() {
                 this.submitted = true;
-                let id = this.id;
+                let id = this.editId;
                 const {date_from, date_to, cottage_id, guest_first_name, guest_last_name, guest_phone_number, guests_number, extra_info, advance_payment} = this;
 
                 // stop here if form is invalid
@@ -151,7 +154,7 @@
                 var self = this;
 
                 reservationService.saveReservation(data).then(function () {
-                        self.$bvModal.hide("cottage-form-modal");
+                        self.$bvModal.hide("reservation-form-modal");
                     }
                 )
                     .catch(function (error) {
@@ -175,6 +178,30 @@
                         self.loading = false;
                     }
                 });
+
+            },
+            getReservationById(id) {
+
+                var self = this;
+                reservationService.getReservation(id).then(function (data) {
+                    console.log(data);
+                        self.cottage_id = data.details.cottage_id;
+                        self.date_from = data.event.date_from;
+                        self.date_to = data.event.date_to;
+                        self.guests_number = data.details.guests_number;
+                        self.guest_first_name = data.details.guest_first_name;
+                        self.guest_last_name = data.details.guest_last_name;
+                        self.guest_phone_number = data.details.guest_phone_number;
+                        self.advance_payment = data.details.advance_payment;
+                        self.extra_info = data.details.extra_info;
+                        self.id = data.id;
+                    }
+                )
+                    .catch(function (error) {
+                        if (error) {
+                            self.errorNotify = error;
+                        }
+                    });
 
             },
 

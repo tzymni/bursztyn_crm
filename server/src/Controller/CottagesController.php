@@ -119,7 +119,7 @@ class CottagesController extends AbstractController implements TokenAuthenticate
     ) {
         $body = $request->getContent();
         $data = json_decode($body, true);
-
+        $id =  $request->get('id');
         if (is_null($data) || empty($data['name']) || empty($data['color'])) {
             $status = JsonResponse::HTTP_BAD_REQUEST;
             $data = $errorDecorator->decorateError(
@@ -130,7 +130,7 @@ class CottagesController extends AbstractController implements TokenAuthenticate
             return new JsonResponse($data, $status);
         }
 
-        $cottage = $cottageService->getActiveCottageById($data);
+        $cottage = $cottageService->getActiveCottageById($id);
 
         $result = $cottageService->updateCottage($cottage, $data);
         if ($result instanceof Cottages) {

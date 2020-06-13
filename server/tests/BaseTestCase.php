@@ -3,9 +3,11 @@
 namespace App\Tests;
 
 use App\Entity\Cottages;
+use App\Entity\Events;
 use App\Entity\FootballLeague;
 use App\Entity\FootballTeam;
 use App\Entity\User;
+use App\Service\EventsService;
 use GuzzleHttp\Client;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
@@ -52,7 +54,10 @@ class BaseTestCase extends KernelTestCase
      * @var Cottages
      */
     protected $testInactiveCottage;
-
+    /**
+     * @var array
+     */
+    protected $testReservation;
     /**
      * @var string
      */
@@ -89,6 +94,8 @@ class BaseTestCase extends KernelTestCase
         $this->testInactiveCottage = $this->createTestCottage(
             array('name' => self::testCottageName, 'color' => '#f8fc00', 'is_active' => false)
         );
+
+        $this->testReservation = $this->createTestReservation();
     }
 
     protected function truncateTestReservations()
@@ -145,6 +152,28 @@ class BaseTestCase extends KernelTestCase
         parent::tearDown();
     }
 
+    protected function createTestReservation() {
+
+        $data = array(
+            'user_id' => $this->testUser->getId(),
+            'cottage_id' => $this->testCottage->getId(),
+            'date_from' => strtotime("+3 weeks"),
+            'date_to' => strtotime("+5 weeks"),
+            'type' => EventsService::RESERVATION_EVENT,
+            'guest_first_name' => self::TEST_USER_EMAIL,
+            'guest_last_name' => 'Test last name',
+            'guest_phone_number' => '111 222 333',
+            'guests_number' => rand(0, 6),
+            'advance_payment' => true,
+            'extra_info' => 'Piesek'
+        );
+        $container = $this->getPrivateContainer();
+        $eventsService = $container
+            ->get('App\Service\EventsService');
+
+        return $eventsService->createEvent($data);
+    }
+
     protected function createTestUser($email = self::TEST_USER_EMAIL, $password = self::TEST_USER_PASSWORD)
     {
         $container = $this->getPrivateContainer();
@@ -182,46 +211,7 @@ class BaseTestCase extends KernelTestCase
         return $cottageService->createCottage($cottageData);
     }
 
-    /**
-     * @param string $name
-     * @return FootballLeague|string
-     */
-    protected function createTestLeague($name = "Test League 1")
-    {
-        $container = $this->getPrivateContainer();
-        $leagueService = $container
-            ->get('App\Service\FootballLeagueService');
 
-        return $leagueService->createLeague(
-            [
-                'name' => $name
-            ]
-        );
-    }
-
-    /**
-     * @param string $name
-     * @param FootballLeague|null $league
-     * @return FootballTeam|string
-     */
-    protected function createTestTeam($name = "Test Team 1", FootballLeague $league = null)
-    {
-        if (!$league) {
-            $league = $this->createTestLeague();
-        }
-
-        $container = $this->getPrivateContainer();
-        $teamService = $container
-            ->get('App\Service\FootballTeamService');
-
-        return $teamService->createTeam(
-            [
-                'name' => $name,
-                'strip' => 'Strip 1',
-                'league_id' => $league->getId()
-            ]
-        );
-    }
 
     /**
      * Create valid JWT token for given (if any) or this user

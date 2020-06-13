@@ -12,24 +12,34 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Reservations[]    findAll()
  * @method Reservations[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class ReservationsRepository extends ServiceEntityRepository {
+class ReservationsRepository extends ServiceEntityRepository
+{
 
-    public function __construct(ManagerRegistry $registry) {
+    public function __construct(ManagerRegistry $registry)
+    {
         parent::__construct($registry, Reservations::class);
     }
 
-    public function findActiveEvents() {
-        
-
-        $qb = $this->createQueryBuilder('p')
-                ->select('p.id as reservation_id, p.date_from, p.date_to, Cottages.name, Cottages.color, p.tourist_name, p.tourist_num ')
-                ->andWhere('p.is_active = :active')
-                ->setParameter('active', 1)
-                ->leftJoin('p.cottage', 'Cottages')
-                ->getQuery()->execute();
-
-        return $qb;
+    /**
+     *
+     * @param int $eventId
+     * @return int|mixed|string
+     */
+    public function findActiveReservationByEventId(int $eventId)
+    {
+        return $this->createQueryBuilder('p')
+            ->select(
+                'p.id as reservation_id, p.guest_first_name, p.guest_last_name, Cottages.name, Cottages.color '
+            )
+            ->andWhere('p.is_active = :active')
+            ->andWhere('p.event = :eventId')
+            ->setParameter('active', true)
+            ->setParameter('eventId', $eventId)
+            ->leftJoin('p.cottage', 'Cottages')
+            ->getQuery()->execute();
     }
+
+
 
 //    /**
 //     * @return Reservations[] Returns an array of Reservations objects
