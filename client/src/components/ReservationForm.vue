@@ -103,9 +103,7 @@
         },
         mounted() {
 
-            console.log(this.editId);
             if (typeof this.editId != 'undefined' && this.editId != null) {
-                console.log('EDIT ID '+this.editId)
                 this.getReservationById(this.editId);
             }
 
@@ -154,6 +152,7 @@
                 var self = this;
 
                 reservationService.saveReservation(data).then(function () {
+                        self.editId = null
                         self.$bvModal.hide("reservation-form-modal");
                     }
                 )
@@ -184,7 +183,6 @@
 
                 var self = this;
                 reservationService.getReservation(id).then(function (data) {
-                    console.log(data);
                         self.cottage_id = data.details.cottage_id;
                         self.date_from = data.event.date_from;
                         self.date_to = data.event.date_to;

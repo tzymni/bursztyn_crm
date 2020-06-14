@@ -3,7 +3,7 @@
         <b-card bg-variant="light" 
                 text-variant="dark" 
                 border-variant="dark" 
-                header="Please login"
+                header="BursztynCRM"
                 header-text-variant="white"
                 header-bg-variant="dark"
                 header-class="p-4 card_header"
@@ -22,7 +22,7 @@
                 <div v-show="submitted && !password" class="invalid-feedback">Password is required</div>
             </div>
             <div class="text-right form-group small">
-                <b-link class="font-weight-light small" href="#foo">Forgotten Password?</b-link>
+<!--                <b-link class="font-weight-light small" href="#foo">Forgotten Password?</b-link>-->
             </div>
             <div class="form-group text-center">
                 <button class="btn btn-outline-dark rounded-pill py-2 mt-2" :disabled="loading">Sign in</button>

@@ -111,9 +111,7 @@
                         </div>
                     </div>
 
-                    <button class="button is-info" @click="clickTestAddItem">
-                        Add Item
-                    </button>
+
                 </div>
             </div>
         </div>
@@ -216,6 +214,7 @@
             this.newItemStartDate = this.isoYearMonthDay(this.today())
             this.newItemEndDate = this.isoYearMonthDay(this.today())
             this.setEvents()
+            this.editId = null
         },
         methods: {
             showReservationFormModal() {
@@ -261,14 +260,12 @@
                 return new Date(t.getFullYear(), t.getMonth(), d, h || 0, m || 0)
             },
             onClickDay(d) {
-                console.log(`You clicked: ${d.toLocaleDateString()}`);
+                this.editId = null
                 this.clickedStartDate = d.toLocaleDateString();
                 this.$bvModal.show("reservation-form-modal");
             },
             onClickItem(e) {
-                this.message = `You clicked: ${e.id}`
                 this.editId = e.id
-                console.log('Edycja '+this.editId);
                 this.$bvModal.show("reservation-form-modal");
             },
             setShowDate(d) {
@@ -283,19 +280,7 @@
                 item.originalEvent.startDate = this.addDays(item.startDate, eLength)
                 item.originalEvent.endDate = this.addDays(item.endDate, eLength)
             },
-            clickTestAddItem() {
-                this.items.push({
-                    startDate: this.newItemStartDate,
-                    endDate: this.newItemEndDate,
-                    title: this.newItemTitle,
-                    id:
-                        "e" +
-                        Math.random()
-                            .toString(36)
-                            .substr(2, 10),
-                })
-                this.message = "You added a calendar item!"
-            },
+
         },
     }
 </script>

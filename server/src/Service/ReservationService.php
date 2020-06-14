@@ -84,13 +84,10 @@ class ReservationService implements DecorateEventInterface
         $this->em->flush();
     }
 
+
     public function getEventDetails(int $eventId)
     {
-        $reservation = $this->getActiveReservationByEventId($eventId);
-
-        $details = array('TROMVA');
-
-        return $reservation;
+        return $this->getActiveReservationByEventId($eventId);
     }
 
     /**

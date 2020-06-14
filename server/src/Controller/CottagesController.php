@@ -149,7 +149,7 @@ class CottagesController extends AbstractController implements TokenAuthenticate
      * @Method({"DELETE"})
      * @param Request $request
      */
-    public function deleteUser(
+    public function deleteCottage(
         Request $request,
         CottageService $cottageService,
         ResponseErrorDecoratorService $errorDecorator

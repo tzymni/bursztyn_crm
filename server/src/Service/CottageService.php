@@ -153,7 +153,23 @@ class CottageService
     }
 
     /**
-     * Soft delete user (change is_active = 0).
+     * Deactivate all related objects by set is_active = false.
+     *
+     * @param Cottages $cottages
+     */
+    protected function deactivateRelatedObjects(Cottages $cottages)
+    {
+        $reservations = $cottages->getReservations();
+
+        foreach ($reservations as $reservation) {
+            $reservation->setIsActive(false);
+            $event = $reservation->getEvent();
+            $event->setIsActive(false);
+        }
+    }
+
+    /**
+     * Soft delete user (change is_active = false).
      *
      * @param Cottages $cottages
      * @return Cottagesr|string
@@ -163,11 +179,12 @@ class CottageService
         $cottages->setIsActive(false);
 
         try {
+            $this->deactivateRelatedObjects($cottages);
             $this->em->persist($cottages);
             $this->em->flush();
             return $cottages;
         } catch (Exception $ex) {
-            return "Cant remove cottager!";
+            return "Cant remove cottage!";
         }
     }
 

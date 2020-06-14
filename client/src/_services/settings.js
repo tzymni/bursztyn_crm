@@ -4,7 +4,7 @@ export const Settings = {
 };
 
 // TODO add global variable with main API url
-const systemVersion = '0.13.0';
+const systemVersion = '0.13.1';
 
 function getSystemVersion() {
     return systemVersion;
