@@ -7,7 +7,6 @@ use App\Entity\Events;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use App\EventListener\ReservationAfterEventSave;
-use PHPUnit\Runner\Exception;
 
 /**
  * Class EventsService
@@ -22,7 +21,7 @@ class EventsService
     const CLEANING_EVENT = 'cleaning';
 
     /**
-     * EntityMenager.
+     * EntityManager.
      *
      * @var EntityManagerInterface
      */
@@ -43,7 +42,7 @@ class EventsService
      * @param $string
      * @return bool
      */
-    protected function isTimestamp($string)
+    protected function isTimestamp($string) : bool
     {
         return (1 === preg_match('~^[1-9][0-9]*$~', $string));
     }
@@ -74,7 +73,7 @@ class EventsService
      * @return bool
      * @throws \Exception
      */
-    public function checkCottageAvailability($cottageId, $dateFrom, $dateTo)
+    public function checkCottageAvailability($cottageId, $dateFrom, $dateTo, $eventId = null)
     {
         $cottageService = new CottageService($this->em);
         $cottageResponse = $cottageService->getActiveCottageById($cottageId);
@@ -83,7 +82,7 @@ class EventsService
             throw new \Exception($cottageResponse);
         }
 
-        $result = $this->em->createQueryBuilder()
+        $query = $this->em->createQueryBuilder()
             ->select('e.id, r.id')
             ->from('App:Reservations', 'r')
             ->leftJoin('r.event', 'e')
@@ -93,8 +92,14 @@ class EventsService
             ->andWhere('r.cottage=:cottageId')
             ->setParameter('cottageId', $cottageId)
             ->setParameter('dateFrom', $dateFrom)
-            ->setParameter('dateTo', $dateTo)
-            ->getQuery()->getResult();
+            ->setParameter('dateTo', $dateTo);
+
+        if ($eventId > 0) {
+            $query->andWhere('r.event != :eventId')
+                ->setParameter('eventId', $eventId);
+        }
+
+        $result = $query->getQuery()->getResult();
 
         if (empty($result)) {
             return true;
@@ -118,7 +123,7 @@ class EventsService
      * @param $data
      * @return Events|string
      */
-    public function createEvent($data)
+    public function createEvent($data, $event = null)
     {
         $createdById = empty($data['user_id']) ? null : $data['user_id'];
         $type = empty($data['type']) ? null : $data['type'];
@@ -156,9 +161,17 @@ class EventsService
             $dateFrom += 12 * 3600;
             $dateTo += 9 * 3600;
 
-            $this->checkCottageAvailability($data['cottage_id'], $dateFrom, $dateTo);
+            $eventId = null;
 
-            $event = new Events();
+            if ($event instanceof Events) {
+                $eventId = $event->getId();
+            }
+
+            $this->checkCottageAvailability($data['cottage_id'], $dateFrom, $dateTo, $eventId);
+            if (empty($event) || !$event instanceof Events) {
+                $event = new Events();
+            }
+
             $event->setCreatedBy($userResponse);
             $event->setType($type);
             $event->setTitle($title);
@@ -171,7 +184,12 @@ class EventsService
             $this->em->flush();
 
             if ($event instanceof Events) {
-                $reservationService->createReservation($event, $data);
+                if (!empty($event->getReservations())) {
+                    $reservation = $event->getReservations();
+                } else {
+                    $reservation = null;
+                }
+                $reservationService->createReservation($event, $data, $reservation);
             }
 
             return $event;
@@ -180,6 +198,32 @@ class EventsService
         }
     }
 
+    /**
+     * Find active event by id.
+     *
+     * @param $id
+     * @return object|string
+     */
+    public function getActiveEventById($id)
+    {
+        $event = $this->em->getRepository('App:Events')->findBy(
+            array("is_active" => true, "id" => $id),
+            array(),
+            array(1)
+        );
+
+        if (isset($event) && isset($event[0])) {
+            return $event[0];
+        } else {
+            return sprintf("Can't find event!");
+        }
+    }
+
+    /**
+     * Get list of all active events.
+     *
+     * @return object[]
+     */
     public function getActiveEvents()
     {
         return $this->em->getRepository('App:Events')->findBy(

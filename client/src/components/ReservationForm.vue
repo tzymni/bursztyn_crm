@@ -121,7 +121,7 @@
                         <input type="checkbox" v-model="advance_payment" name="advance_payment"
                         class="custom-checkbox"
                         :class="{ 'is-invalid': submitted && !advance_payment }"/>
-                        
+
                     </label>-->
       </div>
       <div class="form-group">
@@ -150,37 +150,38 @@
 </template>
 
 <script>
-import { cottageService } from "../_services/cottage.service";
-import { reservationService } from "../_services/reservation.service";
+    import {cottageService} from "../_services/cottage.service";
+    import {reservationService} from "../_services/reservation.service";
 
-export default {
-  name: "ReservationForm",
-  data() {
-    return {
-      // childMessage: '',
-      id: null,
-      date_from: "",
-      date_to: "",
-      cottage_id: null,
-      guest_first_name: "",
-      guest_last_name: "",
-      guest_phone_number: "",
-      guests_number: 1,
-      submitted: false,
-      extra_info: null,
-      advance_payment: false,
-      returnUrl: "",
-      errorNotify: "",
-      loading: false,
-      selected: null,
-      options: [],
-      selectedIndex: 0,
-    };
-  },
-  mounted() {
-    if (typeof this.editId != "undefined" && this.editId != null) {
-      this.getCottageById(this.editId);
-    }
+    export default {
+        name: "ReservationForm",
+        data() {
+            return {
+                // childMessage: '',
+                id: null,
+                date_from: "",
+                date_to: "",
+                cottage_id: null,
+                guest_first_name: "",
+                guest_last_name: "",
+                guest_phone_number: "",
+                guests_number: 1,
+                submitted: false,
+                extra_info: null,
+                advance_payment: false,
+                returnUrl: "",
+                errorNotify: "",
+                loading: false,
+                selected: null,
+                options: [],
+                selectedIndex: 0,
+            };
+        },
+        mounted() {
+
+            if (typeof this.editId != 'undefined' && this.editId != null) {
+                this.getReservationById(this.editId);
+            }
 
     if (
       typeof this.clickedStartDate != "undefined" &&
@@ -203,72 +204,82 @@ export default {
       return newDate;
     },
 
-    handleSubmit() {
-      this.submitted = true;
-      let id = this.id;
-      const {
-        date_from,
-        date_to,
-        cottage_id,
-        guest_first_name,
-        guest_last_name,
-        guest_phone_number,
-        guests_number,
-        extra_info,
-        advance_payment,
-      } = this;
+            handleSubmit() {
+                this.submitted = true;
+                let id = this.editId;
+                const {date_from, date_to, cottage_id, guest_first_name, guest_last_name, guest_phone_number, guests_number, extra_info, advance_payment} = this;
 
-      // stop here if form is invalid
-      if (!(date_from && date_to && cottage_id) && !id) {
-        return;
-      }
+                // stop here if form is invalid
+                if (!(date_from && date_to && cottage_id) && !id) {
+                    return;
+                }
 
-      const data = {
-        date_from,
-        date_to,
-        cottage_id,
-        guest_first_name,
-        guest_last_name,
-        guest_phone_number,
-        guests_number,
-        extra_info,
-        advance_payment,
-        id,
-      };
+                const data = {
+                    date_from,
+                    date_to,
+                    cottage_id,
+                    guest_first_name,
+                    guest_last_name,
+                    guest_phone_number,
+                    guests_number,
+                    extra_info,
+                    advance_payment,
+                    id
+                };
 
-      var self = this;
+                var self = this;
 
-      reservationService
-        .saveReservation(data)
-        .then(function() {
-          self.$bvModal.hide("cottage-form-modal");
-        })
-        .catch(function(error) {
-          if (error) {
-            self.errorNotify = error;
-          }
-        });
-    },
-    getCottages() {
-      var self = this;
-      cottageService
-        .getCottages()
-        .then(function(response) {
-          let list = [];
-          response.map(function(value) {
-            let text = value.name;
-            let color = value.color;
-            list.push({ value: value.id, text: text, color: color });
-          });
-          self.options = list;
-        })
-        .catch(function(error) {
-          if (error) {
-            self.errorNotify = error;
-            self.loading = false;
-          }
-        });
-    },
+                reservationService.saveReservation(data).then(function () {
+                        self.editId = null
+                        self.$bvModal.hide("reservation-form-modal");
+                    }
+                )
+                    .catch(function (error) {
+                        if (error) {
+                            self.errorNotify = error;
+                        }
+                    });
+            },
+            getCottages() {
+                var self = this;
+                cottageService.getCottages().then(function (response) {
+                        let list = [];
+                        response.map(function (value) {
+                            list.push({value: value.id, text: value.name})
+                        });
+                        self.options = list;
+                    }
+                ).catch(function (error) {
+                    if (error) {
+                        self.errorNotify = error;
+                        self.loading = false;
+                    }
+                });
+
+            },
+            getReservationById(id) {
+
+                var self = this;
+                reservationService.getReservation(id).then(function (data) {
+                        self.cottage_id = data.details.cottage_id;
+                        self.date_from = data.event.date_from;
+                        self.date_to = data.event.date_to;
+                        self.guests_number = data.details.guests_number;
+                        self.guest_first_name = data.details.guest_first_name;
+                        self.guest_last_name = data.details.guest_last_name;
+                        self.guest_phone_number = data.details.guest_phone_number;
+                        self.advance_payment = data.details.advance_payment;
+                        self.extra_info = data.details.extra_info;
+                        self.id = data.id;
+                    }
+                )
+                    .catch(function (error) {
+                        if (error) {
+                            self.errorNotify = error;
+                        }
+                    });
+
+            },
     changeColor: function() {
       var s = document.getElementById("square");
       s.style.color = this.scolor();
@@ -281,16 +292,13 @@ export default {
         let x = this.options.findIndex((x) => x.value === y);
         console.log(x);
         //let x = this.options.value.indexOf(y);
-
+        console.log(this.options[x]);
         return this.options[x].color;
       }
     },
-  },
-  computed: {},
-};
+
+        }
+    }
 </script>
-<style scoped>
-.square {
-  text-align: center;
-}
-</style>
+
+
