@@ -129,8 +129,6 @@ export default {
       } else {
         let y = this.cottage_id;
         let x = this.options.findIndex((x) => x.value === y);
-        console.log(x);
-        //let x = this.options.value.indexOf(y);
 
         return this.options[x].color;
       }
