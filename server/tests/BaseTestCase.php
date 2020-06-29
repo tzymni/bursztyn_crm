@@ -61,7 +61,7 @@ class BaseTestCase extends KernelTestCase
     /**
      * @var string
      */
-    const testCottageName = 'CottageTest';
+    public const testCottageName = 'CottageTest';
 
     public function setUp()
     {
@@ -78,12 +78,28 @@ class BaseTestCase extends KernelTestCase
             ->get('doctrine')
             ->getManager();
 
-        $this->truncateTestReservations();
+        $this->createNewTestObjects();
+    }
+
+    /**
+     * Clean up database from test records.
+     *
+     */
+    public function cleanUpDatabaseFromTestRecords()
+    {
+        $reservationIds = $this->getTestReservationIds();
+        $this->truncateTestReservations($reservationIds);
+        $eventIds = $this->getTestEventIds();
+        $this->truncateTestEvents($eventIds);
         $this->truncateTestCottages(self::testCottageName);
-        $this->truncateTestEvents();
         $this->truncateTestUsers();
+    }
 
-
+    /**
+     * Create new test objects required for unit tests.
+     */
+    public function createNewTestObjects()
+    {
         $this->testUser = $this->createTestUser();
         $this->testInactiveUser = $this->createTestUser(
             self::TEST_INACTIVE_USER_EMAIL,
@@ -98,18 +114,85 @@ class BaseTestCase extends KernelTestCase
         $this->testReservation = $this->createTestReservation();
     }
 
-    protected function truncateTestReservations()
+    /**
+     * Get test reservation ids.
+     *
+     * @return array
+     */
+    protected function getTestReservationIds(): array
+    {
+        $reservations = $this->em->createQueryBuilder('p')
+            ->select(
+                'p.id as reservation_id, Events.id as event_id '
+            )
+            ->from('App:Reservations', 'p')
+            ->andWhere('p.guest_first_name = :guest_first_name')
+            ->setParameter('guest_first_name', self::TEST_USER_EMAIL)
+            ->leftJoin('p.event', 'Events')
+            ->leftJoin('Events.created_by', 'User')
+            ->getQuery()->execute();
+
+        $reservationIds = array();
+
+        foreach ($reservations as $reservation) {
+            $reservationIds[] = $reservation['reservation_id'];
+        }
+
+        return $reservationIds;
+    }
+
+    /**
+     * Get test event ids (find by test user email).
+     *
+     * @return array
+     */
+    protected function getTestEventIds(): array
+    {
+        $events = $this->em->createQueryBuilder('p')
+            ->select(
+                'Event.id as event_id, Event.date_from, User.id as user_id, User.email, Event.date_to'
+            )
+            ->from('App:Events', 'Event')
+            ->leftJoin('Event.created_by', 'User')
+            ->andWhere('User.email = :email')
+            ->setParameter('email', self::TEST_USER_EMAIL)
+            ->getQuery()->execute();
+
+        $eventIds = array();
+        foreach ($events as $event) {
+            $eventIds[] = $event['event_id'];
+        }
+
+        return $eventIds;
+    }
+
+    /**
+     * Remove test reservations from database.
+     *
+     * @param array $reservationIds
+     */
+    protected function truncateTestReservations(array $reservationIds): void
     {
         $em = $this->em;
 
+        if (empty($reservationIds)) {
+            return;
+        }
+
+        $reservationIds = join(",", $reservationIds);
         $query = $em->createQuery(
-//            "DELETE App:Reservations u WHERE u.guest_first_name Like '" . self::TEST_USER_EMAIL . "'"
-            "DELETE from App:Reservations"
+            "DELETE from App:Reservations r WHERE r.id IN (" . $reservationIds . ")"
         );
         $query->execute();
+
         parent::tearDown();
     }
 
+    /**
+     * Remove test cottages from database.
+     *
+     * @param $testCottageName
+     */
     protected function truncateTestCottages($testCottageName)
     {
         $em = $this->em;
@@ -120,26 +203,38 @@ class BaseTestCase extends KernelTestCase
             "DELETE App:Cottages u WHERE u.name IN ({$testNamesString})"
         );
         $query->execute();
-        parent::tearDown();
-//
-//        $this->em->close();
-//        $this->em = null; // avoid memory leaks
 
+        parent::tearDown();
     }
 
-    protected function truncateTestEvents()
+    /**
+     * Remove test events from database.
+     *
+     * @param array $eventIds
+     */
+    protected function truncateTestEvents(array $eventIds): void
     {
-        $em = $this->em;
+        if (empty($eventIds)) {
+            return;
+        }
 
-        $query = $em->createQuery(
-//            "DELETE from App:Events u WHERE u.created_by IS NOT NULL "
-            "DELETE from App:Events "
-        );
-        $query->execute();
+        $this->em->createQueryBuilder('p')
+            ->select(
+                'Event.id as event_id'
+            )
+            ->from('App:Events', 'Event')
+            ->andWhere('Event.id IN (:eventIds)')
+            ->setParameter('eventIds', $eventIds)
+            ->delete()
+            ->getQuery()->execute();
+
         parent::tearDown();
     }
 
-    protected function truncateTestUsers()
+    /**
+     * Remove test users from database.
+     */
+    protected function truncateTestUsers(): void
     {
         $em = $this->em;
         $testEmails = array(self::TEST_USER_EMAIL, self::TEST_INACTIVE_USER_EMAIL);
@@ -152,8 +247,13 @@ class BaseTestCase extends KernelTestCase
         parent::tearDown();
     }
 
-    protected function createTestReservation() {
-
+    /**
+     * Create a test reservation.
+     *
+     * @return mixed
+     */
+    protected function createTestReservation()
+    {
         $data = array(
             'user_id' => $this->testUser->getId(),
             'cottage_id' => $this->testCottage->getId(),
@@ -174,6 +274,13 @@ class BaseTestCase extends KernelTestCase
         return $eventsService->createEvent($data);
     }
 
+    /**
+     * Create test user.
+     *
+     * @param string $email
+     * @param string $password
+     * @return mixed
+     */
     protected function createTestUser($email = self::TEST_USER_EMAIL, $password = self::TEST_USER_PASSWORD)
     {
         $container = $this->getPrivateContainer();
@@ -199,7 +306,9 @@ class BaseTestCase extends KernelTestCase
     }
 
     /**
-     * @param $name
+     * Create test cottage.
+     *
+     * @param $cottageData
      * @return mixed
      */
     protected function createTestCottage($cottageData)
@@ -210,8 +319,6 @@ class BaseTestCase extends KernelTestCase
 
         return $cottageService->createCottage($cottageData);
     }
-
-
 
     /**
      * Create valid JWT token for given (if any) or this user
@@ -254,6 +361,7 @@ class BaseTestCase extends KernelTestCase
     protected function tearDown()
     {
         parent::tearDown();
+        $this->cleanUpDatabaseFromTestRecords();
     }
 
 }

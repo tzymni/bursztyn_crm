@@ -9,11 +9,8 @@
 namespace App\Service;
 
 use App\Entity\Cottages;
-use App\Repository\CottagesRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Symfony\Bridge\Doctrine\RegistryInterface;
-use Doctrine\ORM\EntityManager;
+
 
 /**
  * Description of CottageService

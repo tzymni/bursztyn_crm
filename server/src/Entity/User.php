@@ -123,9 +123,6 @@ class User
         return $this;
     }
 
-
-
-
     /**
      * @return int
      */
@@ -164,4 +161,22 @@ class User
 
         return $this;
     }
+
+    /**
+     * @param mixed $id
+     */
+    public function setId($id): void
+    {
+        $this->id = $id;
+    }
+
+    /**
+     * @param ArrayCollection $events
+     */
+    public function setEvents(ArrayCollection $events): void
+    {
+        $this->events = $events;
+    }
+
+
 }

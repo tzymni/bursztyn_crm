@@ -37,7 +37,8 @@ class Events
     private $is_active;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="events")
+     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="events", cascade={"persist", "remove"})
+     *
      */
     private $created_by;
 
