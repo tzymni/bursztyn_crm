@@ -2,7 +2,7 @@
 
 ### Main description
 
-System to manage reservations, cottages and cleaning.
+System to manage reservations, cottages and cleaning created in representational state transfer (REST) software architectural style. 
 
 ##### Assumptions:
 
@@ -19,6 +19,8 @@ System to manage reservations, cottages and cleaning.
 - add a new type of event "cleaning" to know how many cottages are to cleaning and who will do it;
 - export reservations to XLS;
 - warehouse functionality - module integrated with cleaning event;
+- Polish version;
+- add drag-drop functionality in the calendar;
 
 
 ### Install
@@ -33,7 +35,6 @@ After this you need to install npm packages on frontend side.
 <pre>
 npm install
 </pre>
-
 
 ### Used technologies
 

@@ -19,11 +19,25 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
  */
 class BaseTestCase extends KernelTestCase
 {
-    const TEST_USER_PASSWORD = "test";
-    const TEST_USER_EMAIL = "test@gmail.com";
+    /**
+     * Test password for a test user.
+     */
+    public const TEST_USER_PASSWORD = "test";
 
-    const TEST_INACTIVE_USER_PASSWORD = "testInactive";
-    const TEST_INACTIVE_USER_EMAIL = "test-inactive@gmail.com";
+    /**
+     * Test email for a test user.
+     */
+    public const TEST_USER_EMAIL = "test@gmail.com";
+
+    /**
+     * Test password for a test (inactive) user.
+     */
+    public const TEST_INACTIVE_USER_PASSWORD = "testInactive";
+
+    /**
+     * Test email for a inactive user.
+     */
+    public const TEST_INACTIVE_USER_EMAIL = "test-inactive@gmail.com";
 
     /**
      * @var Client
@@ -254,6 +268,7 @@ class BaseTestCase extends KernelTestCase
      */
     protected function createTestReservation()
     {
+
         $data = array(
             'user_id' => $this->testUser->getId(),
             'cottage_id' => $this->testCottage->getId(),

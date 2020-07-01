@@ -144,7 +144,7 @@
                     :events="items"
                     :show-date="showDate"
                     :time-format-options="{ hour: 'numeric', minute: '2-digit' }"
-                    :enable-drag-drop="true"
+                    :enable-drag-drop="false"
                     :disable-past="disablePast"
                     :disable-future="disableFuture"
                     :display-period-uom="displayPeriodUom"
@@ -279,6 +279,7 @@
             },
 
             periodChanged() {
+                console.log("TESTSTST")
                 // range, eventSource) {
                 // Demo does nothing with this information, just including the method to demonstrate how
                 // you can listen for changes to the displayed range and react to them (by loading items, etc.)
@@ -303,6 +304,7 @@
                 this.showDate = d
             },
             onDrop(item, date) {
+                console.log("DROPPED")
                 this.message = `You dropped ${item.id} on ${date.toLocaleDateString()}`
                 // Determine the delta between the old start date and the date chosen,
                 // and apply that delta to both the start and end date to move the item.
