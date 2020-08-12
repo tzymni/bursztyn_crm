@@ -5,13 +5,18 @@ namespace App\Controller;
 use App\Entity\Cottages;
 use App\Service\CottageService;
 use App\Service\ResponseErrorDecoratorService;
-use http\Exception\InvalidArgumentException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * Class CottagesController
+ * @package App\Controller
+ *
+ * @author Tomasz Zymni <tomasz.zymni@gmail.com>
+ */
 class CottagesController extends AbstractController implements TokenAuthenticatedController
 {
 
@@ -119,7 +124,7 @@ class CottagesController extends AbstractController implements TokenAuthenticate
     ) {
         $body = $request->getContent();
         $data = json_decode($body, true);
-        $id =  $request->get('id');
+        $id = $request->get('id');
         if (is_null($data) || empty($data['name']) || empty($data['color'])) {
             $status = JsonResponse::HTTP_BAD_REQUEST;
             $data = $errorDecorator->decorateError(

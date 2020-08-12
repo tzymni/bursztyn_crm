@@ -21,6 +21,7 @@ System to manage reservations, cottages and cleaning created in representational
 - warehouse functionality - module integrated with cleaning event;
 - Polish version;
 - add drag-drop functionality in the calendar;
+- add new columns with price per day and total cost of vacation, display phone number and extra information;
 
 
 ### Install
@@ -41,7 +42,7 @@ npm install
 ##### Backend:
 
 - PHP 7.3
-- PHPUnit
+- PHPUnit 6.5.14
 - MariaDB
 - composer
 - Symfony 4.4

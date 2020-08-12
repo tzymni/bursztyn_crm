@@ -11,7 +11,6 @@ namespace App\Service;
 use App\Entity\Cottages;
 use Doctrine\ORM\EntityManagerInterface;
 
-
 /**
  * Description of CottageService
  *
@@ -122,6 +121,31 @@ class CottageService
         }
     }
 
+    /**
+     * Get all active cottages.
+     *
+     * @return object[]|string
+     */
+    public function getActiveCottages()
+    {
+        $cottage = $this->em->getRepository('App:Cottages')->findBy(
+            array("is_active" => true)
+        );
+
+        if (isset($cottage) && isset($cottage[0])) {
+            return $cottage;
+        } else {
+            return sprintf("Can't find active cottages!");
+        }
+    }
+
+    /**
+     * Update cottage.
+     *
+     * @param Cottages $cottage
+     * @param array $data
+     * @return Cottages|string
+     */
     public function updateCottage(Cottages $cottage, array $data)
     {
         try {

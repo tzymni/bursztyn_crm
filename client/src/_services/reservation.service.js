@@ -2,6 +2,7 @@ export const reservationService = {
     saveReservation,
     getEvents,
     getReservation,
+    getReservationsGroupedByCottages
 };
 
 const axios = require('axios');
@@ -36,6 +37,29 @@ function getEvents() {
 
         });
 }
+
+function getReservationsGroupedByCottages() {
+    const token = sessionStorage.getItem('token');
+    const AuthStr = 'Bearer '.concat(token);
+
+    return axios.get('http://localhost:8000/reservation/list/groupBy/cottages', {headers: {Authorization: AuthStr}})
+        .then(function (response) {
+            return response.data;
+        })
+        .catch(function (error) {
+
+            if (error.response) {
+                const errorMessage = error.response.data.error.message;
+                return Promise.reject(errorMessage);
+            } else {
+                const errorMessage = 'Connection with server problem!';
+                return Promise.reject(errorMessage);
+            }
+
+        });
+}
+
+
 
 function createReservation(data) {
     const axios = require('axios');

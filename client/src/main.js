@@ -15,13 +15,16 @@ import Vuetify from 'vuetify'
 import {library} from '@fortawesome/fontawesome-svg-core'
 import {faCoffee} from '@fortawesome/free-solid-svg-icons'
 import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome'
+import 'vue-good-table/dist/vue-good-table.css'
+
+import VueGoodTablePlugin from 'vue-good-table';
 
 import VueSimpleAlert from "vue-simple-alert";
 
 Vue.use(VueSimpleAlert);
 
 require('@/assets/css/global.css');
-
+Vue.use(VueGoodTablePlugin);
 Vue.use(Vuetify);
 Vue.use(VueSidebarMenu);
 Vue.use(VueRouter);
