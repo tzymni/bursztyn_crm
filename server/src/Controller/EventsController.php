@@ -27,8 +27,7 @@ class EventsController extends AbstractController implements TokenAuthenticatedC
     /**
      * Create a new event.
      *
-     * @Route("/event/reservation")
-     * @Method("POST")
+     * @Route("/event/reservation", methods={"POST"})
      * @param Request $request
      * @param EventsService $eventsService
      * @param ResponseErrorDecoratorService $errorDecoratorService
@@ -72,8 +71,7 @@ class EventsController extends AbstractController implements TokenAuthenticatedC
     }
 
     /**
-     * @Route("/event/list")
-     * @Method("GET")
+     * @Route("/event/list", methods={"GET"})
      * @param ResponseErrorDecoratorService $errorDecorator
      */
     public function getEventList(
@@ -111,8 +109,7 @@ class EventsController extends AbstractController implements TokenAuthenticatedC
     }
 
     /**
-     * @Route("/event/reservation/{id}")
-     * @Method("PUT")
+     * @Route("/event/reservation/{id}", methods={"PUT"})
      */
     public function updateReservationEvent(
         Request $request,
@@ -157,8 +154,7 @@ class EventsController extends AbstractController implements TokenAuthenticatedC
     }
 
     /**
-     * @Route("/event/{id}/type/{type}")
-     * @Method("GET")
+     * @Route("/event/{id}/type/{type}", methods={"GET"})
      * @param ResponseErrorDecoratorService $errorDecorator
      */
     public function getEventByTypeAndId(

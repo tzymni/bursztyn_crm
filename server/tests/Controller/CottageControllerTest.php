@@ -170,8 +170,9 @@ class CottageControllerTest extends BaseTestCase
         );
 
         $token = $this->getValidToken();
+        $cottageId = $this->testCottage->getId();
         $response = $this->client->put(
-            "/cottage/" . $this->testCottage->getId(),
+            "/cottage/{$cottageId}",
             [
                 'body' => json_encode($data),
                 'headers' => [
@@ -186,7 +187,6 @@ class CottageControllerTest extends BaseTestCase
         $this->assertEmpty($responseData);
 
         $updatedCottage = $cottageService->getActiveCottageById($testId);
-
         $this->assertEquals($this->testCottage->getId(), $updatedCottage->getId());
         $this->assertNotEquals($this->testCottage->getName(), $updatedCottage->getName());
         $this->assertEquals($data['max_guests_number'], $updatedCottage->getMaxGuestsNumber());
