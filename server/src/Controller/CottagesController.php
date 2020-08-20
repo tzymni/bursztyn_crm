@@ -23,8 +23,7 @@ class CottagesController extends AbstractController implements TokenAuthenticate
     /**
      * Creates new user by given data
      *
-     * @Route("/cottage/add")
-     * @Method("POST")
+     * @Route("/cottage/add", methods={"POST"})
      * @param Request $request
      * @param CottageService $cottageService
      * @param ResponseErrorDecoratorService $errorDecorator
@@ -62,8 +61,7 @@ class CottagesController extends AbstractController implements TokenAuthenticate
     }
 
     /**
-     * @Route("/cottage/list")
-     * @Method("GET")
+     * @Route("/cottage/list", methods={"GET"})
      * @param ResponseErrorDecoratorService $errorDecorator
      */
     public function getCottagesList(
@@ -81,8 +79,7 @@ class CottagesController extends AbstractController implements TokenAuthenticate
     }
 
     /**
-     * @Route("/cottage/{id}")
-     * @Method("GET")
+     * @Route("/cottage/{id}", methods={"GET"})
      * @param ResponseErrorDecoratorService $errorDecorator
      */
     public function getCottage(
@@ -114,8 +111,7 @@ class CottagesController extends AbstractController implements TokenAuthenticate
     }
 
     /**
-     * @Route("/cottage/{id}")
-     * @Method("PUT")
+     * @Route("/cottage/{id}", methods={"PUT"})
      */
     public function updateCottage(
         Request $request,
@@ -150,8 +146,7 @@ class CottagesController extends AbstractController implements TokenAuthenticate
     }
 
     /**
-     * @Route("/cottage/{id}")
-     * @Method({"DELETE"})
+     * @Route("/cottage/{id}", methods={"DELETE"})
      * @param Request $request
      */
     public function deleteCottage(
