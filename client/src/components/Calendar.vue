@@ -279,7 +279,6 @@
             },
 
             periodChanged() {
-                console.log("TESTSTST")
                 // range, eventSource) {
                 // Demo does nothing with this information, just including the method to demonstrate how
                 // you can listen for changes to the displayed range and react to them (by loading items, etc.)
