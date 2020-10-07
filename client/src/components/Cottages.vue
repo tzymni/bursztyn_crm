@@ -19,7 +19,7 @@
           <CottageForm :editId="$data.editId" v-on:childToParent="showModal" />
         </b-modal>
       </div>
-      <div class="col extra-info">
+      <div class="col extra-info" style="display: none">
         <h3 id="desc-title">{{ selected_title }}</h3>
         <p id="extra-info" class="description">{{ selected_info }}</p>
       </div>

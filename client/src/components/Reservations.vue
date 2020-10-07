@@ -28,8 +28,8 @@
         >
           Add reservation
         </b-button>&nbsp;
-        <button  class="btn btn-info"  @click="$refs.ReservationTable.expandAll()">Expand All</button>&nbsp;
-        <button  class="btn btn-info" @click="$refs.ReservationTable.collapseAll()">Collapse All</button>&nbsp;
+        <button class="btn btn-info" id="expend-collapse" @click="expandCollapseTable()">{{ button.text }}</button>&nbsp;
+        <!--        <button  class="btn btn-info" @event="COLLAPSE" @click="expandCollapseTable($event)">Collapse All</button>&nbsp;-->
       </div>
       <vue-good-table
           ref="ReservationTable"
@@ -49,7 +49,7 @@
 <!--       {{ props.row.id }}-->
 
               <a @click="editReservation(props.row.id)" class="btn btn-primary">
-                <font-awesome-icon icon="edit" />
+                <font-awesome-icon icon="edit"/>
               </a>
     </span>
 
@@ -77,10 +77,15 @@ export default {
     return {
       header: "Reservations",
       editId: null,
+      button: {
+        text: 'Expand all'
+      },
+      expandTable: true,
       columns: [
         {
           label: 'Date from',
           field: 'date_from',
+
           type: 'string',
           filterOptions: {
             enabled: true, // enable filter for this column
@@ -177,11 +182,22 @@ export default {
   methods: {
     showReservationFormModal() {
       this.editId = null
-      this.$bvModal.show("reservation-form-modal");
+      this.$bvModal.show("reservation-form-modal")
+    },
+    expandCollapseTable() {
+      if (this.expandTable == true ) {
+        this.button.text = "Collapse all"
+        this.$refs.ReservationTable.expandAll()
+        this.expandTable = false
+      } else {
+        this.button.text = "Expand all"
+        this.$refs.ReservationTable.collapseAll()
+        this.expandTable = true
+      }
     },
     editReservation(id) {
       this.editId = id
-      this.$bvModal.show("reservation-form-modal");
+      this.$bvModal.show("reservation-form-modal")
     },
     setReservations() {
       this.clickedStartDate = null;
@@ -194,13 +210,13 @@ export default {
               if (typeof cottage.reservations != 'undefined') {
                 const children = [];
                 cottage.reservations.map(function (reservation) {
-                  let full_name = reservation.guest_first_name + " " + reservation.guest_last_name;
-                  let date_from = reservation.event.date_from;
-                  let date_to = reservation.event.date_to;
-                  let event_id = reservation.event.id;
-                  let number_of_guests = reservation.guests_number;
-                  let advance_payment = reservation.advance_payment;
-                  let phone_number = reservation.guest_phone;
+                  let full_name = reservation.guest_first_name + " " + reservation.guest_last_name
+                  let date_from = reservation.event.date_from
+                  let date_to = reservation.event.date_to
+                  let event_id = reservation.event.id
+                  let number_of_guests = reservation.guests_number
+                  let advance_payment = reservation.advance_payment
+                  let phone_number = reservation.guest_phone
 
                   children.push({
                     full_name: full_name,
