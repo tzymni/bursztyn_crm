@@ -48,6 +48,11 @@ class Cottages
      */
     private $reservations;
 
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $external_id;
+
     public function __construct()
     {
         $this->reservations = new ArrayCollection();
@@ -149,6 +154,18 @@ class Cottages
                 $reservation->setCottage(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getExternalId(): ?int
+    {
+        return $this->external_id;
+    }
+
+    public function setExternalId(?int $external_id): self
+    {
+        $this->external_id = $external_id;
 
         return $this;
     }

@@ -1,6 +1,5 @@
 <template>
   <div class="Reservations">
-
     <h1>
       <font-awesome-icon icon="calendar-check"/>
       || {{ header }}
@@ -29,7 +28,6 @@
           Add reservation
         </b-button>&nbsp;
         <button class="btn btn-info" id="expend-collapse" @click="expandCollapseTable()">{{ button.text }}</button>&nbsp;
-        <!--        <button  class="btn btn-info" @event="COLLAPSE" @click="expandCollapseTable($event)">Collapse All</button>&nbsp;-->
       </div>
       <vue-good-table
           ref="ReservationTable"
@@ -46,8 +44,6 @@
   }">
         <template slot="table-row" slot-scope="props">
     <span v-if="props.column.field == 'action'">
-<!--       {{ props.row.id }}-->
-
               <a @click="editReservation(props.row.id)" class="btn btn-primary">
                 <font-awesome-icon icon="edit"/>
               </a>
@@ -68,10 +64,9 @@ import {reservationService} from "../_services/reservation.service";
 import ReservationForm from "@/components/ReservationForm";
 
 export default {
-  name: 'my-component',
+  name: 'reservations',
   components: {
     ReservationForm,
-
   },
   data() {
     return {
@@ -85,7 +80,6 @@ export default {
         {
           label: 'Date from',
           field: 'date_from',
-
           type: 'string',
           filterOptions: {
             enabled: true, // enable filter for this column
@@ -102,13 +96,7 @@ export default {
           field: 'date_to',
           type: 'string',
           filterOptions: {
-            enabled: true, // enable filter for this column
-            // placeholder: 'Filter This Thing', // placeholder for filter input
-            // filterValue: 'Jane', // initial populated value for this filter
-            // filterDropdownItems: [], // dropdown (with selected values) instead of text input
-            // filterMultiselectDropdownItems: [], // dropdown (with multiple selected values) instead of text input
-            // filterFn: this.columnFilterFn, //custom filter function that
-            // trigger: 'enter', //only trigger on enter not on keyup
+            enabled: true,
           },
         },
         {
@@ -116,13 +104,7 @@ export default {
           field: 'full_name',
           type: 'string',
           filterOptions: {
-            enabled: true, // enable filter for this column
-            // placeholder: 'Filter This Thing', // placeholder for filter input
-            // filterValue: 'Jane', // initial populated value for this filter
-            // filterDropdownItems: [], // dropdown (with selected values) instead of text input
-            // filterMultiselectDropdownItems: [], // dropdown (with multiple selected values) instead of text input
-            // filterFn: this.columnFilterFn, //custom filter function that
-            // trigger: 'enter', //only trigger on enter not on keyup
+            enabled: true,
           },
         },
         {
@@ -130,26 +112,14 @@ export default {
           field: 'phone_number',
           type: 'numeric',
           filterOptions: {
-            enabled: true, // enable filter for this column
-            // placeholder: 'Filter This Thing', // placeholder for filter input
-            // filterValue: 'Jane', // initial populated value for this filter
-            // filterDropdownItems: [], // dropdown (with selected values) instead of text input
-            // filterMultiselectDropdownItems: [], // dropdown (with multiple selected values) instead of text input
-            // filterFn: this.columnFilterFn, //custom filter function that
-            // trigger: 'enter', //only trigger on enter not on keyup
+            enabled: true,
           },
         }, {
           label: 'Number of guests',
           field: 'number_of_guests',
           type: 'numeric',
           filterOptions: {
-            enabled: true, // enable filter for this column
-            // placeholder: 'Filter This Thing', // placeholder for filter input
-            // filterValue: 'Jane', // initial populated value for this filter
-            // filterDropdownItems: [], // dropdown (with selected values) instead of text input
-            // filterMultiselectDropdownItems: [], // dropdown (with multiple selected values) instead of text input
-            // filterFn: this.columnFilterFn, //custom filter function that
-            // trigger: 'enter', //only trigger on enter not on keyup
+            enabled: true,
           },
         },
         {
@@ -157,19 +127,12 @@ export default {
           field: 'advance_payment',
           type: 'boolean',
           filterOptions: {
-            enabled: true, // enable filter for this column
-            // placeholder: 'Filter This Thing', // placeholder for filter input
-            // filterValue: 'Jane', // initial populated value for this filter
-            // filterDropdownItems: [], // dropdown (with selected values) instead of text input
-            // filterMultiselectDropdownItems: [], // dropdown (with multiple selected values) instead of text input
-            // filterFn: this.columnFilterFn, //custom filter function that
-            // trigger: 'enter', //only trigger on enter not on keyup
+            enabled: true,
           },
         },
         {
           label: 'Action',
           field: 'action',
-
         }
       ],
       rows: [],
@@ -185,7 +148,7 @@ export default {
       this.$bvModal.show("reservation-form-modal")
     },
     expandCollapseTable() {
-      if (this.expandTable == true ) {
+      if (this.expandTable == true) {
         this.button.text = "Collapse all"
         this.$refs.ReservationTable.expandAll()
         this.expandTable = false
@@ -253,76 +216,4 @@ export default {
 };
 </script>
 
-
-<!--<template>-->
-<!--  <div class="Reservations">-->
-<!--    <h1>-->
-<!--      <font-awesome-icon icon="calendar-check" />-->
-<!--      || {{ header }}-->
-<!--    </h1>-->
-<!--    <div class="container">-->
-<!--      <div class="table-wrap">-->
-<!--        <b-table-->
-<!--          id="reservations"-->
-<!--          :per-page="perPage"-->
-<!--          :current-page="currentPage"-->
-<!--          small-->
-<!--          class="table-reservations"-->
-<!--          :fields="fields"-->
-<!--          :items="reservations"-->
-<!--          thead-class="thead-dark text-uppercase"-->
-<!--        >-->
-<!--        </b-table>-->
-<!--        <b-pagination-->
-<!--          v-model="currentPage"-->
-<!--          :total-rows="rows"-->
-<!--          :per-page="perPage"-->
-<!--          aria-controls="reservations"-->
-<!--        ></b-pagination>-->
-<!--      </div>-->
-<!--    </div>-->
-<!--  </div>-->
-<!--</template>-->
-
-<!--<script>-->
-<!--import { reservationService } from "../_services/reservation.service";-->
-
-<!--export default {-->
-<!--  name: "Reservations",-->
-<!--  data: function() {-->
-<!--    return {-->
-<!--      header: "Reservations",-->
-<!--      reservations: [],-->
-<!--      perPage: 10,-->
-<!--      currentPage: 1,-->
-<!--      fields: [],-->
-<!--      editId: null,-->
-<!--    };-->
-<!--  },-->
-<!--  mounted() {-->
-<!--    this.setReservations();-->
-<!--  },-->
-<!--  methods: {-->
-<!--    setReservations() {-->
-<!--      var self = this;-->
-<!--      reservationService-->
-<!--        .getEvents()-->
-<!--        .then(function(response) {-->
-<!--          self.reservations = response;-->
-<!--        })-->
-<!--        .catch(function(error) {-->
-<!--          if (error) {-->
-<!--            self.errorNotify = error;-->
-<!--            self.loading = false;-->
-<!--          }-->
-<!--        });-->
-<!--    },-->
-<!--  },-->
-<!--  computed: {-->
-<!--    rows() {-->
-<!--      return this.reservations.length;-->
-<!--    },-->
-<!--  },-->
-<!--};-->
-<!--</script>-->
 <style scoped></style>

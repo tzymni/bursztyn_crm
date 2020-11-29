@@ -18,6 +18,43 @@ use Doctrine\ORM\EntityManagerInterface;
  */
 class CottageService
 {
+    public $colorList = array(
+        "#4D4D4D",
+        "#999999",
+        '#FFFFFF',
+        '#FE9200',
+        '#FCDC00',
+        '#DBDF00',
+        '#A4DD00',
+        '#68CCCA',
+        '#73D8FF',
+        '#AEA1FF',
+        '#FDA1FF',
+        '#333333',
+        '#808080',
+        '#CCCCCC',
+        '#D33115',
+        '#E27300',
+        '#FCC400',
+        '#B0BC00',
+        '#68BC00',
+        '#16A5A5',
+        '#009CE0',
+        '#7B64FF',
+        '#FA28FF',
+        '#000000',
+        '#666666',
+        '#B3B3B3',
+        '#9F0500',
+        '#C45100',
+        '#FB9E00',
+        '#808900',
+        '#194D33',
+        '#0C797D',
+        '#0062B1',
+        '#653294',
+        '#AB149E'
+    );
 
     /**
      * @var EntityManagerInterface
@@ -64,6 +101,7 @@ class CottageService
         $extra_info = empty($data['extra_info']) ? null : $data['extra_info'];
         $maxGuestsNumber = empty($data['max_guests_number']) ? null : $data['max_guests_number'];
         $isActive = isset($data['is_active']) ? $data['is_active'] : true;
+        $externalId = empty($data['external_id']) ? null : $data['external_id'];
 
         if (!empty($color) && !$this->validHexColor($color)) {
             return 'Invalid hex color!';
@@ -76,6 +114,7 @@ class CottageService
         $cottage->setExtraInfo($extra_info);
         $cottage->setIsActive($isActive);
         $cottage->setMaxGuestsNumber($maxGuestsNumber);
+        $cottage->setExternalId($externalId);
 
         try {
             $this->em->persist($cottage);
@@ -96,7 +135,7 @@ class CottageService
         if ($cottage) {
             return $cottage;
         } else {
-            return "Cant't find cottage!";
+            return "Can't find cottage!";
         }
     }
 
@@ -207,6 +246,95 @@ class CottageService
         } catch (Exception $ex) {
             return "Cant remove cottage!";
         }
+    }
+
+    /**
+     * Get color that are not used in database.
+     *
+     * @return string
+     */
+    public function getUnusedColor()
+    {
+
+        $query = $this->em->createQueryBuilder()
+            ->select('e.color')
+            ->from('App:Cottages', 'e')
+            ->andWhere('e.is_active = :is_active')
+            ->setParameter('is_active', true);
+
+        $colorsInDB = $query->getQuery()->getResult();
+
+        $usedColors = array();
+        foreach ($colorsInDB as $color) {
+            $usedColors[] = $color['color'];
+        }
+
+        $colorList = $this->colorList;
+
+        foreach ($usedColors as $usedColor) {
+
+            if (($key = array_search($usedColor, $colorList)) !== false) {
+                unset($colorList[$key]);
+            }
+        }
+
+        if (empty($colorList)) {
+            $unusedColor = "#FFFFFF";
+        } else {
+            $ranKey = array_rand($colorList, 1);
+            $unusedColor = $colorList[$ranKey];
+        }
+
+        return $unusedColor;
+    }
+
+    /**
+     * Get ID of cottage by external_id.
+     *
+     * @param $externalId
+     * @return Cottages|null
+     */
+    public function getCottageByExternalId($externalId)
+    {
+
+        $cottage = null;
+
+        $cottage = $this->em->getRepository('App:Cottages')->findBy(
+            array("is_active" => true, "external_id" => $externalId),
+            array(),
+            array(1)
+        );
+
+        if (isset($cottage) && isset($cottage[0])) {
+            return $cottage[0];
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Get all ids of external cottages.
+     *
+     * @return array
+     */
+    public function getAllIdsOfExternalCottages(): array
+    {
+        $query = $this->em->createQueryBuilder()
+            ->select('e.id')
+            ->from('App:Cottages', 'e')
+            ->andWhere('e.is_active = :is_active')
+            ->andWhere('e.external_id IS NOT NULL')
+            ->setParameter('is_active', true);
+
+        $externalCottages = $query->getQuery()->getResult();
+
+        $ids = array();
+        foreach ($externalCottages as $externalCottage) {
+            $ids[] = $externalCottage['id'];
+        }
+
+        return $ids;
+
     }
 
 }
