@@ -6,6 +6,8 @@ use App\Service\CottageService;
 use App\Service\CottagesFromApiParserService;
 use App\Service\ImportFromAPIService;
 use Doctrine\ORM\EntityManagerInterface;
+use GuzzleHttp\Exception\GuzzleException;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -13,32 +15,46 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Class SynchronizeAPIData
  * @package App\Command
- *
  */
 class SynchronizeAPIData extends Command
 {
 
     protected static $defaultName = 'app:synchronize-api-data';
 
+    /**
+     * @var ImportFromAPIService
+     */
     private $importFromApiService;
 
+    /**
+     * @var EntityManagerInterface
+     */
     private $em;
+
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
 
     /**
      * ImportCottages constructor.
      * @param ImportFromAPIService $importFromApiService
      * @param EntityManagerInterface $em
+     * @param LoggerInterface $logger
      */
-    public function __construct(ImportFromAPIService $importFromApiService, EntityManagerInterface $em)
-    {
+    public function __construct(
+        ImportFromAPIService $importFromApiService,
+        EntityManagerInterface $em,
+        LoggerInterface $logger
+    ) {
         $this->importFromApiService = $importFromApiService;
         $this->em = $em;
-
+        $this->logger = $logger;
         parent::__construct();
     }
 
     /**
-     *
+     * Configure description for the task.
      */
     protected function configure()
     {
@@ -55,14 +71,43 @@ class SynchronizeAPIData extends Command
      * @param InputInterface $input
      * @param OutputInterface $output
      * @return int
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws GuzzleException
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
 
         $output->writeln('Getting cottages from API...');
-        $cottagesFromAPI = $this->importFromApiService->importCottages();
-        $cottagesFromAPI = json_decode($cottagesFromAPI, true);
+
+        try {
+
+            $cottagesFromAPI = $this->importFromApiService->getCottagesFromApi();
+            $cottagesFromAPI = json_decode($cottagesFromAPI, true);
+
+            if (!empty($cottagesFromAPI)) {
+                $this->processCottages($cottagesFromAPI);
+            } else {
+                $this->logger->warning("Cottages not found!");
+            }
+
+            $output->writeln('Getting reservations from API...');
+
+            $reservationsFromAPI = $this->importFromApiService->getReservationsFromApi();
+            print_r($reservationsFromAPI);
+        } catch (\Exception $exception) {
+            $this->logger->critical($exception->getMessage());
+        }
+
+        return 0;
+
+    }
+
+    /**
+     * Process imported cottages to the system.
+     *
+     * @param $cottagesFromAPI
+     */
+    protected function processCottages($cottagesFromAPI)
+    {
         $cottageParser = new CottagesFromApiParserService($this->em);
         $parsedCottages = $cottageParser->parseCottagesToSystemFormat($cottagesFromAPI);
         $cottageService = new CottageService($this->em);
@@ -97,14 +142,5 @@ class SynchronizeAPIData extends Command
 
             }
         }
-
-        $output->writeln('Getting reservations from API...');
-
-        $reservationsFromAPI = $this->importFromApiService->importReservations();
-
-        print_r($reservationsFromAPI);
-        return 0;
-
     }
-
 }
