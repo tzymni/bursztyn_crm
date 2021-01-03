@@ -70,6 +70,12 @@ class ReservationService implements DecorateEventInterface
         if (empty($reservation) || !$reservation instanceof Reservations) {
             $reservation = new Reservations();
         }
+
+        $status = isset($data['status']) ? $data['status'] : 'DEFAULT';
+
+        $dateAdd = isset($data['date_add']) ? $data['date_add'] : gmdate("Y-m-d H:i:s");
+        $dateAdd =\DateTime::createFromFormat("Y-m-d H:i:s", $dateAdd);
+
         $reservation->setCottage($cottageResponse);
         $reservation->setEvent($event);
         $reservation->setGuestFirstName($data['guest_first_name']);
@@ -79,6 +85,9 @@ class ReservationService implements DecorateEventInterface
         $reservation->setGuestsNumber($guestsNumber);
         $reservation->setAdvancePayment($data['advance_payment']);
         $reservation->setExtraInfo($extraInfo);
+        $reservation->setStatus($status);
+        $reservation->setDateAdd($dateAdd);
+
         $this->em->persist($reservation);
 
         $this->em->flush();

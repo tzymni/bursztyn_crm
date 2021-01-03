@@ -61,6 +61,31 @@ class Reservations
      */
     private $is_active;
 
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $status;
+
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $date_add;
+
+    /**
+     * @ORM\Column(type="float", nullable=true)
+     */
+    private $advance;
+
+    /**
+     * @ORM\Column(type="float", nullable=true)
+     */
+    private $price;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $external_id;
+
     public function getId()
     {
         return $this->id;
@@ -170,6 +195,66 @@ class Reservations
     public function setIsActive(?bool $is_active): self
     {
         $this->is_active = $is_active;
+
+        return $this;
+    }
+
+    public function getStatus(): ?string
+    {
+        return $this->status;
+    }
+
+    public function setStatus(string $status): self
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    public function getDateAdd(): ?\DateTimeInterface
+    {
+        return $this->date_add;
+    }
+
+    public function setDateAdd(\DateTimeInterface $date_add): self
+    {
+        $this->date_add = $date_add;
+
+        return $this;
+    }
+
+    public function getAdvance(): ?float
+    {
+        return $this->advance;
+    }
+
+    public function setAdvance(?float $advance): self
+    {
+        $this->advance = $advance;
+
+        return $this;
+    }
+
+    public function getPrice(): ?float
+    {
+        return $this->price;
+    }
+
+    public function setPrice(?float $price): self
+    {
+        $this->price = $price;
+
+        return $this;
+    }
+
+    public function getExternalId(): ?int
+    {
+        return $this->external_id;
+    }
+
+    public function setExternalId(?int $external_id): self
+    {
+        $this->external_id = $external_id;
 
         return $this;
     }

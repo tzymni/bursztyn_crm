@@ -133,9 +133,6 @@ class ImportFromAPIService implements DecorateEventInterface
         $request['authenticate']['systemKey'] = $this->generateIdosellPassword();
         $request['authenticate']['systemLogin'] = $this->apiLogin;
         $request['authenticate']['lang'] = 'eng';
-        $request['result'] = array();
-        $request['result']['page'] = 1;
-        $request['result']['number'] = 2;
 
         return json_encode($request);
 

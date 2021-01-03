@@ -2,8 +2,10 @@
 
 namespace App\Command;
 
+use App\Entity\Events;
 use App\Service\CottageService;
 use App\Service\CottagesFromApiParserService;
+use App\Service\EventsService;
 use App\Service\ImportFromAPIService;
 use Doctrine\ORM\EntityManagerInterface;
 use GuzzleHttp\Exception\GuzzleException;
@@ -92,7 +94,11 @@ class SynchronizeAPIData extends Command
             $output->writeln('Getting reservations from API...');
 
             $reservationsFromAPI = $this->importFromApiService->getReservationsFromApi();
-            print_r($reservationsFromAPI);
+
+            if (!empty($reservationsFromAPI)) {
+                $this->processReservations($reservationsFromAPI);
+            }
+
         } catch (\Exception $exception) {
             $this->logger->critical($exception->getMessage());
         }
@@ -101,13 +107,70 @@ class SynchronizeAPIData extends Command
 
     }
 
+    protected function processReservations($reservationsFromAPI)
+    {
+        $reservationsFromAPI = json_decode($reservationsFromAPI, true);
+
+        $reservations = $reservationsFromAPI['result']['reservations'];
+        $cottageService = new CottageService($this->em);
+        $eventService = new EventsService($this->em);
+
+        print_r($reservations);
+        foreach ($reservations as $reservation) {
+
+            $itemsToReservation = $reservation['items'];
+
+            if (isset($reservation['client'])) {
+                $client = $reservation['client'];
+            } else {
+                $client = array();
+            }
+
+            foreach ($itemsToReservation as $item) {
+
+                $reservationEvent = array();
+
+                $externalId = $reservation['id'];
+                $reservationDetails = $reservation['reservationDetails'];
+                $dateFrom = $reservationDetails['dateFrom'];
+                $dateTo = $reservationDetails['dateTo'];
+
+                $reservationEvent['external_id'] = $externalId;
+                $reservationEvent['date_from'] = $dateFrom;
+                $reservationEvent['date_to'] = $dateTo;
+                $cottage = $cottageService->getCottageByExternalId($item['objectItemId']);
+                $cottageId = $cottage->getId();
+                $reservationEvent['cottage_id'] = $cottageId;
+                $reservationEvent['user_id'] = 1;
+                $reservationEvent['guest_first_name'] = isset($client['firstName']) ? $client['firstName'] : 'Unregistered';
+                $reservationEvent['guest_last_name'] = isset($client['lastName']) ? $client['lastName'] : 'Unregistered';
+                $reservationEvent['guest_phone_number'] = isset($client['phone']) ? $client['phone'] : 'Unregistered';
+                $reservationEvent['advance_payment'] = true;
+                $reservationEvent['status'] = $reservationDetails['status'];
+                $reservationEvent['date_add'] = $reservationDetails['dateAdd'];
+                $reservationEvent['type'] = EventsService::RESERVATION_EVENT;
+
+                $result = $eventService->createEvent($reservationEvent);
+
+                if ($result instanceof Events) {
+
+                    print_r($result->getId());
+                } else {
+                    print_r($result);
+                }
+
+            }
+        }
+    }
+
     /**
      * Process imported cottages to the system.
      *
      * @param $cottagesFromAPI
      */
-    protected function processCottages($cottagesFromAPI)
-    {
+    protected function processCottages(
+        $cottagesFromAPI
+    ) {
         $cottageParser = new CottagesFromApiParserService($this->em);
         $parsedCottages = $cottageParser->parseCottagesToSystemFormat($cottagesFromAPI);
         $cottageService = new CottageService($this->em);
