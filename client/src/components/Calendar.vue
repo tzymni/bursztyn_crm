@@ -212,13 +212,13 @@ export default {
       useTodayIcons: true,
       editId: null,
       items: [
-        {
-          id: "e4",
-          startDate: this.thisMonth(20),
-          title: "My Birthday!",
-          classes: "birthday",
-          url: "https://en.wikipedia.org/wiki/Birthday",
-        }
+        // {
+        //   id: "e4",
+        //   startDate: this.thisMonth(20),
+        //   title: "My Birthday!",
+        //   classes: "birthday",
+        //   url: "https://en.wikipedia.org/wiki/Birthday",
+        // }
       ],
       clickedStartDate: null,
     }

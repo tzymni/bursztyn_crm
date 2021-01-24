@@ -19,10 +19,14 @@ class CottagesFromApiParserService
 
     }
 
+    /**
+     * Parse cottages data from API to format required to save data in the database.
+     *
+     * @param array $cottagesFromApi
+     * @return array
+     */
     public function parseCottagesToSystemFormat(array $cottagesFromApi)
     {
-        echo "COTTAGES FROM API";
-
         $parsedCottages = array();
 
         foreach ($cottagesFromApi['result']['objects'] as $cottagesType) {

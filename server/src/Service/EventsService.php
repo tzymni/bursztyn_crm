@@ -136,7 +136,6 @@ class EventsService
 
         try {
             $userResponse = $userService->getActiveUserById($createdById);
-            $title = $reservationService->generateTitle($data);
 
             if (!$userResponse instanceof User) {
                 throw new \Exception($userResponse);
@@ -158,9 +157,6 @@ class EventsService
                 throw new \Exception('Wrong type!');
             }
 
-            $dateFrom += 12 * 3600;
-            $dateTo += 9 * 3600;
-
             $eventId = null;
 
             if ($event instanceof Events) {
@@ -171,13 +167,14 @@ class EventsService
             if (empty($event) || !$event instanceof Events) {
                 $event = new Events();
             }
+            $title = $reservationService->generateTitle($data);
 
             $event->setCreatedBy($userResponse);
             $event->setType($type);
             $event->setTitle($title);
             $event->setDateFromUnixUtc($dateFrom);
-            $event->setDateFrom(gmdate("Y-m-d h:i", $dateFrom));
-            $event->setDateTo(gmdate("Y-m-d h:i", $dateTo));
+            $event->setDateFrom(gmdate("Y-m-d H:i", $dateFrom));
+            $event->setDateTo(gmdate("Y-m-d H:i", $dateTo));
             $event->setDateToUnixUtc($dateTo);
             $event->setIsActive($isActive);
             $this->em->persist($event);

@@ -7,6 +7,8 @@ use App\Service\CottageService;
 use App\Service\CottagesFromApiParserService;
 use App\Service\EventsService;
 use App\Service\ImportFromAPIService;
+use App\Service\ReservationService;
+use App\Service\ReservationsFromApiParserService;
 use Doctrine\ORM\EntityManagerInterface;
 use GuzzleHttp\Exception\GuzzleException;
 use Psr\Log\LoggerInterface;
@@ -107,6 +109,11 @@ class SynchronizeAPIData extends Command
 
     }
 
+    /**
+     * Save Reservations from API to the system.
+     *
+     * @param $reservationsFromAPI
+     */
     protected function processReservations($reservationsFromAPI)
     {
         $reservationsFromAPI = json_decode($reservationsFromAPI, true);
@@ -114,8 +121,9 @@ class SynchronizeAPIData extends Command
         $reservations = $reservationsFromAPI['result']['reservations'];
         $cottageService = new CottageService($this->em);
         $eventService = new EventsService($this->em);
+        $reservationService = new ReservationService($this->em);
+        $reservationsFromAPIParser = new ReservationsFromApiParserService();
 
-        print_r($reservations);
         foreach ($reservations as $reservation) {
 
             $itemsToReservation = $reservation['items'];
@@ -128,35 +136,26 @@ class SynchronizeAPIData extends Command
 
             foreach ($itemsToReservation as $item) {
 
-                $reservationEvent = array();
+                $reservationEvent = $reservationsFromAPIParser->parseApiDataToSystemFormat($cottageService, $item,
+                    $reservation, $client);
 
-                $externalId = $reservation['id'];
-                $reservationDetails = $reservation['reservationDetails'];
-                $dateFrom = $reservationDetails['dateFrom'];
-                $dateTo = $reservationDetails['dateTo'];
+                if (!is_array($reservationEvent)) {
+                    continue;
+                }
 
-                $reservationEvent['external_id'] = $externalId;
-                $reservationEvent['date_from'] = $dateFrom;
-                $reservationEvent['date_to'] = $dateTo;
-                $cottage = $cottageService->getCottageByExternalId($item['objectItemId']);
-                $cottageId = $cottage->getId();
-                $reservationEvent['cottage_id'] = $cottageId;
-                $reservationEvent['user_id'] = 1;
-                $reservationEvent['guest_first_name'] = isset($client['firstName']) ? $client['firstName'] : 'Unregistered';
-                $reservationEvent['guest_last_name'] = isset($client['lastName']) ? $client['lastName'] : 'Unregistered';
-                $reservationEvent['guest_phone_number'] = isset($client['phone']) ? $client['phone'] : 'Unregistered';
-                $reservationEvent['advance_payment'] = true;
-                $reservationEvent['status'] = $reservationDetails['status'];
-                $reservationEvent['date_add'] = $reservationDetails['dateAdd'];
-                $reservationEvent['type'] = EventsService::RESERVATION_EVENT;
+                $reservationObj = $reservationService->getReservationByExternalId($reservationEvent['external_id']);
 
-                $result = $eventService->createEvent($reservationEvent);
-
-                if ($result instanceof Events) {
-
-                    print_r($result->getId());
+                if ($reservationObj) {
+                    $event = $reservationObj->getEvent();
+                    $result = $eventService->createEvent($reservationEvent, $event);
                 } else {
-                    print_r($result);
+                    $result = $eventService->createEvent($reservationEvent);
+
+                }
+                if ($result instanceof Events) {
+                    $this->logger->info('OK');
+                } else {
+                    $this->logger->info($result);
                 }
 
             }

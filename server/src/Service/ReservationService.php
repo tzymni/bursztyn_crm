@@ -47,7 +47,15 @@ class ReservationService implements DecorateEventInterface
         $dateFrom = $data['date_from'];
         $dateTo = $data['date_to'];
 
-        return 'Reservation for ' . $firstName . ' ' . $lastName . ' (' . $dateFrom . ' - ' . $dateTo . ')';
+        $cottageService = new CottageService($this->em);
+        $cottageResponse = $cottageService->getActiveCottageById($data['cottage_id']);
+
+        if (!$cottageResponse instanceof Cottages) {
+            throw new \Exception($cottageResponse);
+        }
+
+        return sprintf("%s: Reservation for %s %s (%s - %s)", $cottageResponse->getName(), $firstName, $lastName,
+            $dateFrom, $dateTo);
     }
 
     /**
@@ -71,28 +79,36 @@ class ReservationService implements DecorateEventInterface
             $reservation = new Reservations();
         }
 
+        if (!isset($data['is_active'])) {
+            $isActive = true;
+        } else {
+            $isActive = $data['is_active'];
+        }
+
         $status = isset($data['status']) ? $data['status'] : 'DEFAULT';
 
         $dateAdd = isset($data['date_add']) ? $data['date_add'] : gmdate("Y-m-d H:i:s");
-        $dateAdd =\DateTime::createFromFormat("Y-m-d H:i:s", $dateAdd);
+        $dateAdd = \DateTime::createFromFormat("Y-m-d H:i:s", $dateAdd);
 
         $reservation->setCottage($cottageResponse);
         $reservation->setEvent($event);
         $reservation->setGuestFirstName($data['guest_first_name']);
         $reservation->setGuestLastName($data['guest_last_name']);
         $reservation->setGuestPhoneNumber($data['guest_phone_number']);
-        $reservation->setIsActive(true);
+        $reservation->setIsActive($isActive);
         $reservation->setGuestsNumber($guestsNumber);
         $reservation->setAdvancePayment($data['advance_payment']);
         $reservation->setExtraInfo($extraInfo);
         $reservation->setStatus($status);
         $reservation->setDateAdd($dateAdd);
+        if (isset($data['external_id'])) {
+            $reservation->setExternalId($data['external_id']);
+        }
 
         $this->em->persist($reservation);
 
         $this->em->flush();
     }
-
 
     public function getEventDetails(int $eventId)
     {
@@ -121,6 +137,30 @@ class ReservationService implements DecorateEventInterface
             return $event[0];
         } else {
             return sprintf("Can't find event!");
+        }
+    }
+
+    /**
+     * Get ID of cottage by external_id.
+     *
+     * @param $externalId
+     * @return Cottages|null
+     */
+    public function getReservationByExternalId($externalId)
+    {
+
+        $reservation = null;
+
+        $reservation = $this->em->getRepository('App:Reservations')->findBy(
+            array( "external_id" => $externalId),
+            array(),
+            array(1)
+        );
+
+        if (isset($reservation) && isset($reservation[0])) {
+            return $reservation[0];
+        } else {
+            return null;
         }
     }
 }
