@@ -10,6 +10,11 @@ use Doctrine\ORM\Mapping as ORM;
 class Reservations
 {
     /**
+     * Event type in events table.
+     */
+    const EVENT_TYPE = 'RESERVATION';
+
+    /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")

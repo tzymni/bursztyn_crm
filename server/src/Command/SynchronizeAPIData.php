@@ -3,6 +3,8 @@
 namespace App\Command;
 
 use App\Entity\Events;
+use App\Lib\CleaningCreator;
+use App\Lib\ReservationCreator;
 use App\Service\CottageService;
 use App\Service\CottagesFromApiParserService;
 use App\Service\EventsService;
@@ -136,27 +138,37 @@ class SynchronizeAPIData extends Command
 
             foreach ($itemsToReservation as $item) {
 
-                $reservationEvent = $reservationsFromAPIParser->parseApiDataToSystemFormat($cottageService, $item,
+                $reservationData = $reservationsFromAPIParser->parseApiDataToSystemFormat($cottageService, $item,
                     $reservation, $client);
 
-                if (!is_array($reservationEvent)) {
+                if (!is_array($reservationData)) {
                     continue;
                 }
 
-                $reservationObj = $reservationService->getReservationByExternalId($reservationEvent['external_id']);
+                $reservationObj = $reservationService->getReservationByExternalId($reservationData['external_id']);
+                try {
 
-                if ($reservationObj) {
-                    $event = $reservationObj->getEvent();
-                    $result = $eventService->createEvent($reservationEvent, $event);
-                } else {
-                    $result = $eventService->createEvent($reservationEvent);
+                    $this->em->beginTransaction();
+                    if ($reservationObj) {
+                        $reservationData['event'] = $reservationObj->getEvent();
+                        $eventService->createEvent(new ReservationCreator($this->em), $reservationData);
+                    } else {
+                        $eventService->createEvent(new ReservationCreator($this->em), $reservationData);
+                    }
 
+                    // add cleaning event
+//                    $eventService->createEvent(new CleaningCreator($this->em), $reservationData);
+
+                    $this->em->commit();
+
+                } catch (\Exception $exception) {
+                    echo $exception->getMessage() . PHP_EOL;
+                    $this->logger->info($exception->getMessage());
+                    $this->em->rollback();
+                    continue;
                 }
-                if ($result instanceof Events) {
-                    $this->logger->info('OK');
-                } else {
-                    $this->logger->info($result);
-                }
+
+                $this->logger->info('OK');
 
             }
         }

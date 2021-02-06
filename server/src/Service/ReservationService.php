@@ -37,28 +37,6 @@ class ReservationService implements DecorateEventInterface
     }
 
     /**
-     * @param $data
-     * @return string
-     */
-    public function generateTitle($data): string
-    {
-        $firstName = $data['guest_first_name'];
-        $lastName = $data['guest_last_name'];
-        $dateFrom = $data['date_from'];
-        $dateTo = $data['date_to'];
-
-        $cottageService = new CottageService($this->em);
-        $cottageResponse = $cottageService->getActiveCottageById($data['cottage_id']);
-
-        if (!$cottageResponse instanceof Cottages) {
-            throw new \Exception($cottageResponse);
-        }
-
-        return sprintf("%s: Reservation for %s %s (%s - %s)", $cottageResponse->getName(), $firstName, $lastName,
-            $dateFrom, $dateTo);
-    }
-
-    /**
      * Create reservation by Events.
      *
      * @param Events $event
@@ -116,6 +94,60 @@ class ReservationService implements DecorateEventInterface
     }
 
     /**
+     * Check cottage availability between two given dates.
+     * Throws error if reservation for given cottage exist between given dates.
+     *
+     * @param $cottageId
+     * @param $dateFrom
+     * @param $dateTo
+     * @return bool
+     * @throws \Exception
+     */
+    public function checkCottageAvailability($cottageId, $dateFrom, $dateTo, $eventId = null): bool
+    {
+        $cottageService = new CottageService($this->em);
+        $cottageResponse = $cottageService->getActiveCottageById($cottageId);
+
+        if (!$cottageResponse instanceof Cottages) {
+            throw new \Exception($cottageResponse);
+        }
+
+        $query = $this->em->createQueryBuilder()
+            ->select('e.id, r.id')
+            ->from('App:Reservations', 'r')
+            ->leftJoin('r.event', 'e')
+            ->andWhere('(e.date_from_unix_utc >= :dateFrom AND e.date_from_unix_utc < :dateTo)')
+            ->orWhere('(e.date_to_unix_utc <= :dateTo AND e.date_to_unix_utc > :dateFrom)')
+            ->orWhere('(e.date_from_unix_utc < :dateFrom AND e.date_to_unix_utc > :dateTo)')
+            ->andWhere('r.cottage=:cottageId')
+            ->setParameter('cottageId', $cottageId)
+            ->setParameter('dateFrom', $dateFrom)
+            ->setParameter('dateTo', $dateTo);
+
+        if ($eventId > 0) {
+            $query->andWhere('r.event != :eventId')
+                ->setParameter('eventId', $eventId);
+        }
+
+        $result = $query->getQuery()->getResult();
+
+        if (empty($result)) {
+            echo "OK!";
+            return true;
+        } else {
+            $dateFrom = gmdate("Y-m-d", $dateFrom);
+            $dateTo = gmdate("Y-m-d", $dateTo);
+            $message = sprintf(
+                "There is a reservation between %s and %s for cottage %s",
+                $dateFrom,
+                $dateTo,
+                $cottageResponse->getName()
+            );
+            throw new \Exception($message);
+        }
+    }
+
+    /**
      * @param $eventId
      */
     public function getActiveReservationByEventId($eventId)
@@ -152,7 +184,7 @@ class ReservationService implements DecorateEventInterface
         $reservation = null;
 
         $reservation = $this->em->getRepository('App:Reservations')->findBy(
-            array( "external_id" => $externalId),
+            array("external_id" => $externalId),
             array(),
             array(1)
         );
