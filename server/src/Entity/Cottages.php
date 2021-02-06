@@ -53,9 +53,15 @@ class Cottages
      */
     private $external_id;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\CottagesCleaningEvents", mappedBy="cottage")
+     */
+    private $cottagesCleaningEvents;
+
     public function __construct()
     {
         $this->reservations = new ArrayCollection();
+        $this->cottagesCleaningEvents = new ArrayCollection();
     }
 
     public function getId()
@@ -166,6 +172,37 @@ class Cottages
     public function setExternalId(?int $external_id): self
     {
         $this->external_id = $external_id;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|CottagesCleaningEvents[]
+     */
+    public function getCottagesCleaningEvents(): Collection
+    {
+        return $this->cottagesCleaningEvents;
+    }
+
+    public function addCottagesCleaningEvent(CottagesCleaningEvents $cottagesCleaningEvent): self
+    {
+        if (!$this->cottagesCleaningEvents->contains($cottagesCleaningEvent)) {
+            $this->cottagesCleaningEvents[] = $cottagesCleaningEvent;
+            $cottagesCleaningEvent->setCottage($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCottagesCleaningEvent(CottagesCleaningEvents $cottagesCleaningEvent): self
+    {
+        if ($this->cottagesCleaningEvents->contains($cottagesCleaningEvent)) {
+            $this->cottagesCleaningEvents->removeElement($cottagesCleaningEvent);
+            // set the owning side to null (unless already changed)
+            if ($cottagesCleaningEvent->getCottage() === $this) {
+                $cottagesCleaningEvent->setCottage(null);
+            }
+        }
 
         return $this;
     }

@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -61,6 +63,16 @@ class Events
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $date_to;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\CottagesCleaningEvents", mappedBy="event")
+     */
+    private $cottagesCleaningEvents;
+
+    public function __construct()
+    {
+        $this->cottagesCleaningEvents = new ArrayCollection();
+    }
 
 
     public function getId(): ?int
@@ -178,6 +190,37 @@ class Events
     public function setDateTo(?string $date_to): self
     {
         $this->date_to = $date_to;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|CottagesCleaningEvents[]
+     */
+    public function getCottagesCleaningEvents(): Collection
+    {
+        return $this->cottagesCleaningEvents;
+    }
+
+    public function addCottagesCleaningEvent(CottagesCleaningEvents $cottagesCleaningEvent): self
+    {
+        if (!$this->cottagesCleaningEvents->contains($cottagesCleaningEvent)) {
+            $this->cottagesCleaningEvents[] = $cottagesCleaningEvent;
+            $cottagesCleaningEvent->setEvent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCottagesCleaningEvent(CottagesCleaningEvents $cottagesCleaningEvent): self
+    {
+        if ($this->cottagesCleaningEvents->contains($cottagesCleaningEvent)) {
+            $this->cottagesCleaningEvents->removeElement($cottagesCleaningEvent);
+            // set the owning side to null (unless already changed)
+            if ($cottagesCleaningEvent->getEvent() === $this) {
+                $cottagesCleaningEvent->setEvent(null);
+            }
+        }
 
         return $this;
     }
