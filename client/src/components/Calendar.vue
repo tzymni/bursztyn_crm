@@ -265,7 +265,8 @@ export default {
                 startDate: new Date(value.date_from * 1000),
                 endDate: new Date(value.date_to * 1000),
                 title: value.title,
-                style: 'background-color: ' + value.color
+                style: 'background-color: ' + value.color,
+                type: value.type
               }
               list.push(newEvent)
             });
@@ -292,12 +293,15 @@ export default {
     },
     onClickDay(d) {
       this.editId = null
-      this.clickedStartDate = d.toLocaleDateString();
-      this.$bvModal.show("reservation-form-modal");
+      this.clickedStartDate = d.toLocaleDateString()
+      this.$bvModal.show("reservation-form-modal")
     },
     onClickItem(e) {
+
       this.editId = e.id
-      this.$bvModal.show("reservation-form-modal");
+      if(e.originalEvent.type == 'RESERVATION') {
+        this.$bvModal.show("reservation-form-modal")
+      }
     },
     setShowDate(d) {
       this.message = `Changing calendar view to ${d.toLocaleDateString()}`

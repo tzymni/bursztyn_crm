@@ -2,7 +2,6 @@
 
 namespace App\Command;
 
-use App\Entity\Events;
 use App\Lib\CleaningCreator;
 use App\Lib\ReservationCreator;
 use App\Service\CottageService;
@@ -148,24 +147,21 @@ class SynchronizeAPIData extends Command
                 $reservationObj = $reservationService->getReservationByExternalId($reservationData['external_id']);
                 try {
 
-                    $this->em->beginTransaction();
                     if ($reservationObj) {
                         $reservationData['event'] = $reservationObj->getEvent();
-                        $eventService->createEvent(new ReservationCreator($this->em), $reservationData);
-                    } else {
-                        $eventService->createEvent(new ReservationCreator($this->em), $reservationData);
+                        $reservationData['reservation'] = $reservationObj;
                     }
 
-                    // add cleaning event
-//                    $eventService->createEvent(new CleaningCreator($this->em), $reservationData);
+                    $this->em->beginTransaction();
+                    $eventService->createEvent(new ReservationCreator($this->em), $reservationData);
 
+                    // add cleaning event
+                    $eventService->createEvent(new CleaningCreator($this->em), $reservationData);
                     $this->em->commit();
 
                 } catch (\Exception $exception) {
-                    echo $exception->getMessage() . PHP_EOL;
                     $this->logger->info($exception->getMessage());
                     $this->em->rollback();
-                    continue;
                 }
 
                 $this->logger->info('OK');

@@ -9,6 +9,8 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class CottagesCleaningEvents
 {
+    const EVENT_TYPE = 'CLEANING';
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()

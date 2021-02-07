@@ -25,7 +25,7 @@ class CottagesFromApiParserService
      * @param array $cottagesFromApi
      * @return array
      */
-    public function parseCottagesToSystemFormat(array $cottagesFromApi)
+    public function parseCottagesToSystemFormat(array $cottagesFromApi): array
     {
         $parsedCottages = array();
 

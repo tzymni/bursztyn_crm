@@ -48,10 +48,11 @@ class ReservationsFromApiParserService
         }
         $cottageId = $cottage->getId();
         $reservationEvent['cottage_id'] = $cottageId;
+        $reservationEvent['cottage'] = $cottage;
         $reservationEvent['user_id'] = 1;
-        $reservationEvent['guest_first_name'] = isset($client['firstName']) ? $client['firstName'] : 'Unregistered';
-        $reservationEvent['guest_last_name'] = isset($client['lastName']) ? $client['lastName'] : 'Unregistered';
-        $reservationEvent['guest_phone_number'] = isset($client['phone']) ? $client['phone'] : 'Unregistered';
+        $reservationEvent['guest_first_name'] = isset($client['firstName']) ? $client['firstName'] : '-';
+        $reservationEvent['guest_last_name'] = isset($client['lastName']) ? $client['lastName'] : '-';
+        $reservationEvent['guest_phone_number'] = isset($client['phone']) ? $client['phone'] : '-';
 
         $guestsNumber = 0;
         if (isset($item['numberOfAdults']) || isset($item['numberOfSmallChildren'])) {

@@ -41,6 +41,8 @@ class ReservationService implements DecorateEventInterface
      *
      * @param Events $event
      * @param array $data
+     * @param null $reservation
+     * @throws \Exception
      */
     public function createReservation(Events $event, array $data, $reservation = null)
     {
@@ -132,7 +134,6 @@ class ReservationService implements DecorateEventInterface
         $result = $query->getQuery()->getResult();
 
         if (empty($result)) {
-            echo "OK!";
             return true;
         } else {
             $dateFrom = gmdate("Y-m-d", $dateFrom);

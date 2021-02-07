@@ -43,7 +43,7 @@ class ReservationParser implements EventParser
             throw new \Exception($cottageResponse);
         }
 
-        return sprintf("%s: Reservation for %s %s (%s - %s)", $cottageResponse->getName(), $firstName, $lastName,
+        return sprintf("%s: Rezerwacja dla %s %s (%s - %s)", $cottageResponse->getName(), $firstName, $lastName,
             $dateFrom, $dateTo);
     }
 

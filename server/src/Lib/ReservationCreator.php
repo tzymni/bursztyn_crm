@@ -3,6 +3,7 @@
 namespace App\Lib;
 
 use App\Entity\Events;
+use App\Entity\Reservations;
 use App\Service\ReservationService;
 
 /**
@@ -19,24 +20,24 @@ class ReservationCreator extends EventCreator
 
     /**
      * @param $data
-     * @param null $event
      * @return Events|mixed|void
      * @throws \Exception
      */
-    public function create($data, $event = null)
+    public function create($data)
     {
         $this->reservationService = new ReservationService($this->em);
         $data = $this->getEvent()->parseData($data);
         $this->validateData($data);
 
-        $createdEvent = parent::create($data, $event);
+        $createdEvent = parent::create($data);
 
-        if (!empty($createdEvent->getReservations())) {
-            $reservation = $createdEvent->getReservations();
+        if(isset($data['reservation']) && $data['reservation'] instanceof  Reservations) {
+            $reservation = $data['reservation'];
         } else {
             $reservation = null;
         }
-        $this->reservationService->createReservation($createdEvent, $data, $reservation);
+
+        $this->reservationService->createReservation($createdEvent, $data, $reservation );
     }
 
     /**

@@ -2,12 +2,9 @@
 
 namespace App\Service;
 
-use App\Entity\Cottages;
 use App\Entity\Events;
 use App\Entity\User;
-use App\Lib\CleaningCreator;
 use App\Lib\EventCreator;
-use App\Lib\ReservationCreator;
 use Doctrine\ORM\EntityManagerInterface;
 use App\EventListener\ReservationAfterEventSave;
 
@@ -109,6 +106,21 @@ class EventsService
         }
     }
 
+    public function getActiveEventByDateAndType($type, $dateFrom, $dateTo)
+    {
+        $event = $this->em->getRepository('App:Events')->findBy(
+            array("is_active" => true, "type" => $type, "date_from" => $dateFrom, "date_to" => $dateTo),
+            array(),
+            array(1)
+        );
+
+        if (isset($event) && isset($event[0])) {
+            return $event[0];
+        } else {
+            return sprintf("Can't find event!");
+        }
+    }
+
     /**
      * Get list of all active events.
      *
@@ -118,6 +130,7 @@ class EventsService
     {
         return $this->em->getRepository('App:Events')->findBy(
             array("is_active" => true),
+//            array("is_active" => true, "type" => 'CLEANING'),
             array()
         );
     }
