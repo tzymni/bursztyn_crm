@@ -122,15 +122,22 @@ class EventsService
     }
 
     /**
-     * Get list of all active events.
+     * Get list of all active events by type.
      *
+     * @param null $type
      * @return object[]
      */
-    public function getActiveEvents()
+    public function getActiveEvents($type = null): array
     {
+        if (empty($type) || $type == 'ALL') {
+            $conditions = array("is_active" => true);
+
+        } else {
+            $conditions = array("is_active" => true, "type" => $type);
+        }
+
         return $this->em->getRepository('App:Events')->findBy(
-            array("is_active" => true),
-//            array("is_active" => true, "type" => 'CLEANING'),
+            $conditions,
             array()
         );
     }

@@ -80,7 +80,10 @@ class CottagesController extends AbstractController implements TokenAuthenticate
 
     /**
      * @Route("/cottage/{id}", methods={"GET"})
+     * @param Request $request
+     * @param CottageService $cottageService
      * @param ResponseErrorDecoratorService $errorDecorator
+     * @return JsonResponse
      */
     public function getCottage(
         Request $request,

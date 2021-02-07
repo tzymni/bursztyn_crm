@@ -70,18 +70,24 @@ class EventsController extends AbstractController implements TokenAuthenticatedC
     }
 
     /**
-     * @Route("/event/list", methods={"GET"})
+     * @Route("/event/list/type/{type}", methods={"GET"})
+     * @param Request $request
      * @param ResponseErrorDecoratorService $errorDecorator
+     * @param EventsService $eventsService
+     * @return JsonResponse
      */
     public function getEventList(
+        Request $request,
         ResponseErrorDecoratorService $errorDecorator,
         EventsService $eventsService
-    ) {
+    ): JsonResponse {
         try {
-            $events = $eventsService->getActiveEvents();
+
+            $type = $request->get('type');
+            $events = $eventsService->getActiveEvents($type);
+            $responseData = array();
 
             if (!empty($events)) {
-                $responseData = array();
                 foreach ($events as $event) {
                     $tmp = array();
                     $tmp['id'] = $event->getId();

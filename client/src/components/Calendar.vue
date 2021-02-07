@@ -29,6 +29,14 @@
         >Check avaliability
         </b-button
         >
+
+        <b-button
+            class="btn btn-info"
+            id="show-cleaning"
+            @click="setEvents('CLEANING')"
+        >Show only cleaning events
+        </b-button
+        >
         <b-modal
             @hide="setEvents()"
             id="check-form-modal"
@@ -252,10 +260,11 @@ export default {
     checkAvaliabilityFormModal() {
       this.$bvModal.show("check-form-modal");
     },
-    setEvents() {
+    setEvents(type) {
+      console.log(type)
       this.clickedStartDate = null;
       var self = this;
-      reservationService.getEvents().then(function (response) {
+      reservationService.getEvents(type).then(function (response) {
 
             let list = [];
             response.map(function (value) {

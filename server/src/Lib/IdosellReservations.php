@@ -6,7 +6,7 @@ namespace App\Lib;
  *
  * @author Tomasz Zymni <tomasz.zymni@gmail.com>
  **/
-class IdosellReservations extends \IdosellMiddleware
+class IdosellReservations
 {
 
     const CANCELED = 'canceled';

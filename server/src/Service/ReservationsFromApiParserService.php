@@ -2,7 +2,6 @@
 
 namespace App\Service;
 
-use App\Lib\IdosellReservations;
 
 /**
  *
@@ -68,7 +67,7 @@ class ReservationsFromApiParserService
         $reservationEvent['type'] = EventsService::RESERVATION_EVENT;
         $reservationEvent['extra_info'] = $reservationDetails['internalNote'];
 
-        if ($reservationEvent['status'] == IdosellReservations::CANCELED) {
+        if ($reservationEvent['status'] == 'canceled') {
             $reservationEvent['is_active'] = false;
         }
 

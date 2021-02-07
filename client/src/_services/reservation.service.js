@@ -17,11 +17,15 @@ function saveReservation(data) {
     }
 }
 
-function getEvents() {
+function getEvents(type) {
     const token = sessionStorage.getItem('token');
     const AuthStr = 'Bearer '.concat(token);
 
-    return axios.get('http://localhost:8000/event/list', {headers: {Authorization: AuthStr}})
+    if(type == null) {
+        type = 'ALL';
+    }
+
+    return axios.get('http://localhost:8000/event/list/type/'+type, {headers: {Authorization: AuthStr}})
         .then(function (response) {
             return response.data;
         })
