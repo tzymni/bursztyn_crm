@@ -2,13 +2,13 @@
   <div>
     <div id="calendar">
       <div class="calendar-controls">
-        <b-button
-            class="btn btn-info"
-            id="show-reservation-form-modal"
-            @click="showReservationFormModal()"
-        >
-          Add reservation
-        </b-button>
+<!--        <b-button-->
+<!--            class="btn btn-info"-->
+<!--            id="show-reservation-form-modal"-->
+<!--            @click="showReservationFormModal()"-->
+<!--        >-->
+<!--          Add reservation-->
+<!--        </b-button>-->
         <b-modal
             @hide="setEvents()"
             id="reservation-form-modal"
@@ -21,7 +21,6 @@
           />
         </b-modal>
 
-        <b-button class="btn btn-info" id="add-cleaning">Add cleaning</b-button>
         <b-button
             class="btn btn-info"
             id="check-avaliability"
@@ -30,13 +29,13 @@
         </b-button
         >
 
-        <b-button
-            class="btn btn-info"
-            id="show-cleaning"
-            @click="setEvents('CLEANING')"
-        >Show only cleaning events
-        </b-button
-        >
+        <div>
+          <b-form-group id="mySelect" label="Choose an event type" label-for="mySelect">
+            <b-form-select id="mySelect" @change="filterCalendarEvents({ currentValue})" v-model="form.option" :options="eventTypes"/>
+          </b-form-group>
+        </div>
+
+
         <b-modal
             @hide="setEvents()"
             id="check-form-modal"
@@ -53,18 +52,6 @@
         <div class="box">
           <h4 class="title is-5">Play with the options!</h4>
 
-          <div class="field">
-            <label class="label">Period UOM</label>
-            <div class="control">
-              <div class="select">
-                <select v-model="displayPeriodUom">
-                  <option>month</option>
-                  <option>week</option>
-                  <option>year</option>
-                </select>
-              </div>
-            </div>
-          </div>
 
           <div class="field">
             <label class="label">Period Count</label>
@@ -219,6 +206,14 @@ export default {
       useHolidayTheme: true,
       useTodayIcons: true,
       editId: null,
+      form: {
+        option: 'ALL',
+      },
+      eventTypes: [
+        {text: 'All', value: 'ALL'},
+        {text: 'Reservations only', value: 'RESERVATION'},
+        {text: 'Cleaning only', value: 'CLEANING'}
+      ],
       items: [
         // {
         //   id: "e4",
@@ -232,6 +227,9 @@ export default {
     }
   },
   computed: {
+    currentValue() {
+      return this.eventTypes.find(option => option.value === this.form.option)
+    },
     userLocale() {
       return this.getDefaultBrowserLocale
     },
@@ -259,6 +257,10 @@ export default {
     },
     checkAvaliabilityFormModal() {
       this.$bvModal.show("check-form-modal");
+    },
+    filterCalendarEvents(selected) {
+      let type = selected.currentValue.value
+      this.setEvents(type)
     },
     setEvents(type) {
       console.log(type)
@@ -308,7 +310,7 @@ export default {
     onClickItem(e) {
 
       this.editId = e.id
-      if(e.originalEvent.type == 'RESERVATION') {
+      if (e.originalEvent.type == 'RESERVATION') {
         this.$bvModal.show("reservation-form-modal")
       }
     },
