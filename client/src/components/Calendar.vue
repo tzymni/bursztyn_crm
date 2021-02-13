@@ -20,6 +20,17 @@
               :editId="$data.editId"
           />
         </b-modal>
+        <b-modal
+            @hide="setEvents()"
+            id="cleaning-form-modal"
+            title="Cottages cleaning"
+            hide-footer
+        >
+          <CleaningForm
+              :clickedStartDate="$data.clickedStartDate"
+              :editId="$data.editId"
+          />
+        </b-modal>
 
         <b-button
             class="btn btn-info"
@@ -167,6 +178,7 @@
 <script>
 // Load CSS from the published version
 import ReservationForm from "./ReservationForm";
+import CleaningForm from "./CleaningForm.vue";
 import {reservationService} from "../_services/reservation.service";
 import CheckAvaliabilityForm from "./CheckAvaliabilityForm";
 
@@ -183,6 +195,7 @@ export default {
   name: "Calendar",
   components: {
     ReservationForm,
+    CleaningForm,
     CalendarView,
     CalendarViewHeader,
     CheckAvaliabilityForm,
@@ -312,6 +325,10 @@ export default {
       this.editId = e.id
       if (e.originalEvent.type == 'RESERVATION') {
         this.$bvModal.show("reservation-form-modal")
+
+      } else {
+        this.$bvModal.show("cleaning-form-modal")
+
       }
     },
     setShowDate(d) {
