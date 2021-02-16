@@ -149,6 +149,36 @@ class ReservationService implements DecorateEventInterface
     }
 
     /**
+     * @param Cottages $cottages
+     * @param $dateFrom
+     * @return array
+     */
+    public function getNextActiveReservationByCottage(Cottages $cottages, $dateFrom): array
+    {
+        $event = $this->em->getRepository('App:Reservations')->createQueryBuilder('p')
+            ->select(
+                'p.id as reservation_id, p.guest_first_name, p.guest_last_name,  p.guests_number,
+                  Events.id as event_id, Events.date_from, Events.date_to, Events.title  '
+            )
+            ->andWhere('p.is_active = :active')
+            ->andWhere('p.cottage = :cottage')
+            ->andWhere('Events.date_from > :date_from')
+            ->setParameter('active', true)
+            ->setParameter('cottage', $cottages->getId())
+            ->setParameter('date_from', $dateFrom)
+            ->leftJoin('p.event', 'Events')
+            ->setMaxResults(1)
+            ->getQuery()->execute();
+
+        if (isset($event) && isset($event[0])) {
+            return $event[0];
+        } else {
+
+            return array();
+        }
+    }
+
+    /**
      * @param $eventId
      */
     public function getActiveReservationByEventId($eventId)

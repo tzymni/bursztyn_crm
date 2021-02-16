@@ -2,13 +2,13 @@
   <div>
     <div id="calendar">
       <div class="calendar-controls">
-<!--        <b-button-->
-<!--            class="btn btn-info"-->
-<!--            id="show-reservation-form-modal"-->
-<!--            @click="showReservationFormModal()"-->
-<!--        >-->
-<!--          Add reservation-->
-<!--        </b-button>-->
+        <!--        <b-button-->
+        <!--            class="btn btn-info"-->
+        <!--            id="show-reservation-form-modal"-->
+        <!--            @click="showReservationFormModal()"-->
+        <!--        >-->
+        <!--          Add reservation-->
+        <!--        </b-button>-->
         <b-modal
             @hide="setEvents()"
             id="reservation-form-modal"
@@ -23,7 +23,7 @@
         <b-modal
             @hide="setEvents()"
             id="cleaning-form-modal"
-            title="Cottages cleaning"
+            title="Sprzątanie domków"
             hide-footer
         >
           <CleaningForm
@@ -36,13 +36,14 @@
             class="btn btn-info"
             id="check-avaliability"
             @click="checkAvaliabilityFormModal()"
-        >Check avaliability
+        >Sprawdź dostępność
         </b-button
         >
 
         <div>
-          <b-form-group id="mySelect" label="Choose an event type" label-for="mySelect">
-            <b-form-select id="mySelect" @change="filterCalendarEvents({ currentValue})" v-model="form.option" :options="eventTypes"/>
+          <b-form-group id="mySelect" label="Wybierz typ zdarzenia" label-for="mySelect">
+            <b-form-select id="mySelect" @change="filterCalendarEvents({ currentValue})" v-model="form.option"
+                           :options="eventTypes"/>
           </b-form-group>
         </div>
 
@@ -50,7 +51,7 @@
         <b-modal
             @hide="setEvents()"
             id="check-form-modal"
-            title="Check avaliability"
+            title="Sprawdź dostępność"
             hide-footer
         >
           <CheckAvaliabilityForm/>
@@ -223,9 +224,9 @@ export default {
         option: 'ALL',
       },
       eventTypes: [
-        {text: 'All', value: 'ALL'},
-        {text: 'Reservations only', value: 'RESERVATION'},
-        {text: 'Cleaning only', value: 'CLEANING'}
+        {text: 'Wszystkie', value: 'ALL'},
+        {text: 'Tylko rezerwacje', value: 'RESERVATION'},
+        {text: 'Tylko zmiany', value: 'CLEANING'}
       ],
       items: [
         // {

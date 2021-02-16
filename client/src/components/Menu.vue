@@ -33,39 +33,39 @@ export default {
         },
         {
           href: "/",
-          title: "Calendar",
+          title: "Kalendarz",
           icon: "fa fa-calendar-alt",
         },
         {
-          title: "Assets",
+          title: "Zasoby",
           icon: "fa fa-warehouse",
           child: [
             {
               href: "/cottages",
-              title: "Cottages",
+              title: "Domki",
               icon: "fa fa-home",
             },
             {
               href: "/users",
-              title: "Users",
+              title: "Użytkownicy",
               icon: "fa fa-user",
             },
           ],
         },
         {
-          title: "Management",
+          title: "Zarządzanie",
           icon: "fa fa-tasks",
           child: [
             {
               href: "/reservations",
-              title: "Reservations",
+              title: "Rezerwacje",
               icon: "fa fa-calendar-check",
             },
           ],
         },
         {
           href: "/logout",
-          title: "Logout",
+          title: "Wyloguj",
           icon: "fa fa-sign-out-alt",
           meta: { hideNavigation: true },
         },

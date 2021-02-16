@@ -51,15 +51,9 @@ class EventsService
         return false;
     }
 
-    protected function eventCreate(EventCreator $eventCreator, $data)
-    {
-
-    }
-
     /**
      * Create event and reservation.
      *
-     * TODO Use single responsibility and move creating reservations.
      * @param EventCreator $eventCreator
      * @param $data
      * @param null $event
@@ -95,6 +89,21 @@ class EventsService
     {
         $event = $this->em->getRepository('App:Events')->findBy(
             array("is_active" => true, "id" => $id),
+            array(),
+            array(1)
+        );
+
+        if (isset($event) && isset($event[0])) {
+            return $event[0];
+        } else {
+            return sprintf("Can't find event!");
+        }
+    }
+
+    public function getNextEventByDateAndType($dateFrom, $type)
+    {
+        $event = $this->em->getRepository('App:Events')->findBy(
+            array("is_active" => true, "type" => $type, "date_from >= $dateFrom"),
             array(),
             array(1)
         );

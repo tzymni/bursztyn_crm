@@ -26,6 +26,26 @@ class CottagesCleaningEventsService
     }
 
     /**
+     * @param Events $event
+     * @return array|null
+     */
+    public function getCottageCleaningEventsByEvent(Events $event): ?array
+    {
+        $cottageEvent = null;
+
+        $cottageEvents = $this->em->getRepository('App:CottagesCleaningEvents')->findBy(
+            array("event" => $event),
+            array('cottage' => 'ASC')
+        );
+
+        if (isset($cottageEvents) && isset($cottageEvents[0])) {
+            return $cottageEvents;
+        } else {
+            return null;
+        }
+    }
+
+    /**
      * @param Cottages $cottage
      * @param Events $event
      * @return object|null
