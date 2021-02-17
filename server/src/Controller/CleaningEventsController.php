@@ -85,7 +85,7 @@ class CleaningEventsController extends AbstractController
                 $tmp['cottage_id'] = $cottageCleaningEvent->getCottage()->getId();
                 $tmp['cottage_name'] = $cottageCleaningEvent->getCottage()->getName();
                 $nextReservation = $reservationService->getNextActiveReservationByCottage($cottageCleaningEvent->getCottage(),
-                    $event->getDateFrom());
+                    $event->getDateTo());
                 $periodInDays = 0;
                 if (!empty($nextReservation)) {
                     $nextReservationDateFrom = $nextReservation['date_from'];

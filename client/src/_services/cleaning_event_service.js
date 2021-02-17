@@ -1,6 +1,31 @@
 export const cleaningEventServices = {
     getCleaningEvent,
+    getCleaningEventDetails
 };
+
+
+function getCleaningEventDetails(id) {
+    var axios = require("axios");
+    var token = sessionStorage.getItem("token");
+    var AuthStr = "Bearer ".concat(token);
+    return axios
+        .get("http://localhost:8000/cleaning/details/" + id, {
+            headers: {Authorization: AuthStr},
+        })
+        .then(function (response) {
+            return response.data;
+        })
+        .catch(function (error) {
+            if (error.response) {
+                const errorData = error.response.data;
+                return Promise.reject(errorData.error.message);
+            } else {
+                const errorMessage = "Connection with server problem!";
+                return Promise.reject(errorMessage);
+            }
+        });
+}
+
 
 function getCleaningEvent(id) {
     var axios = require("axios");
@@ -8,12 +33,12 @@ function getCleaningEvent(id) {
     var AuthStr = "Bearer ".concat(token);
     return axios
         .get("http://localhost:8000/cleaning/" + id, {
-            headers: { Authorization: AuthStr },
+            headers: {Authorization: AuthStr},
         })
-        .then(function(response) {
+        .then(function (response) {
             return response.data;
         })
-        .catch(function(error) {
+        .catch(function (error) {
             if (error.response) {
                 const errorData = error.response.data;
                 return Promise.reject(errorData.error.message);

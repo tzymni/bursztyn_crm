@@ -162,11 +162,12 @@ class ReservationService implements DecorateEventInterface
             )
             ->andWhere('p.is_active = :active')
             ->andWhere('p.cottage = :cottage')
-            ->andWhere('Events.date_from > :date_from')
+            ->andWhere('Events.date_from >= :date_from')
             ->setParameter('active', true)
             ->setParameter('cottage', $cottages->getId())
             ->setParameter('date_from', $dateFrom)
             ->leftJoin('p.event', 'Events')
+            ->addOrderBy('Events.date_from', 'ASC')
             ->setMaxResults(1)
             ->getQuery()->execute();
 
