@@ -37,6 +37,11 @@ export default {
           icon: "fa fa-calendar-alt",
         },
         {
+          href: "/timeline-calendar",
+          title: "Prosty Kalendarz",
+          icon: "fa fa-calendar-alt",
+        },
+        {
           title: "Zasoby",
           icon: "fa fa-warehouse",
           child: [
