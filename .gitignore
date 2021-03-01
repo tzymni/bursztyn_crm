@@ -7,3 +7,4 @@ client/node_modules/
 .idea/
 server/phpunit.xml.dist
 server/symfony.lock
+/server/config/api.yaml
