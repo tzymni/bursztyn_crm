@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="toolbox">
-      <button @click="updateFirstRow">Update first row</button>
+      <!--      <button @click="updateFirstRow">Update first row</button>-->
       <!--      <button @click="changeZoomLevel">Change zoom level</button>-->
     </div>
     <div class="gstc-wrapper" ref="gstc"></div>
@@ -13,17 +13,18 @@ import GSTC from 'gantt-schedule-timeline-calendar';
 import {Plugin as TimelinePointer} from 'gantt-schedule-timeline-calendar/dist/plugins/timeline-pointer.esm.min.js';
 import {Plugin as Selection} from 'gantt-schedule-timeline-calendar/dist/plugins/selection.esm.min.js';
 import {Plugin as ItemResizing} from 'gantt-schedule-timeline-calendar/dist/plugins/item-resizing.esm.min.js';
-import {Plugin as ItemMovement} from 'gantt-schedule-timeline-calendar/dist/plugins/item-movement.esm.min.js';
+// import {Plugin as ItemMovement} from 'gantt-schedule-timeline-calendar/dist/plugins/item-movement.esm.min.js';
 import {Plugin as HighlightWeekends} from 'gantt-schedule-timeline-calendar/dist/plugins/highlight-weekends.esm.min';
 import 'gantt-schedule-timeline-calendar/dist/style.css';
 import {cottageService} from "@/_services/cottage.service";
+import {reservationService} from "@/_services/reservation.service";
 
 let gstc, state;
 
 
 // main component
 export default {
-  name: 'Timeline calendar',
+  name: 'TimelineCalendar',
   data: function () {
     return {
       state: null,
@@ -31,7 +32,7 @@ export default {
       config: {
 
         licenseKey: '====BEGIN LICENSE KEY====\nXOfH/lnVASM6et4Co473t9jPIvhmQ/l0X3Ewog30VudX6GVkOB0n3oDx42NtADJ8HjYrhfXKSNu5EMRb5KzCLvMt/pu7xugjbvpyI1glE7Ha6E5VZwRpb4AC8T1KBF67FKAgaI7YFeOtPFROSCKrW5la38jbE5fo+q2N6wAfEti8la2ie6/7U2V+SdJPqkm/mLY/JBHdvDHoUduwe4zgqBUYLTNUgX6aKdlhpZPuHfj2SMeB/tcTJfH48rN1mgGkNkAT9ovROwI7ReLrdlHrHmJ1UwZZnAfxAC3ftIjgTEHsd/f+JrjW6t+kL6Ef1tT1eQ2DPFLJlhluTD91AsZMUg==||U2FsdGVkX1/SWWqU9YmxtM0T6Nm5mClKwqTaoF9wgZd9rNw2xs4hnY8Ilv8DZtFyNt92xym3eB6WA605N5llLm0D68EQtU9ci1rTEDopZ1ODzcqtTVSoFEloNPFSfW6LTIC9+2LSVBeeHXoLEQiLYHWihHu10Xll3KsH9iBObDACDm1PT7IV4uWvNpNeuKJc\npY3C5SG+3sHRX1aeMnHlKLhaIsOdw2IexjvMqocVpfRpX4wnsabNA0VJ3k95zUPS3vTtSegeDhwbl6j+/FZcGk9i+gAy6LuetlKuARjPYn2LH5Be3Ah+ggSBPlxf3JW9rtWNdUoFByHTcFlhzlU9HnpnBUrgcVMhCQ7SAjN9h2NMGmCr10Rn4OE0WtelNqYVig7KmENaPvFT+k2I0cYZ4KWwxxsQNKbjEAxJxrzK4HkaczCvyQbzj4Ppxx/0q+Cns44OeyWcwYD/vSaJm4Kptwpr+L4y5BoSO/WeqhSUQQ85nvOhtE0pSH/ZXYo3pqjPdQRfNm6NFeBl2lwTmZUEuw==\n====END LICENSE KEY====',
-        plugins: [TimelinePointer(), Selection(), ItemResizing(), ItemMovement(), HighlightWeekends({
+        plugins: [TimelinePointer(), Selection(), ItemResizing(), HighlightWeekends({
           weekdays: [6, 0],
           className: "test-weekend"
         })],
@@ -62,6 +63,7 @@ export default {
   },
   mounted() {
     this.setCottages()
+    this.setReservations()
     /**
      * @type { import("gantt-schedule-timeline-calendar").Config }
      */
@@ -98,9 +100,9 @@ export default {
 
       const items = {};
       let start = GSTC.api.date().startOf('day').subtract(6, 'day');
-      for (let i = 0; i <280; i++) {
+      for (let i = 0; i < 200; i++) {
         const id = GSTC.api.GSTCID(i.toString());
-        const rowId = GSTC.api.GSTCID((Math.floor(Math.random() * 100)).toString());
+        const rowId = GSTC.api.GSTCID((Math.floor(Math.random() * 10)).toString());
         start = start.add(1, 'day');
         items[id] = {
           id,
@@ -115,6 +117,41 @@ export default {
       }
       return items;
 
+    },
+    setReservations() {
+      var self = this;
+      reservationService.getEvents('RESERVATION').then(function (response) {
+
+            let list = []
+            const itemsNew = {}
+
+            response.map(function (value) {
+
+              let id = GSTC.api.GSTCID(value.id);
+              let rowId = GSTC.api.GSTCID(value.cottage_id);
+
+              itemsNew[id] = {
+                id,
+                label: value.title,
+                rowId,
+                time: {
+                  start: value.date_from * 1000,
+                  end: value.date_to * 1000
+                },
+                style: {background: value.color},
+              }
+
+            });
+
+            state.update('config.chart.items', itemsNew)
+            self.items = list
+          }
+      ).catch(function (error) {
+        if (error) {
+          self.errorNotify = error;
+          self.loading = false;
+        }
+      });
     },
     setCottages() {
       var self = this;

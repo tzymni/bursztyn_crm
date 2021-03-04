@@ -277,7 +277,6 @@ export default {
       this.setEvents(type)
     },
     setEvents(type) {
-      console.log(type)
       this.clickedStartDate = null;
       var self = this;
       reservationService.getEvents(type).then(function (response) {
