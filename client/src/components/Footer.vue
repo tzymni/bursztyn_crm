@@ -8,7 +8,7 @@
         >
         <v-card-text padless class="text-left footer-div">
         
-                Hello {{user_name}}
+                Witaj {{user_name}}
             </v-card-text>
 
             <v-card-text padless class="footer-div">

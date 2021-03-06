@@ -6,7 +6,7 @@
       </div>
       <div class="row form-group">
         <div class="col">
-          <label for="date_from">Date from</label>
+          <label for="date_from">Od</label>
           <input
             type="date"
             v-model="date_from"
@@ -15,12 +15,12 @@
             :class="{ 'is-invalid': submitted && !date_from }"
           />
           <div v-show="submitted && !date_from" class="invalid-feedback">
-            Date from is required
+            Data jest wymagana.
           </div>
         </div>
 
         <div class="col">
-          <label for="date_to">Date to</label>
+          <label for="date_to">Do</label>
           <input
             type="date"
             v-model="date_to"
@@ -29,13 +29,13 @@
             :class="{ 'is-invalid': submitted && !date_to }"
           />
           <div v-show="submitted && !date_to" class="invalid-feedback">
-            Date to is required
+            Data jest wymagana.
           </div>
         </div>
       </div>
       <div class="row form-group">
         <div class="col">
-          <label for="cottage_id">Cottage</label>
+          <label for="cottage_id">Domek</label>
           <b-form-select
             v-model="cottage_id"
             :options="options"
@@ -44,14 +44,14 @@
             @change="changeColor()"
           />
           <div v-show="submitted && !cottage_id" class="invalid-feedback">
-            Cottage is required
+            Podaj nazwe/numer domku.
           </div>
         </div>
       </div>
 
       <div class="form-group">
         <button class="btn btn-primary" :disabled="loading">
-          Saarch
+          Szukaj
         </button>
         <img
           v-show="loading"

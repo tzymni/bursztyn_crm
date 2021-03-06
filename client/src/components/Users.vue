@@ -7,12 +7,12 @@
     <div class="container">
       <div>
         <b-button class="btn btn-info" id="show-modal" @click="showModal()"
-          >Add user</b-button
+          >Nowy użytkownik</b-button
         >
         <b-modal
           @hide="setUsers()"
           id="user-form-modal"
-          title="User form"
+          title="Użytkownik"
           hide-footer
         >
           <UserForm :editId="$data.editId" v-on:childToParent="showModal" />
@@ -39,9 +39,21 @@
               <font-awesome-icon class="icon" icon="user" />
             </p>
           </template>
+          <template v-slot:head(email)="data">
+            <p class="hide">{{ data.field.email }}</p>
+            <p>E-mail</p>
+          </template>
+          <template v-slot:head(first_name)="data">
+            <p class="hide">{{ data.field.first_name }}</p>
+            <p>Imie</p>
+          </template>
+          <template v-slot:head(last_name)="data">
+            <p class="hide">{{ data.field.last_name }}</p>
+            <p>Nazwisko</p>
+          </template>
           <template v-slot:head(is_active)="data">
             <p class="hide">{{ data.field.is_active }}</p>
-            <p>Operations</p>
+            <p>Opcje</p>
           </template>
           <template v-slot:cell(is_active)="data">
             <p class="hide">{{ data.item.is_active }}</p>
@@ -73,7 +85,7 @@ export default {
   components: { UserForm },
   data: function() {
     return {
-      header: "Users",
+      header: "Użytkownicy",
       users: [],
       perPage: 10,
       currentPage: 1,
@@ -106,8 +118,8 @@ export default {
     },
     deleteUser(id) {
       this.$confirm(
-        "Are you sure you want to delete this user?",
-        "Delete user",
+        "Czy na pewno chcesz usunąć tego użytkownika?",
+        "Usuń",
         "error"
       ).then(() => {
         var self = this;
@@ -137,7 +149,7 @@ export { UserForm };
 .users {
   width: 100%;
   height: 100%;
-  max-width: 900px;
+  max-width: 1300px;
 }
 
 .table-wrap {

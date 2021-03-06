@@ -6,7 +6,7 @@
       </div>
       <div class="row form-group">
         <div class="col">
-          <label for="date_from">Date from</label>
+          <label for="date_from">Od</label>
           <input
               type="date"
               v-model="date_from"
@@ -15,12 +15,12 @@
               :class="{ 'is-invalid': submitted && !date_from }"
           />
           <div v-show="submitted && !date_from" class="invalid-feedback">
-            Date from is required
+            Data przyjazdu jest obowiazkowa
           </div>
         </div>
 
         <div class="col">
-          <label for="date_to">Date to</label>
+          <label for="date_to">Do</label>
           <input
               type="date"
               v-model="date_to"
@@ -29,14 +29,14 @@
               :class="{ 'is-invalid': submitted && !date_to }"
           />
           <div v-show="submitted && !date_to" class="invalid-feedback">
-            Date to is required
+            Data wyjazdu jest obowiazkowa
           </div>
         </div>
       </div>
 
       <div class="row form-group">
         <div class="col">
-          <label for="guest_first_name">Guest first name</label>
+          <label for="guest_first_name">Imie</label>
           <input
               type="text"
               v-model="guest_first_name"
@@ -45,11 +45,11 @@
               :class="{ 'is-invalid': submitted && !guest_first_name }"
           />
           <div v-show="submitted && !guest_first_name" class="invalid-feedback">
-            Guest first name is required
+            Podaj imie gościa
           </div>
         </div>
         <div class="col">
-          <label for="guest_last_name">Guest last name</label>
+          <label for="guest_last_name">Nazwisko</label>
           <input
               type="text"
               v-model="guest_last_name"
@@ -59,11 +59,11 @@
               color="color"
           />
           <div v-show="submitted && !guest_last_name" class="invalid-feedback">
-            Guest last name is required
+            Podaj nazwisko gościa
           </div>
         </div>
         <div class="col">
-          <label for="guest_phone_number">Guest phone number</label>
+          <label for="guest_phone_number">Numer telefonu</label>
           <input
               type="text"
               v-model="guest_phone_number"
@@ -75,13 +75,13 @@
               v-show="submitted && !guest_phone_number"
               class="invalid-feedback"
           >
-            Guest phone number is required
+            Podaj numer telefonu gościa
           </div>
         </div>
       </div>
       <div class="row form-group">
         <div class="col">
-          <label for="guests_number">Number of guests</label>
+          <label for="guests_number">Ilosc gości</label>
           <input
               type="number"
               min="1"
@@ -94,7 +94,7 @@
           />
         </div>
         <div class="col">
-          <label for="cottage_id">Cottage</label>
+          <label for="cottage_id">Domek</label>
           <b-form-select
               v-model="cottage_id"
               :options="options"
@@ -103,7 +103,7 @@
               @change="changeColor()"
           />
           <div v-show="submitted && !cottage_id" class="invalid-feedback">
-            Cottage is required
+            Wybierz domek!
           </div>
         </div>
       </div>
@@ -115,7 +115,7 @@
             name="advance_payment"
             switch
         >
-          Advanced Payment?
+          Opłata z góry
         </b-form-checkbox>
         <!--<label class="custom-checkbox" for="advance_payment">Advance payment?
                         <input type="checkbox" v-model="advance_payment" name="advance_payment"
@@ -125,7 +125,7 @@
                     </label>-->
       </div>
       <div class="form-group">
-        <label for="extra_info">Extra info</label>
+        <label for="extra_info">Dodatkowe informacje</label>
         <textarea
             v-model="extra_info"
             name="extra_info"
@@ -135,7 +135,7 @@
 
       <div class="form-group">
         <button class="btn btn-primary" :disabled="loading">
-          Save and close
+          Zapisz
         </button>
         <img
             v-show="loading"
