@@ -133,8 +133,10 @@ class CleaningEventsController extends AbstractController
                 $events[$x]['cottage_id'] = $cleaningEvent->getCottage()->getId();
                 $events[$x]['cottage_color'] = $cleaningEvent->getCottage()->getColor();
                 $events[$x]['event_id'] = $cleaningEvent->getEvent()->getId();
+                $events[$x]['event_type'] = $cleaningEvent->getEvent()->getType();
+                $events[$x]['id'] = $cleaningEvent->getId();
                 $events[$x]['date_from'] = $cleaningEvent->getEvent()->getDateFromUnixUtc();
-                $events[$x]['date_to'] = $cleaningEvent->getEvent()->getDateToUnixUtc();
+                $events[$x]['date_to'] = strtotime('+8 hours', $cleaningEvent->getEvent()->getDateToUnixUtc());
                 $events[$x]['title'] = 'Sprzątanie';
                 $x++;
             }

@@ -34,6 +34,7 @@ import {Plugin as HighlightWeekends} from 'gantt-schedule-timeline-calendar/dist
 import 'gantt-schedule-timeline-calendar/dist/style.css';
 import {cottageService} from "@/_services/cottage.service";
 import {reservationService} from "@/_services/reservation.service";
+import {cleaningEventServices} from "@/_services/cleaning_event_service";
 
 let gstc, state;
 
@@ -78,7 +79,7 @@ export default {
         chart: {
           items: this.generateItems(),
           time: {
-            zoom: 21
+            zoom: 20
           }
         }
       }
@@ -108,11 +109,11 @@ export default {
     },
     filterCalendarEvents(selected) {
       let type = selected.currentValue.value
-      console.log(type)
+
       if (type == 'RESERVATION') {
         this.setReservations()
       } else {
-        this.setCottages()
+        this.setCleaningEvents()
       }
 
       // this.setEvents(type)
@@ -188,7 +189,7 @@ export default {
       });
     }, setCleaningEvents() {
       var self = this;
-      reservationService.getEvents('RESERVATION').then(function (response) {
+      cleaningEventServices.getAllCleaningEvents().then(function (response) {
 
             let list = []
             const itemsNew = {}
@@ -200,13 +201,14 @@ export default {
 
               itemsNew[id] = {
                 id,
+                type: value.type,
                 label: value.title,
                 rowId,
                 time: {
                   start: value.date_from * 1000,
                   end: value.date_to * 1000
                 },
-                style: {background: value.color},
+                style: {background: value.cottage_color},
               }
 
             });
