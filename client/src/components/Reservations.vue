@@ -1,25 +1,11 @@
 <template>
-  <div class="Reservations">
+  <div class="reservations">
     <h1>
       <font-awesome-icon icon="calendar-check"/>
       || {{ header }}
     </h1>
-    <div class="calendar-controls">
-
-      <b-modal
-          @hide="setReservations()"
-          id="reservation-form-modal"
-          title="Reservation form"
-          hide-footer
-      >
-        <ReservationForm
-            :clickedStartDate="$data.clickedStartDate"
-            :editId="$data.editId"
-        />
-      </b-modal>
-    </div>
-    <div>
-      <div class="button-group">
+    <div class="container">
+          <div class="calendar-controls">
         <b-button
             class="btn btn-info"
             id="show-reservation-form-modal"
@@ -28,7 +14,19 @@
           Dodaj rezerwacje
         </b-button>&nbsp;
         <button class="btn btn-info" id="expend-collapse" @click="expandCollapseTable()">{{ button.text }}</button>&nbsp;
-      </div>
+        <b-modal
+          @hide="setReservations()"
+          id="reservation-form-modal"
+          title="Rezerwacja"
+          hide-footer
+      >
+        <ReservationForm
+            :clickedStartDate="$data.clickedStartDate"
+            :editId="$data.editId"
+        />
+      </b-modal>
+    </div>
+
       <vue-good-table
           ref="ReservationTable"
           :columns="columns"
@@ -216,4 +214,10 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.reservations {
+  width: 100%;
+  height: 100%;
+  max-width: 1300px;
+}
+</style>
