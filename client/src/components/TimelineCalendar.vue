@@ -60,6 +60,42 @@ export default {
           weekdays: [6, 0],
           className: "test-weekend"
         })],
+        locale: {
+          name: 'pl',
+          weekdays: 'Niedziela_Poniedziałek_Wtorek_Środa_Czwartek_Piątek_Sobota'.split(
+              '_'
+          ),
+          weekdaysShort: 'Niedz_Pon_Wt_Śr_Czw_Piąt_Sob'.split('_'),
+          weekdaysMin: 'Ni_Po_Wt_Śr_Cz_Pi_So'.split('_'),
+          months: 'Styczeń_Luty_Marzec_Kwiecień_Maj_Czerwiec_Lipiec_Sierpień_Wrzesień_Październik_Listopad_Grudzień'.split(
+              '_'
+          ),
+          monthsShort: 'Sty_Lut_Mar_Kwi_Maj_Cze_Lip_Sie_Wrz_Paź_Lis_Gru'.split('_'),
+          weekStart: 1,
+          relativeTime: {
+            future: 'w %s',
+            past: '%s temu',
+            s: 'a kilka sekund',
+            m: 'minuta',
+            mm: '%d minut',
+            h: 'godzina',
+            hh: '%d godziny',
+            d: 'dzień',
+            dd: '%d dni',
+            M: 'miesiąc',
+            MM: '%d miesiące',
+            y: 'rok',
+            yy: '%d lata',
+          },
+          formats: {
+            LT: 'HH:mm',
+            LTS: 'HH:mm:ss',
+            L: 'DD/MM/YYYY',
+            LL: 'D MMMM YYYY',
+            LLL: 'D MMMM YYYY HH:mm',
+            LLLL: 'dddd, D MMMM YYYY HH:mm',
+          },
+        },
         list: {
           columns: {
             data: {
@@ -115,8 +151,6 @@ export default {
       } else {
         this.setCleaningEvents()
       }
-
-      // this.setEvents(type)
     },
     generateRows() {
 
