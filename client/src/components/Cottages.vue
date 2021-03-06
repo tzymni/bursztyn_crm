@@ -12,6 +12,7 @@
         <b-button class="btn btn-info" id="show-modal" @click="showModal()"
           >Nowy domek</b-button
         >
+        -->
         <b-modal
           @hide="setCottages()"
           id="cottage-form-modal"
@@ -20,7 +21,7 @@
         >
           <CottageForm :editId="$data.editId" v-on:childToParent="showModal" />
         </b-modal>
-      </div> -->
+      </div>
       <div class="col extra-info" style="display: none">
         <h3 id="desc-title">{{ selected_title }}</h3>
         <p id="extra-info" class="description">{{ selected_info }}</p>
@@ -155,26 +156,27 @@ export default {
           }
         });
     },
-    deleteCottage(id) {
-      this.$confirm(
-        "Czy na pewno chcesz usunąć domek?",
-        "Usuń",
-        "error"
-      ).then(() => {
-        var self = this;
-        cottageService
-          .deleteCottage(id)
-          .then(function() {
-            self.setCottages();
-          })
-          .catch(function(error) {
-            if (error) {
-              self.errorNotify = error;
-              self.loading = false;
-            }
-          });
-      });
-    },
+    // DELETE COTTAGE - functionality suspended!
+    // deleteCottage(id) {
+    //   this.$confirm(
+    //     "Czy na pewno chcesz usunąć domek?",
+    //     "Usuń",
+    //     "error"
+    //   ).then(() => {
+    //     var self = this;
+    //     cottageService
+    //       .deleteCottage(id)
+    //       .then(function() {
+    //         self.setCottages();
+    //       })
+    //       .catch(function(error) {
+    //         if (error) {
+    //           self.errorNotify = error;
+    //           self.loading = false;
+    //         }
+    //       });
+    //   });
+    // },
     onRowSelected(items) {
       this.selected = items;
       this.displaySelected();
