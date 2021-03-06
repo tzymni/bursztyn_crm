@@ -3,14 +3,14 @@
         <form @submit.prevent="handleSubmit">
 
             <div class="form-group">
-                <label for="email">Email</label>
+                <label for="email">Adres Email</label>
                 <input :disabled="disabledEmailField == true" type="text" v-model="email" name="email"
                        class="form-control"
                        :class="{ 'is-invalid': submitted && !email }"/>
-                <div v-show="submitted && !email" class="invalid-feedback">Email is required</div>
+                <div v-show="submitted && !email" class="invalid-feedback">Podaj adres email.</div>
             </div>
             <div class="form-group">
-                <label htmlFor="password">Password</label>
+                <label htmlFor="password">Hasło  </label>
                 <label class="switch">
                 <input type="checkbox" v-on:click="showPassword()">
                 <i class="far fa-eye-slash eye-show"></i>
@@ -18,27 +18,27 @@
                 </label>
                 <input id="password" type="password" v-model="password" name="password" class="form-control"
                        :class="{ 'is-invalid': submitted && !password }"/>
-                <div v-show="submitted && !password" class="invalid-feedback">Password is required</div>
+                <div v-show="submitted && !password" class="invalid-feedback">Podaj hasło</div>
             </div>
             <div class="form-group">
-                <label htmlFor="c_password">Comfirm password</label>
+                <label htmlFor="c_password">Potwierdź hasło</label>
                 <input id="c_password" type="password" v-model="c_password" name="c_password" class="form-control"
                        :class="{ 'is-invalid': submitted && c_password!=password }"/>
-                <div v-show="submitted && c_password!=password" class="invalid-feedback">Both fields needs to be the same</div>
+                <div v-show="submitted && c_password!=password" class="invalid-feedback">Potwierdzone hasło jest nieprawidłowe</div>
             </div>
             <div class="form-group">
-                <label htmlFor="first_name">First name</label>
+                <label htmlFor="first_name">Imie</label>
                 <input type="first_name" v-model="first_name" name="first_name" class="form-control"
                        :class="{ 'is-invalid': submitted && !first_name }"/>
 
             </div>
             <div class="form-group">
-                <label htmlFor="last_name">Last name</label>
+                <label htmlFor="last_name">Nazwisko</label>
                 <input type="last_name" v-model="last_name" name="last_name" class="form-control"
                        :class="{ 'is-invalid': submitted && !last_name }"/>
             </div>
             <div class="form-group">
-                <button class="btn btn-primary" :disabled="loading">Save and close</button>
+                <button class="btn btn-primary" :disabled="loading">Zapisz</button>
                 <img v-show="loading"
                      src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA=="/>
             </div>
@@ -150,6 +150,7 @@
 /* clear toggle */
 .switch {
   position: absolute;
+  margin-left: 10px;
   display: inline-block;
 }
 

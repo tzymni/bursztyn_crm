@@ -6,14 +6,14 @@
     </h1>
 
     <div class="container">
-      <div class="col">
+      <div>
         <b-button class="btn btn-info" id="show-modal" @click="showModal()"
-          >Add cottage</b-button
+          >Nowy domek</b-button
         >
         <b-modal
           @hide="setCottages()"
           id="cottage-form-modal"
-          title="Cottage form"
+          title="Domek"
           hide-footer
         >
           <CottageForm :editId="$data.editId" v-on:childToParent="showModal" />
@@ -63,13 +63,25 @@
             <template v-slot:cell(extra_info)="data">
               <p class>{{ typeof data.item.extra_info == 'string' ? data.item.extra_info.substr(0, 50) : '' }}</p>
             </template>
+            <template v-slot:head(name)="data">
+              <p class="hide">{{ data.field.name }}</p>
+              <p>Nazwa</p>
+            </template>
+            <template v-slot:head(color)="data">
+              <p class="hide">{{ data.field.color }}</p>
+              <p>Kolor</p>
+            </template>
+            <template v-slot:head(extra_info)="data">
+              <p class="hide">{{ data.field.extra_info }}</p>
+              <p>Dodatkowe Informacje</p>
+            </template>
             <template v-slot:head(max_guests_number)="data">
               <p class="hide">{{ data.field.max_guests_number }}</p>
-              <p>Capacity</p>
+              <p>Pojemność</p>
             </template>
             <template v-slot:head(is_active)="data">
               <p class="hide">{{ data.field.is_active }}</p>
-              <p>Operations</p>
+              <p>Opcje</p>
             </template>
             <template v-slot:cell(is_active)="data">
               <p class="hide">{{ data.item.is_active }}</p>
@@ -103,7 +115,7 @@ export default {
   components: { CottageForm },
   data: function() {
     return {
-      header: "Cottages",
+      header: "Domki",
       cottages: [],
       perPage: 10,
       currentPage: 1,
@@ -141,8 +153,8 @@ export default {
     },
     deleteCottage(id) {
       this.$confirm(
-        "Are you sure you want to delete this cottage?",
-        "Delete cottage",
+        "Czy na pewno chcesz usunąć domek?",
+        "Usuń",
         "error"
       ).then(() => {
         var self = this;

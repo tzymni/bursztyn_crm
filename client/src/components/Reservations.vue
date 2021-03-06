@@ -1,15 +1,23 @@
 <template>
-  <div class="Reservations">
+  <div class="reservations">
     <h1>
       <font-awesome-icon icon="calendar-check"/>
       || {{ header }}
     </h1>
-    <div class="calendar-controls">
-
-      <b-modal
+    <div class="container">
+          <div class="calendar-controls">
+        <b-button
+            class="btn btn-info"
+            id="show-reservation-form-modal"
+            @click="showReservationFormModal()"
+        >
+          Dodaj rezerwacje
+        </b-button>&nbsp;
+        <button class="btn btn-info" id="expend-collapse" @click="expandCollapseTable()">{{ button.text }}</button>&nbsp;
+        <b-modal
           @hide="setReservations()"
           id="reservation-form-modal"
-          title="Reservation form"
+          title="Rezerwacja"
           hide-footer
       >
         <ReservationForm
@@ -18,17 +26,7 @@
         />
       </b-modal>
     </div>
-    <div>
-      <div class="button-group">
-        <b-button
-            class="btn btn-info"
-            id="show-reservation-form-modal"
-            @click="showReservationFormModal()"
-        >
-          Add reservation
-        </b-button>&nbsp;
-        <button class="btn btn-info" id="expend-collapse" @click="expandCollapseTable()">{{ button.text }}</button>&nbsp;
-      </div>
+
       <vue-good-table
           ref="ReservationTable"
           :columns="columns"
@@ -70,10 +68,10 @@ export default {
   },
   data() {
     return {
-      header: "Reservations",
+      header: "Rezerwacje",
       editId: null,
       button: {
-        text: 'Expand all'
+        text: 'Rozwiń wszystkie'
       },
       expandTable: true,
       columns: [
@@ -149,11 +147,11 @@ export default {
     },
     expandCollapseTable() {
       if (this.expandTable == true) {
-        this.button.text = "Collapse all"
+        this.button.text = "Zwiń wszystkie"
         this.$refs.ReservationTable.expandAll()
         this.expandTable = false
       } else {
-        this.button.text = "Expand all"
+        this.button.text = "Rozwiń wszystkie"
         this.$refs.ReservationTable.collapseAll()
         this.expandTable = true
       }
@@ -216,4 +214,10 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.reservations {
+  width: 100%;
+  height: 100%;
+  max-width: 1300px;
+}
+</style>
