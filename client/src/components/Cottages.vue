@@ -6,7 +6,9 @@
     </h1>
 
     <div class="container">
-      <div>
+      <!-- ADD COTTAGE - functionality suspended!
+        
+        <div>
         <b-button class="btn btn-info" id="show-modal" @click="showModal()"
           >Nowy domek</b-button
         >
@@ -18,7 +20,7 @@
         >
           <CottageForm :editId="$data.editId" v-on:childToParent="showModal" />
         </b-modal>
-      </div>
+      </div> -->
       <div class="col extra-info" style="display: none">
         <h3 id="desc-title">{{ selected_title }}</h3>
         <p id="extra-info" class="description">{{ selected_info }}</p>
@@ -85,9 +87,11 @@
             </template>
             <template v-slot:cell(is_active)="data">
               <p class="hide">{{ data.item.is_active }}</p>
-              <a @click="deleteCottage(data.item.id)" class="btn btn-danger">
+              <!--  DELETE COTTAGE - functionality suspended!
+                
+                <a @click="deleteCottage(data.item.id)" class="btn btn-danger">
                 <font-awesome-icon icon="trash-alt" />
-              </a>
+              </a> -->
               <a @click="showModal(data.item.id)" class="btn btn-primary">
                 <font-awesome-icon icon="edit" />
               </a>
