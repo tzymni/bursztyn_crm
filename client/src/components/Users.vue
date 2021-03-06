@@ -7,7 +7,7 @@
     <div class="container">
       <div>
         <b-button class="btn btn-info" id="show-modal" @click="showModal()"
-          >Add user</b-button
+          >Nowy użytkownik</b-button
         >
         <b-modal
           @hide="setUsers()"
@@ -41,7 +41,7 @@
           </template>
           <template v-slot:head(is_active)="data">
             <p class="hide">{{ data.field.is_active }}</p>
-            <p>Operations</p>
+            <p>Opcje</p>
           </template>
           <template v-slot:cell(is_active)="data">
             <p class="hide">{{ data.item.is_active }}</p>
@@ -73,7 +73,7 @@ export default {
   components: { UserForm },
   data: function() {
     return {
-      header: "Users",
+      header: "Użytkownicy",
       users: [],
       perPage: 10,
       currentPage: 1,
@@ -106,9 +106,9 @@ export default {
     },
     deleteUser(id) {
       this.$confirm(
-        "Are you sure you want to delete this user?",
-        "Delete user",
-        "error"
+        "Czy na pewno chcesz usunąć tego użytkownika?",
+        "Usuń",
+        "Błąd"
       ).then(() => {
         var self = this;
         userService

@@ -356,7 +356,7 @@ export default {
                 .toString(36)
                 .substr(2, 10),
       })
-      this.message = "You added a calendar item!"
+      this.message = "Dodales nowy wpis do kalendarza!"
     },
   },
 }

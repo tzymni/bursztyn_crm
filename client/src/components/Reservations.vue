@@ -25,7 +25,7 @@
             id="show-reservation-form-modal"
             @click="showReservationFormModal()"
         >
-          Add reservation
+          Dodaj rezerwacje
         </b-button>&nbsp;
         <button class="btn btn-info" id="expend-collapse" @click="expandCollapseTable()">{{ button.text }}</button>&nbsp;
       </div>
@@ -70,10 +70,10 @@ export default {
   },
   data() {
     return {
-      header: "Reservations",
+      header: "Rezerwacje",
       editId: null,
       button: {
-        text: 'Expand all'
+        text: 'Rozwin wszystkie'
       },
       expandTable: true,
       columns: [
@@ -149,11 +149,11 @@ export default {
     },
     expandCollapseTable() {
       if (this.expandTable == true) {
-        this.button.text = "Collapse all"
+        this.button.text = "Zwin wszystkie"
         this.$refs.ReservationTable.expandAll()
         this.expandTable = false
       } else {
-        this.button.text = "Expand all"
+        this.button.text = "Rozwin wszystkie"
         this.$refs.ReservationTable.collapseAll()
         this.expandTable = true
       }
