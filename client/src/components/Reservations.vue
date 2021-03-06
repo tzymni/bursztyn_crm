@@ -71,7 +71,7 @@ export default {
       header: "Rezerwacje",
       editId: null,
       button: {
-        text: 'Rozwin wszystkie'
+        text: 'Rozwiń wszystkie'
       },
       expandTable: true,
       columns: [
@@ -147,11 +147,11 @@ export default {
     },
     expandCollapseTable() {
       if (this.expandTable == true) {
-        this.button.text = "Zwin wszystkie"
+        this.button.text = "Zwiń wszystkie"
         this.$refs.ReservationTable.expandAll()
         this.expandTable = false
       } else {
-        this.button.text = "Rozwin wszystkie"
+        this.button.text = "Rozwiń wszystkie"
         this.$refs.ReservationTable.collapseAll()
         this.expandTable = true
       }

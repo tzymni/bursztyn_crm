@@ -16,7 +16,7 @@
                 <div v-show="submitted && !username" class="invalid-feedback">Podaj nazwe uzytkownika</div>
             </div>
             <div class="form-group">
-                <label htmlFor="password">Haslo</label>
+                <label htmlFor="password">Hasło</label>
                 <input type="password" v-model="password" name="password" class="form-login"
                        :class="{ 'is-invalid': submitted && !password }"/>
                 <div v-show="submitted && !password" class="invalid-feedback">Podaj haslo</div>

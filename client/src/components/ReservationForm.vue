@@ -45,7 +45,7 @@
               :class="{ 'is-invalid': submitted && !guest_first_name }"
           />
           <div v-show="submitted && !guest_first_name" class="invalid-feedback">
-            Podaj imie goscia
+            Podaj imie gościa
           </div>
         </div>
         <div class="col">
@@ -59,7 +59,7 @@
               color="color"
           />
           <div v-show="submitted && !guest_last_name" class="invalid-feedback">
-            Podaj nazwisko goscia
+            Podaj nazwisko gościa
           </div>
         </div>
         <div class="col">
@@ -75,13 +75,13 @@
               v-show="submitted && !guest_phone_number"
               class="invalid-feedback"
           >
-            Podaj numer telefonu goscia
+            Podaj numer telefonu gościa
           </div>
         </div>
       </div>
       <div class="row form-group">
         <div class="col">
-          <label for="guests_number">Ilosc gosci</label>
+          <label for="guests_number">Ilosc gości</label>
           <input
               type="number"
               min="1"
