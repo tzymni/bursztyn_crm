@@ -12,7 +12,7 @@
         <b-modal
           @hide="setUsers()"
           id="user-form-modal"
-          title="User form"
+          title="Użytkownik"
           hide-footer
         >
           <UserForm :editId="$data.editId" v-on:childToParent="showModal" />
@@ -38,6 +38,18 @@
             <p class="text-center">
               <font-awesome-icon class="icon" icon="user" />
             </p>
+          </template>
+          <template v-slot:head(email)="data">
+            <p class="hide">{{ data.field.email }}</p>
+            <p>E-mail</p>
+          </template>
+          <template v-slot:head(first_name)="data">
+            <p class="hide">{{ data.field.first_name }}</p>
+            <p>Imie</p>
+          </template>
+          <template v-slot:head(last_name)="data">
+            <p class="hide">{{ data.field.last_name }}</p>
+            <p>Nazwisko</p>
           </template>
           <template v-slot:head(is_active)="data">
             <p class="hide">{{ data.field.is_active }}</p>
@@ -108,7 +120,7 @@ export default {
       this.$confirm(
         "Czy na pewno chcesz usunąć tego użytkownika?",
         "Usuń",
-        "Błąd"
+        "error"
       ).then(() => {
         var self = this;
         userService
@@ -137,7 +149,7 @@ export { UserForm };
 .users {
   width: 100%;
   height: 100%;
-  max-width: 900px;
+  max-width: 1300px;
 }
 
 .table-wrap {

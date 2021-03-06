@@ -6,14 +6,14 @@
     </h1>
 
     <div class="container">
-      <div class="col">
+      <div>
         <b-button class="btn btn-info" id="show-modal" @click="showModal()"
-          >Dodaj domek</b-button
+          >Nowy domek</b-button
         >
         <b-modal
           @hide="setCottages()"
           id="cottage-form-modal"
-          title="Cottage form"
+          title="Domek"
           hide-footer
         >
           <CottageForm :editId="$data.editId" v-on:childToParent="showModal" />
@@ -77,7 +77,7 @@
             </template>
             <template v-slot:head(max_guests_number)="data">
               <p class="hide">{{ data.field.max_guests_number }}</p>
-              <p>Pojemnosc</p>
+              <p>Pojemność</p>
             </template>
             <template v-slot:head(is_active)="data">
               <p class="hide">{{ data.field.is_active }}</p>
@@ -153,8 +153,8 @@ export default {
     },
     deleteCottage(id) {
       this.$confirm(
-        "Are you sure you want to delete this cottage?",
-        "Delete cottage",
+        "Czy na pewno chcesz usunąć domek?",
+        "Usuń",
         "error"
       ).then(() => {
         var self = this;

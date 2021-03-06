@@ -9,7 +9,7 @@
                 <div v-show="submitted && !name" class="invalid-feedback">Podaj nazwe domku.</div>
             </div>
             <div class="form-group">
-                <label for="max_guests_number">Pojemnosc domku</label>
+                <label for="max_guests_number">Pojemność domku</label>
                 <b-form-select v-model="max_guests_number" :options="options" size="sm" class="mt-3" :class="{ 'is-invalid': submitted && !max_guests_number }"></b-form-select>
             </div>
             <div class="form-group">
@@ -64,12 +64,12 @@
                     { value: 2, text: '2 osoby' },
                     { value: 3, text: '3 osoby' },
                     { value: 4, text: '4 osoby' },
-                    { value: 5, text: '5 osob' },
-                    { value: 6, text: '6 osob' },
-                    { value: 7, text: '7 osob' },
-                    { value: 8, text: '8 osob' },
-                    { value: 9, text: '9 osob' },
-                    { value: 10, text: '10 osob' },
+                    { value: 5, text: '5 osób' },
+                    { value: 6, text: '6 osób' },
+                    { value: 7, text: '7 osób' },
+                    { value: 8, text: '8 osób' },
+                    { value: 9, text: '9 osób' },
+                    { value: 10, text: '10 osób' },
                 ],
             };
         },
