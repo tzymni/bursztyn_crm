@@ -17,6 +17,7 @@
           Dodaj rezerwacje
         </b-button> -->
         <button class="btn btn-info" id="expend-collapse" @click="expandCollapseTable()">{{ button.text }}</button>&nbsp;
+        <button class="btn btn-info" id="todays-date" @click="setDateToToday()">Od dzis</button>&nbsp;
         <b-modal
           @hide="setReservations()"
           id="reservation-form-modal"
@@ -34,6 +35,7 @@
           ref="ReservationTable"
           :columns="columns"
           :rows="rows"
+          theme="black-rhino"
           :line-numbers="true"
 
           :group-options="{
@@ -83,13 +85,13 @@ export default {
           field: 'date_from',
           type: 'string',
           filterOptions: {
-            enabled: true, // enable filter for this column
-            // placeholder: 'Filter This Thing', // placeholder for filter input
-            // filterValue: 'Jane', // initial populated value for this filter
-            // filterDropdownItems: [], // dropdown (with selected values) instead of text input
-            // filterMultiselectDropdownItems: [], // dropdown (with multiple selected values) instead of text input
-            // filterFn: this.columnFilterFn, //custom filter function that
-            // trigger: 'enter', //only trigger on enter not on keyup
+            enabled: true, 
+            filterValue: '',
+            filterFn: function(data, filterString) {
+              var x = parseInt(Date.parse(filterString));
+              data = parseInt(Date.parse(data));
+              return data >= x;
+            }
           },
         },
         {
@@ -98,6 +100,11 @@ export default {
           type: 'string',
           filterOptions: {
             enabled: true,
+            filterFn: function(data, filterString) {
+              var x = parseInt(Date.parse(filterString));
+              data = parseInt(Date.parse(data));
+              return data <= x;
+            }
           },
         },
         {
@@ -212,6 +219,10 @@ export default {
           self.loading = false;
         }
       });
+    },
+    setDateToToday(){
+      var date = new Date(Date.now()).toLocaleDateString('ko-KR');
+      this.columns[0].filterOptions.filterValue = date;
     },
   }
 };
