@@ -109,6 +109,12 @@ export default {
     filterCalendarEvents(selected) {
       let type = selected.currentValue.value
       console.log(type)
+      if (type == 'RESERVATION') {
+        this.setReservations()
+      } else {
+        this.setCottages()
+      }
+
       // this.setEvents(type)
     },
     generateRows() {
@@ -130,7 +136,7 @@ export default {
       let start = GSTC.api.date().startOf('day').subtract(6, 'day');
       for (let i = 0; i < 200; i++) {
         const id = GSTC.api.GSTCID(i.toString());
-        const rowId = GSTC.api.GSTCID((Math.floor(Math.random() * 10)).toString());
+        const rowId = GSTC.api.GSTCID((Math.floor(10 * 10)).toString());
         start = start.add(1, 'day');
         items[id] = {
           id,
@@ -147,6 +153,40 @@ export default {
 
     },
     setReservations() {
+      var self = this;
+      reservationService.getEvents('RESERVATION').then(function (response) {
+
+            let list = []
+            const itemsNew = {}
+
+            response.map(function (value) {
+
+              let id = GSTC.api.GSTCID(value.id);
+              let rowId = GSTC.api.GSTCID(value.cottage_id);
+
+              itemsNew[id] = {
+                id,
+                label: value.title,
+                rowId,
+                time: {
+                  start: value.date_from * 1000,
+                  end: value.date_to * 1000
+                },
+                style: {background: value.color},
+              }
+
+            });
+
+            state.update('config.chart.items', itemsNew)
+            self.items = list
+          }
+      ).catch(function (error) {
+        if (error) {
+          self.errorNotify = error;
+          self.loading = false;
+        }
+      });
+    }, setCleaningEvents() {
       var self = this;
       reservationService.getEvents('RESERVATION').then(function (response) {
 
