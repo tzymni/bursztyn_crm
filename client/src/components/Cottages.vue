@@ -6,13 +6,12 @@
     </h1>
 
     <div class="container">
+     <div>
       <!-- ADD COTTAGE - functionality suspended!
-        
-        <div>
         <b-button class="btn btn-info" id="show-modal" @click="showModal()"
           >Nowy domek</b-button
         >
-        -->
+      -->
         <b-modal
           @hide="setCottages()"
           id="cottage-form-modal"

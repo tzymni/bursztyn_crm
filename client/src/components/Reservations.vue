@@ -6,13 +6,16 @@
     </h1>
     <div class="container">
           <div class="calendar-controls">
-        <b-button
+        <!-- 
+          ADD RESERVATION - functionality suspended!
+          
+          <b-button
             class="btn btn-info"
             id="show-reservation-form-modal"
             @click="showReservationFormModal()"
         >
           Dodaj rezerwacje
-        </b-button>&nbsp;
+        </b-button> -->
         <button class="btn btn-info" id="expend-collapse" @click="expandCollapseTable()">{{ button.text }}</button>&nbsp;
         <b-modal
           @hide="setReservations()"

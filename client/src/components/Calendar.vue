@@ -12,7 +12,7 @@
         <b-modal
             @hide="setEvents()"
             id="reservation-form-modal"
-            title="Reservation form"
+            title="Rezerwacja"
             hide-footer
         >
           <ReservationForm
