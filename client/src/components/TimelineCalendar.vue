@@ -1,6 +1,26 @@
 <template>
   <div>
     <div class="calendar-controls">
+      <b-modal
+          id="reservation-form-modal"
+          title="Reservation form"
+          hide-footer
+      >
+        <ReservationForm
+            :editId="$data.editId"
+        />
+      </b-modal>
+
+      <b-modal
+          id="cleaning-form-modal"
+          title="Sprzątanie domków"
+          hide-footer
+      >
+        <CleaningForm
+            :editId="$data.editId"
+        />
+      </b-modal>
+
       <b-button
           class="btn btn-info"
           href="#/"
@@ -28,20 +48,22 @@
 import GSTC from 'gantt-schedule-timeline-calendar';
 import {Plugin as TimelinePointer} from 'gantt-schedule-timeline-calendar/dist/plugins/timeline-pointer.esm.min.js';
 import {Plugin as Selection} from 'gantt-schedule-timeline-calendar/dist/plugins/selection.esm.min.js';
-import {Plugin as ItemResizing} from 'gantt-schedule-timeline-calendar/dist/plugins/item-resizing.esm.min.js';
-// import {Plugin as ItemMovement} from 'gantt-schedule-timeline-calendar/dist/plugins/item-movement.esm.min.js';
 import {Plugin as HighlightWeekends} from 'gantt-schedule-timeline-calendar/dist/plugins/highlight-weekends.esm.min';
 import 'gantt-schedule-timeline-calendar/dist/style.css';
 import {cottageService} from "@/_services/cottage.service";
 import {reservationService} from "@/_services/reservation.service";
 import {cleaningEventServices} from "@/_services/cleaning_event_service";
-
+import ReservationForm from "@/components/ReservationForm";
+import CleaningForm from "@/components/CleaningForm";
 let gstc, state;
-
 
 // main component
 export default {
   name: 'TimelineCalendar',
+  components: {
+    ReservationForm,
+    CleaningForm
+  },
   data: function () {
     return {
       state: null,
@@ -53,12 +75,15 @@ export default {
         {text: 'Tylko rezerwacje', value: 'RESERVATION'},
         {text: 'Tylko zmiany', value: 'CLEANING'}
       ],
+      editId: null,
       config: {
-
+        actions: {
+          'chart-timeline-items-row-item': [this.clickAction],
+        },
         licenseKey: '====BEGIN LICENSE KEY====\nXOfH/lnVASM6et4Co473t9jPIvhmQ/l0X3Ewog30VudX6GVkOB0n3oDx42NtADJ8HjYrhfXKSNu5EMRb5KzCLvMt/pu7xugjbvpyI1glE7Ha6E5VZwRpb4AC8T1KBF67FKAgaI7YFeOtPFROSCKrW5la38jbE5fo+q2N6wAfEti8la2ie6/7U2V+SdJPqkm/mLY/JBHdvDHoUduwe4zgqBUYLTNUgX6aKdlhpZPuHfj2SMeB/tcTJfH48rN1mgGkNkAT9ovROwI7ReLrdlHrHmJ1UwZZnAfxAC3ftIjgTEHsd/f+JrjW6t+kL6Ef1tT1eQ2DPFLJlhluTD91AsZMUg==||U2FsdGVkX1/SWWqU9YmxtM0T6Nm5mClKwqTaoF9wgZd9rNw2xs4hnY8Ilv8DZtFyNt92xym3eB6WA605N5llLm0D68EQtU9ci1rTEDopZ1ODzcqtTVSoFEloNPFSfW6LTIC9+2LSVBeeHXoLEQiLYHWihHu10Xll3KsH9iBObDACDm1PT7IV4uWvNpNeuKJc\npY3C5SG+3sHRX1aeMnHlKLhaIsOdw2IexjvMqocVpfRpX4wnsabNA0VJ3k95zUPS3vTtSegeDhwbl6j+/FZcGk9i+gAy6LuetlKuARjPYn2LH5Be3Ah+ggSBPlxf3JW9rtWNdUoFByHTcFlhzlU9HnpnBUrgcVMhCQ7SAjN9h2NMGmCr10Rn4OE0WtelNqYVig7KmENaPvFT+k2I0cYZ4KWwxxsQNKbjEAxJxrzK4HkaczCvyQbzj4Ppxx/0q+Cns44OeyWcwYD/vSaJm4Kptwpr+L4y5BoSO/WeqhSUQQ85nvOhtE0pSH/ZXYo3pqjPdQRfNm6NFeBl2lwTmZUEuw==\n====END LICENSE KEY====',
-        plugins: [TimelinePointer(), Selection(), ItemResizing(), HighlightWeekends({
+        plugins: [TimelinePointer(), Selection(), HighlightWeekends({
           weekdays: [6, 0],
-          className: "test-weekend"
+          className: "highlight-weekend"
         })],
         locale: {
           name: 'pl',
@@ -122,6 +147,7 @@ export default {
     };
   },
   mounted() {
+    this.editId = null
     this.setCottages()
     this.setReservations()
     /**
@@ -137,6 +163,32 @@ export default {
     if (gstc) gstc.destroy();
   },
   methods: {
+    clickAction(element, data) {
+
+      const self = this;
+
+      function showModal() {
+
+        self.editId = data.item.event_id
+        if (data.item.type === 'RESERVATION') {
+          self.$bvModal.show("reservation-form-modal")
+        } else {
+          self.$bvModal.show("cleaning-form-modal")
+        }
+      }
+
+      element.addEventListener('click', showModal);
+      return {
+        update(element, newData) {
+          data = newData; // data from parent scope updated
+        },
+
+        destroy(element) {
+          element.removeEventListener('click', showModal);
+        },
+      };
+
+    },
     updateFirstRow() {
       state.update(`config.list.rows.${GSTC.api.GSTCID('0')}`, row => {
         row.label = 'Changed dynamically';
@@ -146,7 +198,7 @@ export default {
     filterCalendarEvents(selected) {
       let type = selected.currentValue.value
 
-      if (type == 'RESERVATION') {
+      if (type === 'RESERVATION') {
         this.setReservations()
       } else {
         this.setCleaningEvents()
@@ -201,12 +253,14 @@ export default {
 
               itemsNew[id] = {
                 id,
+                event_id: value.id,
                 label: value.title,
                 rowId,
                 time: {
                   start: value.date_from * 1000,
                   end: value.date_to * 1000
                 },
+                type: value.type,
                 style: {background: value.color},
               }
 
@@ -237,6 +291,7 @@ export default {
                 id,
                 type: value.type,
                 label: value.title,
+                event_id: value.event_id,
                 rowId,
                 time: {
                   start: value.date_from * 1000,
@@ -294,13 +349,8 @@ export default {
 };
 </script>
 <style>
-.test-weekend {
+.highlight-weekend {
   background: #cedde2;
-}
-
-.gstc-component {
-  margin: 0;
-  padding: 0;
 }
 
 .toolbox {
