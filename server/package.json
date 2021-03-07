@@ -12,6 +12,7 @@
     },
     "dependencies": {
         "@fortawesome/fontawesome-free": "^5.12.1",
-        "@ng-bootstrap/ng-bootstrap": "^4.0.0"
+        "@ng-bootstrap/ng-bootstrap": "^4.0.0",
+        "daypilot-pro-vue": "0.0.0"
     }
 }

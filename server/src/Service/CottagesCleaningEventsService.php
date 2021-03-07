@@ -112,4 +112,26 @@ class CottagesCleaningEventsService
 
         }
     }
+
+    /**
+     * Get all cleaning events without grouping per cottage.
+     *
+     * @return object[]|null
+     */
+    public function getAllCottagesCleaningEvents(): ?array
+    {
+
+        $cottageEvent = null;
+
+        $cottageEvents = $this->em->getRepository('App:CottagesCleaningEvents')->findBy(
+            array(),
+            array('cottage' => 'ASC')
+        );
+
+        if (isset($cottageEvents) && isset($cottageEvents[0])) {
+            return $cottageEvents;
+        } else {
+            return null;
+        }
+    }
 }

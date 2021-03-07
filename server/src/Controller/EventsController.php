@@ -100,6 +100,7 @@ class EventsController extends AbstractController implements TokenAuthenticatedC
                     if (!empty($reservation)) {
                         $cottage = $reservation->getCottage();
                         $tmp['color'] = $cottage->getColor();
+                        $tmp['cottage_id'] = $cottage->getId();
                     }
 
                     if ($event->getType() == CottagesCleaningEvents::EVENT_TYPE) {

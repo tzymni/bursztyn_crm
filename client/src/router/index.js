@@ -7,6 +7,7 @@ import Reservations from "../components/Reservations";
 import LoginPanel from "../components/LoginPanel";
 import Logout from "../components/Logout";
 
+import TimelineCalendar from "@/components/TimelineCalendar";
 Vue.use(Router);
 
 export const router = new Router({
@@ -28,6 +29,13 @@ export const router = new Router({
     {
       path: "/cottages",
       component: Cottages,
+      meta: {
+        title: "Bursztyn - Cottages",
+      },
+    },
+    {
+      path: "/timeline-calendar",
+      component: TimelineCalendar,
       meta: {
         title: "Bursztyn - Cottages",
       },

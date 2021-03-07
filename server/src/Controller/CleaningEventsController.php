@@ -103,16 +103,52 @@ class CleaningEventsController extends AbstractController
             }
             $status = JsonResponse::HTTP_OK;
             return new JsonResponse($details, $status);
-        }
-        catch (\Exception $exception) {
+        } catch (\Exception $exception) {
             $status = JsonResponse::HTTP_BAD_REQUEST;
             $data = $errorDecorator->decorateError($status, 'Something goes wrong!');
             return new JsonResponse($data, $status);
         }
 
-        print_r($details);
-//        echo $cottageCleaning[0]['id'];
-
-        die();
     }
+
+    /**
+     * Get all cleaning events without grouping per cottage.
+     *
+     * @Route ("/cleaning/list/all", methods={"GET"})
+     * @param CottagesCleaningEventsService $cottagesCleaningEventsService
+     * @param ResponseErrorDecoratorService $errorDecorator
+     * @return JsonResponse
+     */
+    public function getAllCleaningEventsWithoutGrouping(
+        CottagesCleaningEventsService $cottagesCleaningEventsService,
+        ResponseErrorDecoratorService $errorDecorator
+    ) {
+
+        try {
+            $cleaningEvents = $cottagesCleaningEventsService->getAllCottagesCleaningEvents();
+            $events = array();
+
+            $x = 0;
+            foreach ($cleaningEvents as $cleaningEvent) {
+                $events[$x]['cottage_id'] = $cleaningEvent->getCottage()->getId();
+                $events[$x]['cottage_color'] = $cleaningEvent->getCottage()->getColor();
+                $events[$x]['event_id'] = $cleaningEvent->getEvent()->getId();
+                $events[$x]['event_type'] = $cleaningEvent->getEvent()->getType();
+                $events[$x]['id'] = $cleaningEvent->getId();
+                $events[$x]['date_from'] = $cleaningEvent->getEvent()->getDateFromUnixUtc();
+                $events[$x]['date_to'] = strtotime('+8 hours', $cleaningEvent->getEvent()->getDateToUnixUtc());
+                $events[$x]['title'] = 'Sprzątanie';
+                $x++;
+            }
+
+            $status = JsonResponse::HTTP_OK;
+            return new JsonResponse($events, $status);
+
+        } catch (\Exception $exception) {
+            $status = JsonResponse::HTTP_BAD_REQUEST;
+            $data = $errorDecorator->decorateError($status, 'Something goes wrong!');
+            return new JsonResponse($data, $status);
+        }
+    }
+
 }

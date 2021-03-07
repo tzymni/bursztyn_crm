@@ -2,13 +2,7 @@
   <div>
     <div id="calendar">
       <div class="calendar-controls">
-        <!--        <b-button-->
-        <!--            class="btn btn-info"-->
-        <!--            id="show-reservation-form-modal"-->
-        <!--            @click="showReservationFormModal()"-->
-        <!--        >-->
-        <!--          Add reservation-->
-        <!--        </b-button>-->
+
         <b-modal
             @hide="setEvents()"
             id="reservation-form-modal"
@@ -31,6 +25,13 @@
               :editId="$data.editId"
           />
         </b-modal>
+
+        <b-button
+            class="btn btn-info"
+            href="#/timeline-calendar"
+        >Kalendarz liniowy
+        </b-button
+        >
 
         <b-button
             class="btn btn-info"
@@ -58,94 +59,7 @@
         </b-modal>
       </div>
 
-      <div id="trial-of-options" style="display: none">
-        <div v-if="message" class="notification is-success">{{ message }}</div>
 
-        <div class="box">
-          <h4 class="title is-5">Play with the options!</h4>
-
-
-          <div class="field">
-            <label class="label">Period Count</label>
-            <div class="control">
-              <div class="select">
-                <select v-model="displayPeriodCount">
-                  <option :value="1">1</option>
-                  <option :value="2">2</option>
-                  <option :value="3">3</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          <div class="field">
-            <label class="label">Starting day of the week</label>
-            <div class="control">
-              <div class="select">
-                <select v-model="startingDayOfWeek">
-                  <option
-                      v-for="(d, index) in dayNames"
-                      :key="index"
-                      :value="index"
-                  >
-                    {{ d }}
-                  </option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          <div class="field">
-            <label class="label">Today Button</label>
-            <label class="checkbox">
-              <input v-model="useTodayIcons" type="checkbox"/>
-              Icons
-            </label>
-          </div>
-
-          <div class="field">
-            <label class="label">Themes</label>
-            <label class="checkbox">
-              <input v-model="useDefaultTheme" type="checkbox"/>
-              Default
-            </label>
-          </div>
-
-          <div class="field">
-            <label class="checkbox">
-              <input v-model="useHolidayTheme" type="checkbox"/>
-              Holidays
-            </label>
-          </div>
-        </div>
-
-        <div class="box">
-          <div class="field">
-            <label class="label">Title</label>
-            <div class="control">
-              <input v-model="newItemTitle" class="input" type="text"/>
-            </div>
-          </div>
-
-          <div class="field">
-            <label class="label">Start date</label>
-            <div class="control">
-              <input v-model="newItemStartDate" class="input" type="date"/>
-            </div>
-          </div>
-
-          <div class="field">
-            <label class="label">End date</label>
-            <div class="control">
-              <input v-model="newItemEndDate" class="input" type="date"/>
-            </div>
-          </div>
-
-          <button class="button is-info" @click="clickTestAddItem">
-            Add Item
-          </button>
-        </div>
-      </div>
 
       <div class="calendar-parent">
         <calendar-view
@@ -277,7 +191,6 @@ export default {
       this.setEvents(type)
     },
     setEvents(type) {
-      console.log(type)
       this.clickedStartDate = null;
       var self = this;
       reservationService.getEvents(type).then(function (response) {
