@@ -136,15 +136,16 @@ class ReservationService implements DecorateEventInterface
         if (empty($result)) {
             return true;
         } else {
-            $dateFrom = gmdate("Y-m-d", $dateFrom);
-            $dateTo = gmdate("Y-m-d", $dateTo);
-            $message = sprintf(
-                "There is a reservation between %s and %s for cottage %s",
-                $dateFrom,
-                $dateTo,
-                $cottageResponse->getName()
-            );
-            throw new \Exception($message);
+            return false;
+//            $dateFrom = gmdate("Y-m-d", $dateFrom);
+//            $dateTo = gmdate("Y-m-d", $dateTo);
+//            $message = sprintf(
+//                "There is a reservation between %s and %s for cottage %s",
+//                $dateFrom,
+//                $dateTo,
+//                $cottageResponse->getName()
+//            );
+//            throw new \Exception($message);
         }
     }
 

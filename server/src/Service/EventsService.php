@@ -37,21 +37,6 @@ class EventsService
     }
 
     /**
-     * Check if type is valid.
-     *
-     * @param string $type
-     * @return bool
-     */
-    protected function isValidType(string $type): bool
-    {
-        if (in_array($type, array(self::RESERVATION_EVENT, self::CLEANING_EVENT))) {
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
      * Create event and reservation.
      *
      * @param EventCreator $eventCreator
@@ -100,20 +85,6 @@ class EventsService
         }
     }
 
-    public function getNextEventByDateAndType($dateFrom, $type)
-    {
-        $event = $this->em->getRepository('App:Events')->findBy(
-            array("is_active" => true, "type" => $type, "date_from >= $dateFrom"),
-            array(),
-            array(1)
-        );
-
-        if (isset($event) && isset($event[0])) {
-            return $event[0];
-        } else {
-            return sprintf("Can't find event!");
-        }
-    }
 
     public function getActiveEventByDateAndType($type, $dateFrom, $dateTo)
     {

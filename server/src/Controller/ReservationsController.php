@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Cottages;
 use App\Entity\Events;
 use App\Lib\EventDecorator;
 use App\Service\CottageService;
@@ -20,7 +21,7 @@ use Symfony\Component\Routing\Annotation\Route;
  *
  * @author Tomasz Zymni <tomasz.zymni@gmail.com>
  */
-class ReservationsController extends AbstractController implements TokenAuthenticatedController
+class ReservationsController extends AbstractController
 {
 
     /**
@@ -79,6 +80,89 @@ class ReservationsController extends AbstractController implements TokenAuthenti
             $responseData = $exception->getMessage();
         }
         return new JsonResponse($responseData, $status);
+    }
+
+    /**
+     * Check if defined cottages are available between defined dates and return only available cottages (id and name).
+     *
+     * @Route ("/reservation/availability/cottage_ids/{cottage_ids}/date_from/{date_from}/date_to/{date_to}", methods={"GET"})
+     * @param ResponseErrorDecoratorService $errorDecorator
+     * @param Request $request
+     * @param ReservationService $reservationService
+     * @param CottageService $cottageService
+     * @return JsonResponse
+     * @throws \Exception
+     */
+    public function checkCottagesAvailabilityForReservation(
+        ResponseErrorDecoratorService $errorDecorator,
+        Request $request,
+        ReservationService $reservationService,
+        CottageService $cottageService
+    ): JsonResponse {
+
+        date_default_timezone_set('UTC');
+
+        $dateFrom = $request->get('date_from');
+        $dateTo = $request->get('date_to');
+        $cottageIds = $request->get('cottage_ids');
+
+        $response = array();
+
+        if ($dateFrom == $dateTo) {
+            $response['error'] = 'Dates of reservation must be different!';
+        }
+
+        if (\DateTime::createFromFormat('Y-m-d', $dateFrom) == false) {
+            $response['error'] = 'Wrong date from!';
+        }
+
+        if (\DateTime::createFromFormat('Y-m-d', $dateTo) == false) {
+            $response['error'] = 'Wrong date to!';
+        }
+
+        if (strlen($cottageIds) == 0 || strlen($cottageIds) >= 50) {
+            $response['error'] = 'Wrong long of string for cottages!';
+        }
+
+        if (!empty($response['error'])) {
+            $status = JsonResponse::HTTP_BAD_REQUEST;
+            $response = $errorDecorator->decorateError($status, $response['error']);
+            return new JsonResponse($response, $status);
+        }
+
+        $availableCottages = array();
+
+        $dateFromUnix = strtotime($dateFrom) + 11 * 3600;
+        $dateToUnix = strtotime($dateTo) + 14 * 3600;
+
+        if (!empty($cottageIds)) {
+
+            $cottages = explode(",", $cottageIds);
+            $x = 0;
+            foreach ($cottages as $cottageId) {
+
+                $cottage = $cottageService->getActiveCottageById($cottageId);
+
+                if ($cottage instanceof Cottages) {
+
+                    if ($reservationService->checkCottageAvailability($cottageId, $dateFromUnix, $dateToUnix)) {
+                        $availableCottages[$x]['name'] = $cottage->getName();
+                        $availableCottages[$x]['id'] = $cottage->getId();
+                        $x++;
+                    }
+
+                }
+            }
+
+            $response['available_cottages'] = $availableCottages;
+            $status = JsonResponse::HTTP_OK;
+        } else {
+            $status = JsonResponse::HTTP_BAD_REQUEST;
+            $response['error'] = 'No cottages';
+
+        }
+        return new JsonResponse($response, $status);
+
     }
 
 }

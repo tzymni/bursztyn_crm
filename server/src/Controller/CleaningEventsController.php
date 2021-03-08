@@ -12,17 +12,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-class CleaningEventsController extends AbstractController
+class CleaningEventsController extends AbstractController implements TokenAuthenticatedController
 {
-    /**
-     * @Route("/cleaning/events", name="cleaning_events")
-     */
-    public function index()
-    {
-        return $this->render('cleaning_events/index.html.twig', [
-            'controller_name' => 'CleaningEventsController',
-        ]);
-    }
 
     /**
      * @Route ("/cleaning/{id}", methods={"GET"})
@@ -63,7 +54,10 @@ class CleaningEventsController extends AbstractController
      * @Route ("/cleaning/details/{id}", methods={"GET"})
      * @param Request $request
      * @param EventsService $eventsService
-     * @param ResponseErrorDecoratorService $responseErrorDecoratorService
+     * @param CottagesCleaningEventsService $cottagesCleaningEventsService
+     * @param ReservationService $reservationService
+     * @param ResponseErrorDecoratorService $errorDecorator
+     * @return JsonResponse
      */
     public function getCleaningEventDetails(
         Request $request,
