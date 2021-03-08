@@ -8,3 +8,4 @@ client/node_modules/
 server/phpunit.xml.dist
 server/symfony.lock
 /server/config/api.yaml
+node_modules/

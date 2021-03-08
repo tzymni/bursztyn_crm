@@ -78,6 +78,7 @@ export default {
       button: {
         text: 'Rozwiń wszystkie'
       },
+      todaysDate: '',
       expandTable: true,
       columns: [
         {
@@ -86,7 +87,7 @@ export default {
           type: 'string',
           filterOptions: {
             enabled: true, 
-            filterValue: '',
+            filterValue: this.todaysDate,
             filterFn: function(data, filterString) {
               var x = parseInt(Date.parse(filterString));
               data = parseInt(Date.parse(data));
@@ -221,7 +222,10 @@ export default {
       });
     },
     setDateToToday(){
-      var date = new Date(Date.now()).toLocaleDateString('ko-KR');
+      var date = this.columns[0].filterOptions.filterValue;
+      if(date===''){
+        date = new Date(Date.now()).toLocaleDateString('en-GB');
+      } else if(date!='') date = '';
       this.columns[0].filterOptions.filterValue = date;
     },
   }
