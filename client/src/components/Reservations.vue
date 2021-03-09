@@ -227,7 +227,7 @@ export default {
 
       if (date === '' || typeof date == 'undefined') {
         date = moment(String(Date(Date.now()))).format('YYYY/MM/DD')
-      } else if (date != '')  {
+      } else {
         date = '';
       }
       this.columns[0].filterOptions.filterValue = date;
