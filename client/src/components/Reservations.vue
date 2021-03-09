@@ -5,7 +5,7 @@
       || {{ header }}
     </h1>
     <div class="container">
-          <div class="calendar-controls">
+      <div class="calendar-controls">
         <!-- 
           ADD RESERVATION - functionality suspended!
           
@@ -19,17 +19,17 @@
         <button class="btn btn-info" id="expend-collapse" @click="expandCollapseTable()">{{ button.text }}</button>&nbsp;
         <button class="btn btn-info" id="todays-date" @click="setDateToToday()">Od dzis</button>&nbsp;
         <b-modal
-          @hide="setReservations()"
-          id="reservation-form-modal"
-          title="Rezerwacja"
-          hide-footer
-      >
-        <ReservationForm
-            :clickedStartDate="$data.clickedStartDate"
-            :editId="$data.editId"
-        />
-      </b-modal>
-    </div>
+            @hide="setReservations()"
+            id="reservation-form-modal"
+            title="Rezerwacja"
+            hide-footer
+        >
+          <ReservationForm
+              :clickedStartDate="$data.clickedStartDate"
+              :editId="$data.editId"
+          />
+        </b-modal>
+      </div>
 
       <vue-good-table
           ref="ReservationTable"
@@ -65,6 +65,7 @@
 <script>
 import {reservationService} from "../_services/reservation.service";
 import ReservationForm from "@/components/ReservationForm";
+import moment from 'moment'
 
 export default {
   name: 'reservations',
@@ -86,9 +87,9 @@ export default {
           field: 'date_from',
           type: 'string',
           filterOptions: {
-            enabled: true, 
+            enabled: true,
             filterValue: this.todaysDate,
-            filterFn: function(data, filterString) {
+            filterFn: function (data, filterString) {
               var x = parseInt(Date.parse(filterString));
               data = parseInt(Date.parse(data));
               return data >= x;
@@ -101,7 +102,7 @@ export default {
           type: 'string',
           filterOptions: {
             enabled: true,
-            filterFn: function(data, filterString) {
+            filterFn: function (data, filterString) {
               var x = parseInt(Date.parse(filterString));
               data = parseInt(Date.parse(data));
               return data <= x;
@@ -221,11 +222,14 @@ export default {
         }
       });
     },
-    setDateToToday(){
-      var date = this.columns[0].filterOptions.filterValue;
-      if(date===''){
-        date = new Date(Date.now()).toLocaleDateString('en-GB');
-      } else if(date!='') date = '';
+    setDateToToday() {
+      let date = this.columns[0].filterOptions.filterValue;
+
+      if (date === '' || typeof date == 'undefined') {
+        date = moment(String(Date(Date.now()))).format('YYYY/MM/DD')
+      } else if (date != '')  {
+        date = '';
+      }
       this.columns[0].filterOptions.filterValue = date;
     },
   }
