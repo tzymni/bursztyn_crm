@@ -155,6 +155,10 @@ class ReservationsController extends AbstractController
             }
 
             $response['available_cottages'] = $availableCottages;
+            $response['request_details']['cottages_ids'] = $cottageIds;
+            $response['request_details']['date_from'] = $dateFrom;
+            $response['request_details']['date_to'] = $dateTo;
+
             $status = JsonResponse::HTTP_OK;
         } else {
             $status = JsonResponse::HTTP_BAD_REQUEST;
