@@ -2,7 +2,8 @@ export const reservationService = {
     saveReservation,
     getEvents,
     getReservation,
-    getReservationsGroupedByCottages
+    getReservationsGroupedByCottages,
+    checkAvailability
 };
 
 const axios = require('axios');
@@ -21,11 +22,11 @@ function getEvents(type) {
     const token = sessionStorage.getItem('token');
     const AuthStr = 'Bearer '.concat(token);
 
-    if(type == null) {
+    if (type == null) {
         type = 'ALL';
     }
 
-    return axios.get('http://localhost:8000/event/list/type/'+type, {headers: {Authorization: AuthStr}})
+    return axios.get('http://localhost:8000/event/list/type/' + type, {headers: {Authorization: AuthStr}})
         .then(function (response) {
             return response.data;
         })
@@ -62,7 +63,6 @@ function getReservationsGroupedByCottages() {
 
         });
 }
-
 
 
 function createReservation(data) {
@@ -106,12 +106,12 @@ function updateReservation(data) {
 
     return axios
         .put("http://localhost:8000/event/reservation/" + data.id, data, {
-            headers: { Authorization: AuthStr },
+            headers: {Authorization: AuthStr},
         })
-        .then(function(response) {
+        .then(function (response) {
             return response.data;
         })
-        .catch(function(error) {
+        .catch(function (error) {
             if (error.response) {
                 const errorData = error.response.data;
                 return Promise.reject(errorData.error.message);
@@ -127,13 +127,35 @@ function getReservation(eventId) {
     var token = sessionStorage.getItem("token");
     var AuthStr = "Bearer ".concat(token);
     return axios
-        .get("http://localhost:8000/event/" + eventId+"/type/reservation", {
-            headers: { Authorization: AuthStr },
+        .get("http://localhost:8000/event/" + eventId + "/type/reservation", {
+            headers: {Authorization: AuthStr},
         })
-        .then(function(response) {
+        .then(function (response) {
             return response.data;
         })
-        .catch(function(error) {
+        .catch(function (error) {
+            if (error.response) {
+                const errorData = error.response.data;
+                return Promise.reject(errorData.error.message);
+            } else {
+                const errorMessage = "Connection with server problem!";
+                return Promise.reject(errorMessage);
+            }
+        });
+}
+
+function checkAvailability(dateFrom, dateTo, cottageIds) {
+    var axios = require("axios");
+    var token = sessionStorage.getItem("token");
+    var AuthStr = "Bearer ".concat(token);
+    return axios
+        .get("http://localhost:8000/reservation/availability/cottage_ids/" + cottageIds + "/date_from/" + dateFrom + "/date_to/" + dateTo, {
+            headers: {Authorization: AuthStr},
+        })
+        .then(function (response) {
+            return response.data;
+        })
+        .catch(function (error) {
             if (error.response) {
                 const errorData = error.response.data;
                 return Promise.reject(errorData.error.message);

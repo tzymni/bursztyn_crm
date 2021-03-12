@@ -27,7 +27,20 @@
       >Kalendarz szczegółowy
       </b-button
       >
-
+      <b-button
+          class="btn btn-info"
+          id="check-avaliability"
+          @click="checkAvailabilityFormModal()"
+      >Sprawdź dostępność
+      </b-button
+      >
+      <b-modal
+          id="check-form-modal"
+          title="Sprawdź dostępność"
+          hide-footer
+      >
+        <CheckAvaliabilityForm/>
+      </b-modal>
       <div>
         <b-form-group id="mySelect" label="Wybierz typ zdarzenia" label-for="mySelect">
           <b-form-select id="mySelect" @change="filterCalendarEvents({ currentValue})" v-model="form.option"
@@ -55,6 +68,8 @@ import {reservationService} from "@/_services/reservation.service";
 import {cleaningEventServices} from "@/_services/cleaning_event_service";
 import ReservationForm from "@/components/ReservationForm";
 import CleaningForm from "@/components/CleaningForm";
+import CheckAvaliabilityForm from "./CheckAvailabilityForm";
+
 let gstc, state;
 
 // main component
@@ -62,7 +77,8 @@ export default {
   name: 'TimelineCalendar',
   components: {
     ReservationForm,
-    CleaningForm
+    CleaningForm,
+    CheckAvaliabilityForm
   },
   data: function () {
     return {
@@ -140,7 +156,7 @@ export default {
         chart: {
           items: this.generateItems(),
           time: {
-            zoom: 20
+            zoom: 22
           }
         }
       }
@@ -340,6 +356,9 @@ export default {
             }
           });
     },
+    checkAvailabilityFormModal() {
+      this.$bvModal.show("check-form-modal");
+    }
   },
   computed: {
     currentValue() {
