@@ -22,7 +22,8 @@
           <input
               type="date"
               v-model="date_to"
-              name="date_from"
+              :min="date_from"
+              name="date_to"
               required="required"
               class="form-control"
               :class="{ 'is-invalid': submitted && !date_to }"
