@@ -53,12 +53,9 @@
               track-by="id"
               :preselect-first="false"
           ></multiselect>
-          <div>
-          </div>
 
-          <div v-show="submitted && !cottage_ids" class="invalid-feedback">
-            Podaj nazwe/numer domku.
-          </div>
+
+          <div style="white-space: pre-line;" id="availability-response">{{ availability_response }}</div>
         </div>
       </div>
 
@@ -100,6 +97,7 @@ export default {
       selected: null,
       options: [],
       selectedIndex: 0,
+      availability_response: null
     };
   },
   mounted() {
@@ -117,10 +115,23 @@ export default {
 
       let cottage_ids_string = only_ids.join(",")
 
-      console.log(cottage_ids_string)
-
+      const self = this;
       reservationService.checkAvailability(date_from, date_to, cottage_ids_string).then(function (response) {
-        console.log(response)
+
+        let tmp_response = ''
+
+        if (response.available_cottages.length === 0) {
+          tmp_response += "Brak dostępnych domków w okresie " + response.request_details.date_from + " - " + response.request_details.date_to + ".\n"
+        } else {
+          tmp_response += "Dostępne domki w okresie " + response.request_details.date_from + " - " + response.request_details.date_to + ":\n"
+
+          response.available_cottages.map(function (value) {
+            tmp_response += "-" +value.name + "\n"
+          })
+        }
+
+
+        self.availability_response = tmp_response
       })
           .catch(function (error) {
             if (error) {
