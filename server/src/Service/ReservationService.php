@@ -122,8 +122,10 @@ class ReservationService implements DecorateEventInterface
             ->orWhere('(e.date_to_unix_utc <= :dateTo AND e.date_to_unix_utc > :dateFrom)')
             ->orWhere('(e.date_from_unix_utc < :dateFrom AND e.date_to_unix_utc > :dateTo)')
             ->andWhere('r.cottage=:cottageId')
+            ->andWhere('e.is_active=:isActive')
             ->setParameter('cottageId', $cottageId)
             ->setParameter('dateFrom', $dateFrom)
+            ->setParameter('isActive', true)
             ->setParameter('dateTo', $dateTo);
 
         if ($eventId > 0) {
