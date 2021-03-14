@@ -1,6 +1,11 @@
 <template>
   <div>
     <div id="calendar">
+      <h1>
+        <font-awesome-icon icon="calendar-alt" />
+        || {{ header }}
+      </h1>
+
       <div class="calendar-controls">
 
         <b-modal
@@ -117,6 +122,7 @@ export default {
     return {
       /* Show the current month, and give it some fake items to show */
       showDate: this.thisMonth(1),
+      header: "Kalendarz",
       message: "",
       startingDayOfWeek: 1,
       disablePast: false,
