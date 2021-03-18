@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-class CleaningEventsController extends AbstractController
+class CleaningEventsController extends AbstractController implements TokenAuthenticatedController
 {
 
     /**
@@ -140,7 +140,7 @@ class CleaningEventsController extends AbstractController
                 $response[$x]['details'] = $details;
                 $response[$x]['number_of_cottages'] = count($details);
                 $response[$x]['title'] = $cleanEvent->getTitle();
-                $response[$x]['date_from'] = $cleanEvent->getDateFrom();
+                $response[$x]['date_from'] = substr($cleanEvent->getDateFrom(), 0 ,10);
                 $x++;
             }
 

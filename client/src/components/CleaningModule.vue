@@ -22,18 +22,24 @@
 </template>
 
 <script>
+
+import {cleaningEventServices} from "@/_services/cleaning_event_service";
+
 export default {
   name: "CleaningModule",
   data() {
     return {
       header: 'Nadchodzące zmiany',
       fields: [{
-        key: 'date',
+        key: 'date_from',
         label: 'Data',
       },
         {
           key: 'title',
           label: 'Tytuł',
+        }, {
+          key: 'number_of_cottages',
+          label: 'Liczba domków',
         },
         {
           key: 'show_details',
@@ -56,6 +62,26 @@ export default {
           ],
       items: []
     }
+  },
+  methods: {
+    getEvents() {
+      const self = this
+      cleaningEventServices.getFutureCleaningEventsWithDetails().then(function (response) {
+
+        self.items = response
+
+      }).catch(function (error) {
+        if (error) {
+          self.errorNotify = error;
+          self.loading = false;
+        }
+      });
+
+    }
+  },
+  mounted() {
+
+    this.getEvents()
   }
 }
 </script>
