@@ -114,6 +114,42 @@ class CottagesCleaningEventsService
     }
 
     /**
+     * @param $eventId
+     * @return array
+     */
+    public function generateCottageCleaningEventDetails($eventId): array
+    {
+        $eventsService = new EventsService($this->em);
+        $reservationService = new ReservationService($this->em);
+        $event = $eventsService->getActiveEventById($eventId);
+        $cottageCleaningEvents = $this->getCottageCleaningEventsByEvent($event);
+
+        $details = array();
+        foreach ($cottageCleaningEvents as $cottageCleaningEvent) {
+            $tmp = array();
+            $tmp['cottage_id'] = $cottageCleaningEvent->getCottage()->getId();
+            $tmp['cottage_name'] = $cottageCleaningEvent->getCottage()->getName();
+            $nextReservation = $reservationService->getNextActiveReservationByCottage($cottageCleaningEvent->getCottage(),
+                $event->getDateTo());
+            $periodInDays = 0;
+            if (!empty($nextReservation)) {
+                $nextReservationDateFrom = $nextReservation['date_from'];
+                $nextReservationDateTo = $nextReservation['date_to'];
+                $dateDiff = strtotime($nextReservationDateTo) - strtotime($nextReservationDateFrom);
+                $periodInDays = round($dateDiff / (60 * 60 * 24));
+            }
+            $tmp['next_reservation_date'] = !empty($nextReservation) ? $nextReservation['date_from'] : 'Brak';
+            $tmp['next_reservation_period'] = $periodInDays;
+            $tmp['next_reservation_event_id'] = !empty($nextReservation) ? $nextReservation['event_id'] : null;
+            $tmp['next_reservation_id'] = !empty($nextReservation) ? $nextReservation['reservation_id'] : null;
+
+            $details[] = $tmp;
+        }
+
+        return $details;
+    }
+
+    /**
      * Get all cleaning events without grouping per cottage.
      *
      * @return object[]|null

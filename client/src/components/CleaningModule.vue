@@ -32,8 +32,8 @@ export default {
         label: 'Data',
       },
         {
-          key: 'number_of_cottages',
-          label: 'Liczba domków',
+          key: 'title',
+          label: 'Tytuł',
         },
         {
           key: 'show_details',

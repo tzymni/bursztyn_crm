@@ -1,11 +1,4 @@
 <?php
-
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 namespace App\Service;
 
 use App\Entity\Cottages;
@@ -90,6 +83,10 @@ class ReservationService implements DecorateEventInterface
         $this->em->flush();
     }
 
+    /**
+     * @param int $eventId
+     * @return string
+     */
     public function getEventDetails(int $eventId)
     {
         return $this->getActiveReservationByEventId($eventId);
@@ -102,6 +99,7 @@ class ReservationService implements DecorateEventInterface
      * @param $cottageId
      * @param $dateFrom
      * @param $dateTo
+     * @param null $eventId
      * @return bool
      * @throws \Exception
      */
@@ -139,15 +137,6 @@ class ReservationService implements DecorateEventInterface
             return true;
         } else {
             return false;
-//            $dateFrom = gmdate("Y-m-d", $dateFrom);
-//            $dateTo = gmdate("Y-m-d", $dateTo);
-//            $message = sprintf(
-//                "There is a reservation between %s and %s for cottage %s",
-//                $dateFrom,
-//                $dateTo,
-//                $cottageResponse->getName()
-//            );
-//            throw new \Exception($message);
         }
     }
 
