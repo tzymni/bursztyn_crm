@@ -8,8 +8,6 @@
     <div class="table-wrap">
       <b-table
           id="users"
-          :per-page="perPage"
-          :current-page="currentPage"
           small
           class="table-users"
           :fields="fields"
@@ -37,10 +35,6 @@
         </template>
       </b-table>
       <b-pagination
-          v-model="currentPage"
-          :total-rows="rows"
-          :per-page="perPage"
-          aria-controls="users"
       ></b-pagination>
     </div>
 
@@ -87,7 +81,7 @@ export default {
   methods: {
     getCleaningEvent(id) {
 
-      var self = this;
+      const self = this
       cleaningEventServices.getCleaningEvent(id).then(function (data) {
 
             self.title = data.name;
@@ -104,11 +98,9 @@ export default {
 
     }, getCleaningEventDetails(id) {
 
-      var self = this;
+      const self = this
       cleaningEventServices.getCleaningEventDetails(id).then(function (data) {
-
             self.eventDetails = data
-            console.log(data)
           }
       )
           .catch(function (error) {

@@ -1,5 +1,9 @@
 <template>
   <div>
+    <h1>
+      <font-awesome-icon icon="calendar-alt" />
+      || {{ header }}
+    </h1>
     <div class="calendar-controls">
       <b-modal
           id="reservation-form-modal"
@@ -49,10 +53,6 @@
       </div>
 
     </div>
-    <div class="toolbox">
-      <!--      <button @click="updateFirstRow">Update first row</button>-->
-      <!--      <button @click="changeZoomLevel">Change zoom level</button>-->
-    </div>
     <div class="gstc-wrapper" ref="gstc"></div>
   </div>
 </template>
@@ -82,6 +82,7 @@ export default {
   },
   data: function () {
     return {
+      header: "Kalendarz liniowy",
       state: null,
       cottages: {},
       form: {

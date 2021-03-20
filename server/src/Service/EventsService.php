@@ -41,7 +41,6 @@ class EventsService
      *
      * @param EventCreator $eventCreator
      * @param $data
-     * @param null $event
      * @return Events|string
      * @throws \Exception
      */
@@ -85,7 +84,12 @@ class EventsService
         }
     }
 
-
+    /**
+     * @param $type
+     * @param $dateFrom
+     * @param $dateTo
+     * @return object|string
+     */
     public function getActiveEventByDateAndType($type, $dateFrom, $dateTo)
     {
         $event = $this->em->getRepository('App:Events')->findBy(
@@ -96,6 +100,34 @@ class EventsService
 
         if (isset($event) && isset($event[0])) {
             return $event[0];
+        } else {
+            return sprintf("Can't find event!");
+        }
+    }
+
+    /**
+     * @param $type
+     * @param $dateFrom
+     * @return object|string
+     */
+    public function getAllFutureActiveEventsByType($type)
+    {
+        $dateFrom = gmdate("Y-m-d 00:00:00");
+        $query = $this->em->createQueryBuilder()
+            ->select(array('e'))
+            ->from('App:Events', 'e')
+            ->where('e.is_active = :isActive')
+            ->andWhere('e.type = :type')
+            ->andWhere('e.date_from >= :dateFrom')
+            ->orderBy('e.date_from ', 'ASC')
+            ->setParameter('isActive', true)
+            ->setParameter('type', $type)
+            ->setParameter('dateFrom', $dateFrom);
+
+        $events = $query->getQuery()->getResult();
+
+        if (isset($events) && isset($events[0])) {
+            return $events;
         } else {
             return sprintf("Can't find event!");
         }

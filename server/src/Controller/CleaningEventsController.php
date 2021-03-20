@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\CottagesCleaningEvents;
 use App\Entity\Events;
 use App\Service\CottagesCleaningEventsService;
 use App\Service\EventsService;
@@ -53,48 +54,19 @@ class CleaningEventsController extends AbstractController implements TokenAuthen
     /**
      * @Route ("/cleaning/details/{id}", methods={"GET"})
      * @param Request $request
-     * @param EventsService $eventsService
      * @param CottagesCleaningEventsService $cottagesCleaningEventsService
-     * @param ReservationService $reservationService
      * @param ResponseErrorDecoratorService $errorDecorator
      * @return JsonResponse
      */
     public function getCleaningEventDetails(
         Request $request,
-        EventsService $eventsService,
         CottagesCleaningEventsService $cottagesCleaningEventsService,
-        ReservationService $reservationService,
         ResponseErrorDecoratorService $errorDecorator
     ) {
         $id = $request->get('id');
 
         try {
-
-            $event = $eventsService->getActiveEventById($id);
-            $cottageCleaningEvents = $cottagesCleaningEventsService->getCottageCleaningEventsByEvent($event);
-
-            $details = array();
-            foreach ($cottageCleaningEvents as $cottageCleaningEvent) {
-                $tmp = array();
-                $tmp['cottage_id'] = $cottageCleaningEvent->getCottage()->getId();
-                $tmp['cottage_name'] = $cottageCleaningEvent->getCottage()->getName();
-                $nextReservation = $reservationService->getNextActiveReservationByCottage($cottageCleaningEvent->getCottage(),
-                    $event->getDateTo());
-                $periodInDays = 0;
-                if (!empty($nextReservation)) {
-                    $nextReservationDateFrom = $nextReservation['date_from'];
-                    $nextReservationDateTo = $nextReservation['date_to'];
-                    $dateDiff = strtotime($nextReservationDateTo) - strtotime($nextReservationDateFrom);
-
-                    $periodInDays = round($dateDiff / (60 * 60 * 24));
-                }
-                $tmp['next_reservation_date'] = !empty($nextReservation) ? $nextReservation['date_from'] : 'Brak';
-                $tmp['next_reservation_period'] = $periodInDays;
-                $tmp['next_reservation_event_id'] = !empty($nextReservation) ? $nextReservation['event_id'] : null;
-                $tmp['next_reservation_id'] = !empty($nextReservation) ? $nextReservation['reservation_id'] : null;
-
-                $details[] = $tmp;
-            }
+            $details = $cottagesCleaningEventsService->generateCottageCleaningEventDetails($id);
             $status = JsonResponse::HTTP_OK;
             return new JsonResponse($details, $status);
         } catch (\Exception $exception) {
@@ -143,6 +115,44 @@ class CleaningEventsController extends AbstractController implements TokenAuthen
             $data = $errorDecorator->decorateError($status, 'Something goes wrong!');
             return new JsonResponse($data, $status);
         }
+    }
+
+    /**
+     * @Route ("/next-cleanings", methods={"GET"})
+     *
+     * @param EventsService $eventsService
+     * @param CottagesCleaningEventsService $cottagesCleaningEventsService
+     * @param ResponseErrorDecoratorService $errorDecorator
+     * @return JsonResponse
+     */
+    public function getNextCleaningEventsWithDetails(
+        EventsService $eventsService,
+        CottagesCleaningEventsService $cottagesCleaningEventsService,
+        ResponseErrorDecoratorService $errorDecorator
+    ) {
+        try {
+            $cleaningEvents = $eventsService->getAllFutureActiveEventsByType(CottagesCleaningEvents::EVENT_TYPE);
+            $response = array();
+
+            $x = 0;
+            foreach ($cleaningEvents as $cleanEvent) {
+                $details = $cottagesCleaningEventsService->generateCottageCleaningEventDetails($cleanEvent->getId());
+                $response[$x]['details'] = $details;
+                $response[$x]['number_of_cottages'] = count($details);
+                $response[$x]['title'] = $cleanEvent->getTitle();
+                $response[$x]['date_from'] = substr($cleanEvent->getDateFrom(), 0 ,10);
+                $x++;
+            }
+
+            $status = JsonResponse::HTTP_OK;
+
+        } catch (\Exception $exception) {
+            echo $exception->getMessage();
+            $status = JsonResponse::HTTP_BAD_REQUEST;
+            $response = $errorDecorator->decorateError($status, 'Something goes wrong!');
+        }
+        return new JsonResponse($response, $status);
+
     }
 
 }

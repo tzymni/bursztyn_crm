@@ -61,6 +61,11 @@ export default {
               title: "Rezerwacje",
               icon: "fa fa-calendar-check",
             },
+            {
+              href: "/cleaning-module",
+              title: "Nadchodzące zmiany",
+              icon: "fa fa-broom",
+            },
           ],
         },
         {
