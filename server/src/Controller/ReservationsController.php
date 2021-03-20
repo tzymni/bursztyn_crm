@@ -3,37 +3,36 @@
 namespace App\Controller;
 
 use App\Entity\Cottages;
-use App\Entity\Events;
-use App\Lib\EventDecorator;
+use App\Entity\Reservations;
 use App\Service\CottageService;
-use App\Service\EventsService;
 use App\Service\ReservationService;
 use App\Service\ResponseErrorDecoratorService;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * Class ReservationsController
- * @package App\Controller
+ * Controller for handling requests related to reservation events.
  *
+ * @package App\Controller
  * @author Tomasz Zymni <tomasz.zymni@gmail.com>
  */
 class ReservationsController extends AbstractController
 {
 
     /**
-     * @Route("/reservation/list/groupBy/cottages")
-     * @Method("GET")
+     * Get list of cottages and list of all reservations for them.
+     *
+     * @Route("/reservation/list/groupBy/cottages", methods={"GET"})
      * @param ResponseErrorDecoratorService $errorDecorator
+     * @param CottageService $cottageService
      * @return JsonResponse
      */
     public function getReservationListGroupedByCottages(
         ResponseErrorDecoratorService $errorDecorator,
         CottageService $cottageService
-    ) {
+    ): JsonResponse {
         try {
 
             $cottages = $cottageService->getActiveCottages();
@@ -50,16 +49,16 @@ class ReservationsController extends AbstractController
                 $tmpReservations = null;
 
                 if (!empty($reservations)) {
-                    foreach ($reservations as $reser) {
+                    foreach ($reservations as $reservation) {
                         $tmpReservations = array();
-                        $tmpReservations['guest_first_name'] = $reser->getGuestFirstName();
-                        $tmpReservations['guest_last_name'] = $reser->getGuestLastName();
-                        $tmpReservations['guest_phone'] = $reser->getGuestPhoneNumber();
-                        $tmpReservations['guests_number'] = $reser->getGuestsNumber();
-                        $tmpReservations['advance_payment'] = $reser->getAdvancePayment();
-                        $tmpReservations['extra_info'] = $reser->getExtraInfo();
+                        $tmpReservations['guest_first_name'] = $reservation->getGuestFirstName();
+                        $tmpReservations['guest_last_name'] = $reservation->getGuestLastName();
+                        $tmpReservations['guest_phone'] = $reservation->getGuestPhoneNumber();
+                        $tmpReservations['guests_number'] = $reservation->getGuestsNumber();
+                        $tmpReservations['advance_payment'] = $reservation->getAdvancePayment();
+                        $tmpReservations['extra_info'] = $reservation->getExtraInfo();
 
-                        $event = $reser->getEvent();
+                        $event = $reservation->getEvent();
 
                         $tmpReservations['event']['id'] = $event->getId();
                         $tmpReservations['event']['date_from'] = $event->getDateFrom();
@@ -76,8 +75,8 @@ class ReservationsController extends AbstractController
 
             $status = JsonResponse::HTTP_OK;
         } catch (\Exception $exception) {
-            $status = JsonResponse::HTTP_OK;
-            $responseData = $exception->getMessage();
+            $status = JsonResponse::HTTP_BAD_REQUEST;
+            $responseData = $errorDecorator->decorateError($status, $exception->getMessage());
         }
         return new JsonResponse($responseData, $status);
     }
@@ -132,8 +131,8 @@ class ReservationsController extends AbstractController
 
         $availableCottages = array();
 
-        $dateFromUnix = strtotime($dateFrom) + 11 * 3600;
-        $dateToUnix = strtotime($dateTo) + 14 * 3600;
+        $dateFromUnix = strtotime($dateFrom) + Reservations::HOUR_OF_END * 3600;
+        $dateToUnix = strtotime($dateTo) + Reservations::HOUR_OF_START * 3600;
 
         if (!empty($cottageIds)) {
 

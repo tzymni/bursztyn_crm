@@ -84,9 +84,9 @@ export default {
       const self = this
       cleaningEventServices.getCleaningEvent(id).then(function (data) {
 
-            self.title = data.name;
-            self.date = data.date;
-            self.id = data.id;
+            self.title = data.details.name
+            self.date = data.details.date
+            self.id = data.details.id
 
           }
       )

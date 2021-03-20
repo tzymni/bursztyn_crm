@@ -9,6 +9,11 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Reservations
 {
+
+    const HOUR_OF_START = '14';
+
+    const HOUR_OF_END = '11';
+
     /**
      * Event type in events table.
      */
@@ -263,6 +268,5 @@ class Reservations
 
         return $this;
     }
-
 
 }

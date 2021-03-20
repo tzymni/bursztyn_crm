@@ -27,7 +27,7 @@ class CottagesRepository extends ServiceEntityRepository
     public function findAllActive(): array
     {
         $qb = $this->createQueryBuilder('p')
-            ->select('p.id,p.name, p.color, p.extra_info, p.max_guests_number, p.is_active')
+            ->select(array())
             ->andWhere('p.is_active = :active')
             ->setParameter('active', 1)
             ->getQuery();

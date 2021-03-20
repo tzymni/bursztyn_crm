@@ -5,6 +5,7 @@ namespace App\Service;
 use App\Entity\Events;
 use App\Entity\Users;
 use App\Lib\EventCreator;
+use App\Service\interfaces\DecorateEventInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use App\EventListener\ReservationAfterEventSave;
 
@@ -14,7 +15,7 @@ use App\EventListener\ReservationAfterEventSave;
  *
  * @author Tomasz Zymni <tomasz.zymni@gmail.com>
  */
-class EventsService
+class EventsService implements DecorateEventInterface
 {
 
     const RESERVATION_EVENT = 'reservation';
@@ -34,6 +35,28 @@ class EventsService
     public function __construct(EntityManagerInterface $em)
     {
         $this->em = $em;
+    }
+
+    /**
+     * @param int $eventId
+     * @return array
+     */
+    public function getEventDetails(int $eventId): array
+    {
+        $event = $this->getActiveEventById($eventId);
+
+        if ($event instanceof Events) {
+
+            $data = [
+                'id' => $event->getId(),
+                'name' => $event->getTitle(),
+                'date' => $event->getDateFrom(),
+            ];
+        } else {
+            $data = array();
+        }
+
+        return $data;
     }
 
     /**

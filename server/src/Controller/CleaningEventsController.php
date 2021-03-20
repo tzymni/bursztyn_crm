@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Entity\CottagesCleaningEvents;
-use App\Entity\Events;
 use App\Service\CottagesCleaningEventsService;
 use App\Service\EventsService;
 use App\Service\ResponseErrorDecoratorService;
@@ -20,44 +19,6 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class CleaningEventsController extends AbstractController implements TokenAuthenticatedController
 {
-
-    /**
-     * Get cleaning event from Events table
-     *
-     * @Route ("/cleaning/{id}", methods={"GET"})
-     * @param Request $request
-     * @param EventsService $eventsService
-     * @param ResponseErrorDecoratorService $errorDecorator
-     * @return JsonResponse
-     */
-    public function getCleaningEvent(
-        Request $request,
-        EventsService $eventsService,
-        ResponseErrorDecoratorService $errorDecorator
-    ) {
-
-        $id = $request->get('id');
-
-        if (!empty($id)) {
-            $eventResponse = $eventsService->getActiveEventById($id);
-        } else {
-            $eventResponse = 'Id not found!';
-        }
-        if ($eventResponse instanceof Events) {
-            $status = JsonResponse::HTTP_OK;
-            $data = [
-                'id' => $eventResponse->getId(),
-                'name' => $eventResponse->getTitle(),
-                'date' => $eventResponse->getDateFrom(),
-            ];
-        } else {
-            $status = JsonResponse::HTTP_BAD_REQUEST;
-            $data = $errorDecorator->decorateError($status, $eventResponse);
-        }
-
-        return new JsonResponse($data, $status);
-    }
-
     /**
      * @Route ("/cleaning/details/{id}", methods={"GET"})
      * @param Request $request
@@ -69,7 +30,7 @@ class CleaningEventsController extends AbstractController implements TokenAuthen
         Request $request,
         CottagesCleaningEventsService $cottagesCleaningEventsService,
         ResponseErrorDecoratorService $errorDecorator
-    ) {
+    ): JsonResponse {
         $id = $request->get('id');
 
         try {
@@ -95,7 +56,7 @@ class CleaningEventsController extends AbstractController implements TokenAuthen
     public function getAllCleaningEventsWithoutGrouping(
         CottagesCleaningEventsService $cottagesCleaningEventsService,
         ResponseErrorDecoratorService $errorDecorator
-    ) {
+    ): JsonResponse {
 
         try {
             $cleaningEvents = $cottagesCleaningEventsService->getAllCottagesCleaningEvents();
@@ -136,7 +97,7 @@ class CleaningEventsController extends AbstractController implements TokenAuthen
         EventsService $eventsService,
         CottagesCleaningEventsService $cottagesCleaningEventsService,
         ResponseErrorDecoratorService $errorDecorator
-    ) {
+    ): JsonResponse {
         try {
             $cleaningEvents = $eventsService->getAllFutureActiveEventsByType(CottagesCleaningEvents::EVENT_TYPE);
             $response = array();
@@ -154,7 +115,6 @@ class CleaningEventsController extends AbstractController implements TokenAuthen
             $status = JsonResponse::HTTP_OK;
 
         } catch (\Exception $exception) {
-            echo $exception->getMessage();
             $status = JsonResponse::HTTP_BAD_REQUEST;
             $response = $errorDecorator->decorateError($status, 'Something goes wrong!');
         }

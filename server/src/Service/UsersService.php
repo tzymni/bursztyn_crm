@@ -185,4 +185,8 @@ class UsersService
         }
     }
 
+    public function getActiveUsers()
+    {
+        return $this->em->getRepository(Users::class)->findAllActiveUsers();
+    }
 }

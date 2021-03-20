@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Entity\Cottages;
+use App\Repository\CottagesRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
@@ -161,12 +162,15 @@ class CottageService
      */
     public function getActiveCottages()
     {
-        $cottage = $this->em->getRepository('App:Cottages')->findBy(
-            array("is_active" => true)
-        );
 
-        if (isset($cottage) && isset($cottage[0])) {
-            return $cottage;
+        $cottageRepository = $this->em->getRepository(Cottages::class);
+
+        if ($cottageRepository instanceof CottagesRepository) {
+            $cottages = $cottageRepository->findAllActive();
+        }
+
+        if (isset($cottages) && isset($cottages[0])) {
+            return $cottages;
         } else {
             return sprintf("Can't find active cottages!");
         }
