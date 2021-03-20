@@ -2,13 +2,13 @@
 
 namespace App\Tests\Controller;
 
-use App\Entity\User;
+use App\Entity\Users;
 use App\Tests\BaseTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Class UserControllerTest
- * Unit tests for UserController.
+ * Unit tests for UsersController.
  *
  * @author Tomasz Zymni <tomasz.zymni@gmail.com>
  *ls
@@ -155,7 +155,7 @@ class UserControllerTest extends BaseTestCase
         $this->assertNotEmpty($responseData);
         $this->assertEquals(
             $responseData['error']['message'],
-            sprintf('User with email %s already exist!', $testEmail)
+            sprintf('Users with email %s already exist!', $testEmail)
         );
     }
 
@@ -210,7 +210,7 @@ class UserControllerTest extends BaseTestCase
     {
         $container = $this->getPrivateContainer();
         $userService = $container
-            ->get('App\Service\UserService');
+            ->get('App\Service\UsersService');
 
         $data = array(
             'id' => $this->testUser->getId(),
@@ -247,7 +247,7 @@ class UserControllerTest extends BaseTestCase
     {
         $container = $this->getPrivateContainer();
         $userService = $container
-            ->get('App\Service\UserService');
+            ->get('App\Service\UsersService');
 
         $data = array(
             'id' => $this->testUser->getId(),
@@ -310,7 +310,7 @@ class UserControllerTest extends BaseTestCase
     {
         $container = $this->getPrivateContainer();
         $userService = $container
-            ->get('App\Service\UserService');
+            ->get('App\Service\UsersService');
 
         $token = $this->getValidToken();
         $response = $this->client->delete(

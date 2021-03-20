@@ -3,7 +3,7 @@
 namespace App\Service;
 
 use App\Entity\Events;
-use App\Entity\User;
+use App\Entity\Users;
 use App\Lib\EventCreator;
 use Doctrine\ORM\EntityManagerInterface;
 use App\EventListener\ReservationAfterEventSave;
@@ -51,11 +51,11 @@ class EventsService
         $data['is_active'] = isset($data['is_active']) ? $data['is_active'] : true;
         $data['date_from'] = !empty($data['date_from']) ? $data['date_from'] : null;
         $data['date_to'] = !empty($data['date_to']) ? $data['date_to'] : null;
-        $userService = new UserService($this->em);
+        $userService = new UsersService($this->em);
 
         $userResponse = $userService->getActiveUserById($createdById);
 
-        if (!$userResponse instanceof User) {
+        if (!$userResponse instanceof Users) {
             throw new \Exception($userResponse);
         }
 

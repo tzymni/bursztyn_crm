@@ -19,32 +19,4 @@ class CottagesCleaningEventsRepository extends ServiceEntityRepository
         parent::__construct($registry, CottagesCleaningEvents::class);
     }
 
-    // /**
-    //  * @return CottagesCleaningEvents[] Returns an array of CottagesCleaningEvents objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('c')
-            ->andWhere('c.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('c.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?CottagesCleaningEvents
-    {
-        return $this->createQueryBuilder('c')
-            ->andWhere('c.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }

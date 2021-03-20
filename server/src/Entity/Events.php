@@ -39,7 +39,7 @@ class Events
     private $is_active;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="events", cascade={"persist", "remove"})
+     * @ORM\ManyToOne(targetEntity="Users", inversedBy="events", cascade={"persist", "remove"})
      *
      */
     private $created_by;
@@ -128,12 +128,12 @@ class Events
         return $this;
     }
 
-    public function getCreatedBy(): ?User
+    public function getCreatedBy(): ?Users
     {
         return $this->created_by;
     }
 
-    public function setCreatedBy(?User $created_by): self
+    public function setCreatedBy(?Users $created_by): self
     {
         $this->created_by = $created_by;
 

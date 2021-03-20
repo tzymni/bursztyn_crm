@@ -6,7 +6,7 @@ use App\Entity\Cottages;
 use App\Entity\Events;
 use App\Entity\FootballLeague;
 use App\Entity\FootballTeam;
-use App\Entity\User;
+use App\Entity\Users;
 use App\Service\EventsService;
 use GuzzleHttp\Client;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -50,12 +50,12 @@ class BaseTestCase extends KernelTestCase
     protected $em;
 
     /**
-     * @var User
+     * @var Users
      */
     protected $testUser;
 
     /**
-     * @var User
+     * @var Users
      */
     protected $testInactiveUser;
 
@@ -143,7 +143,7 @@ class BaseTestCase extends KernelTestCase
             ->andWhere('p.guest_first_name = :guest_first_name')
             ->setParameter('guest_first_name', self::TEST_USER_EMAIL)
             ->leftJoin('p.event', 'Events')
-            ->leftJoin('Events.created_by', 'User')
+            ->leftJoin('Events.created_by', 'Users')
             ->getQuery()->execute();
 
         $reservationIds = array();
@@ -164,11 +164,11 @@ class BaseTestCase extends KernelTestCase
     {
         $events = $this->em->createQueryBuilder('p')
             ->select(
-                'Event.id as event_id, Event.date_from, User.id as user_id, User.email, Event.date_to'
+                'Event.id as event_id, Event.date_from, Users.id as user_id, Users.email, Event.date_to'
             )
             ->from('App:Events', 'Event')
-            ->leftJoin('Event.created_by', 'User')
-            ->andWhere('User.email = :email')
+            ->leftJoin('Event.created_by', 'Users')
+            ->andWhere('Users.email = :email')
             ->setParameter('email', self::TEST_USER_EMAIL)
             ->getQuery()->execute();
 
@@ -255,7 +255,7 @@ class BaseTestCase extends KernelTestCase
 
         $testEmailsString = "'" . implode("','", $testEmails) . "'";
         $query = $em->createQuery(
-            "DELETE App:User u WHERE u.email IN ({$testEmailsString})  OR u.email LIKE '%@test-create.pl'"
+            "DELETE App:Users u WHERE u.email IN ({$testEmailsString})  OR u.email LIKE '%@test-create.pl'"
         );
         $query->execute();
         parent::tearDown();
@@ -300,7 +300,7 @@ class BaseTestCase extends KernelTestCase
     {
         $container = $this->getPrivateContainer();
         $userService = $container
-            ->get('App\Service\UserService');
+            ->get('App\Service\UsersService');
 
         if ($email == self::TEST_INACTIVE_USER_EMAIL) {
             $conditions = [
@@ -338,10 +338,10 @@ class BaseTestCase extends KernelTestCase
     /**
      * Create valid JWT token for given (if any) or this user
      *
-     * @param User|null $user
+     * @param Users|null $user
      * @return string Valid JWT token to use for REST API endpoints authentication
      */
-    protected function getValidToken(User $user = null)
+    protected function getValidToken(Users $user = null)
     {
         if (!$user) {
             $user = $this->testUser;

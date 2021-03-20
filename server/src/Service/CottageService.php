@@ -83,10 +83,10 @@ class CottageService
     /**
      * @param $data
      *    $data = [
-     *      'name' => (string) User name. Required.
-     *      'password' => (string) User (plain) password. Required.
+     *      'name' => (string) Users name. Required.
+     *      'password' => (string) Users (plain) password. Required.
      *    ]
-     * @return User|string User entity or string in case of error
+     * @return Users|string Users entity or string in case of error
      */
     public function createCottage($data)
     {

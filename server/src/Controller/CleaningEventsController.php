@@ -6,17 +6,24 @@ use App\Entity\CottagesCleaningEvents;
 use App\Entity\Events;
 use App\Service\CottagesCleaningEventsService;
 use App\Service\EventsService;
-use App\Service\ReservationService;
 use App\Service\ResponseErrorDecoratorService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * Controller for handling requests related to cleaning events.
+ *
+ * @package App\Controller
+ * @author Tomasz Zymni <tomasz.zymni@gmail.com>
+ */
 class CleaningEventsController extends AbstractController implements TokenAuthenticatedController
 {
 
     /**
+     * Get cleaning event from Events table
+     *
      * @Route ("/cleaning/{id}", methods={"GET"})
      * @param Request $request
      * @param EventsService $eventsService
@@ -140,7 +147,7 @@ class CleaningEventsController extends AbstractController implements TokenAuthen
                 $response[$x]['details'] = $details;
                 $response[$x]['number_of_cottages'] = count($details);
                 $response[$x]['title'] = $cleanEvent->getTitle();
-                $response[$x]['date_from'] = substr($cleanEvent->getDateFrom(), 0 ,10);
+                $response[$x]['date_from'] = substr($cleanEvent->getDateFrom(), 0, 10);
                 $x++;
             }
 

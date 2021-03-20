@@ -2,37 +2,40 @@
 
 namespace App\Controller;
 
-use App\Entity\User;
+use App\Entity\Users;
 use App\Service\AuthService;
 use App\Service\ResponseErrorDecoratorService;
-use App\Service\UserService;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use App\Service\UsersService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * Authentication controller.
+ *
+ * @package App\Controller
+ * @author Tomasz Zymni <tomasz.zymni@gmail.com>
+ */
 class AuthController extends AbstractController
 {
     /**
-     * Authenticate user by given credentials
+     * Authenticate user by given credentials and response token.
      *
-     * @Route("/api/authenticate")
-     * @Method("POST")
+     * @Route("/api/authenticate", methods={"POST"})
      * @param Request $request
-     * @param UserService $userService
+     * @param UsersService $userService
      * @param AuthService $authService
      * @param ResponseErrorDecoratorService $errorDecorator
      * @return JsonResponse
      */
     public function issueJWTToken(
         Request $request,
-        UserService $userService,
+        UsersService $userService,
         AuthService $authService,
         ResponseErrorDecoratorService $errorDecorator
     ) {
-    
-	
+
         $email = $request->getUser();
         $plainPassword = $request->getPassword();
 
@@ -41,9 +44,8 @@ class AuthController extends AbstractController
             $data = $errorDecorator->decorateError($status, "Invalid credentials");
         } else {
 
-
             $result = $userService->getUserByEmail($email);
-            if ($result instanceof User) {
+            if ($result instanceof Users) {
                 if (password_verify($plainPassword, $result->getPassword())) {
                     $jwt = $authService->authenticate([
                         'email' => $result->getEmail()
