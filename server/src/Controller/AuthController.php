@@ -34,7 +34,7 @@ class AuthController extends AbstractController
         UsersService $userService,
         AuthService $authService,
         ResponseErrorDecoratorService $errorDecorator
-    ) {
+    ): JsonResponse {
 
         $email = $request->getUser();
         $plainPassword = $request->getPassword();
@@ -48,7 +48,8 @@ class AuthController extends AbstractController
             if ($result instanceof Users) {
                 if (password_verify($plainPassword, $result->getPassword())) {
                     $jwt = $authService->authenticate([
-                        'email' => $result->getEmail()
+                        'email' => $result->getEmail(),
+                        'id' => $result->getId()
                     ]);
 
                     $user = array();

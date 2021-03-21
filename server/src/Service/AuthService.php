@@ -1,24 +1,51 @@
 <?php
 
-
 namespace App\Service;
 
 use Firebase\JWT\JWT;
+use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
+/**
+ * Service to generate/validate token authentication.
+ *
+ * @package App\Service
+ * @author Tomasz Zymni <tomasz.zymni@gmail.com>
+ */
 class AuthService
 {
+
+    /**
+     * Algorithm to generate JWT token.
+     */
+    const JWT_ALGORITHM = 'HS256';
+
+    /**
+     * Validation time of the token in seconds.
+     */
+    const TOKEN_VALIDITY_TIME = 60 * 60 * 24;
+
+    /**
+     * @var
+     */
     private $jwtSecretKey;
+
+    /**
+     * @var RequestStack
+     */
     private $requestStack;
 
-    public function __construct(RequestStack $requestStack, $jwtSecretKey)
+    /**
+     * @var ContainerBagInterface
+     */
+    private $containerBag;
+
+    public function __construct(RequestStack $requestStack, $jwtSecretKey, ContainerBagInterface $containerBag)
     {
         $this->jwtSecretKey = $jwtSecretKey;
         $this->requestStack = $requestStack;
+        $this->containerBag = $containerBag;
     }
-
-    const JWT_ALG = 'HS256';
-    const SECONDS_VALID = 60 * 60 * 24;
 
     /**
      * Generate JWT token based on given user-data
@@ -26,9 +53,9 @@ class AuthService
      * @param array $userData Array which contains relevant user-data to include into JWT payload
      * @return string JWT token required to gain access to restricted rest api methods
      */
-    public function authenticate(array $userData)
+    public function authenticate(array $userData): string
     {
-        return $this->_generateJWT($userData);
+        return $this->generateJWT($userData);
     }
 
     /**
@@ -37,23 +64,21 @@ class AuthService
      * @param array $userData
      * @return string
      */
-    private function _generateJWT(array $userData)
+    private function generateJWT(array $userData): string
     {
-        $issuedAt = time();
-        $secondsValid = self::SECONDS_VALID;
-        $expirationTime = $issuedAt + $secondsValid; // jwt valid for $secondsValid seconds from the issued time
+        $currentTime = time();
+        $secondsValid = self::TOKEN_VALIDITY_TIME;
+        $expirationTime = $currentTime + $secondsValid;
         $payload = array(
-            'sub' => $userData['email'],
+            'sub' => $userData['id'],
             'email' => $userData['email'],
-            'extra_info' => 'DyzioToKrolWszechswiata',
-            'iat' => $issuedAt,
+            'extra_info' => $this->containerBag->get('jst_extra_info'),
+            'iat' => $currentTime,
             'exp' => $expirationTime
         );
         $key = $this->jwtSecretKey;
-        $alg = self::JWT_ALG;
-        $jwt = JWT::encode($payload, $key, $alg);
-
-        return $jwt;
+        $alg = self::JWT_ALGORITHM;
+        return JWT::encode($payload, $key, $alg);
     }
 
     /**
@@ -61,11 +86,11 @@ class AuthService
      *
      * @return boolean true if is authenticated, false otherwise
      */
-    public function isAuthenticated()
+    public function isAuthenticated(): bool
     {
-        $token = $this->_getBearerToken();
+        $token = $this->getBearerToken();
 
-        $decoded_array = $this->_validateJWT($token);
+        $decoded_array = $this->validateJWT($token);
         if (!empty($decoded_array)) {
             // process valid token
             return true;
@@ -75,28 +100,11 @@ class AuthService
     }
 
     /**
-     * Get decoded authentication token for the currently authenticated user
-     *
-     * @return mixed array of decoded jwt claims or false
-     */
-    public function getDecodedAuthToken()
-    {
-        $token = $this->_getBearerToken();
-        $decoded_array = $this->_validateJWT($token);
-
-        if (!empty($decoded_array)) {
-            return $decoded_array;
-        } else {
-            return false;
-        }
-    }
-
-    /**
      * Get access token from header
      *
-     * @return authorization request header information (if exists) or null
+     * @return string authorization request header information (if exists) or null
      */
-    private function _getBearerToken()
+    private function getBearerToken(): ?string
     {
         $request = $this->requestStack->getCurrentRequest();
         $authHeader = $request->headers->get('Authorization');
@@ -116,12 +124,12 @@ class AuthService
      * @param string $token
      * @return array decoded array if is-valid-wt, null otherwise
      */
-    private function _validateJWT($token)
+    private function validateJWT(string $token): ?array
     {
         try {
             $key = $this->jwtSecretKey;
             JWT::$leeway = 60; // $leeway in seconds
-            $decoded = JWT::decode($token, $key, array(self::JWT_ALG));
+            $decoded = JWT::decode($token, $key, array(self::JWT_ALGORITHM));
             $decoded_array = (array)$decoded;
         } catch (\Exception $e) {
             $decoded_array = null;

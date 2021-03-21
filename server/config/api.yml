@@ -1,5 +1,0 @@
-parameters:
-  url_get_all_objects: "https://client8940.idosell.com/api/objects/getAll/21/json"
-  url_get_all_reservations: "https://client8940.idosell.com/api/reservations/get/21/json"
-  login: ""
-  password: ""
