@@ -35,4 +35,25 @@ class EventsRepository extends ServiceEntityRepository
         return $qb->execute();
     }
 
+    /**
+     * Find active event by id.
+     *
+     * @param $id
+     * @return object|string
+     */
+    public function getActiveById($id)
+    {
+        $event = $this->findBy(
+            array("is_active" => true, "id" => $id),
+            array(),
+            array(1)
+        );
+
+        if (isset($event) && isset($event[0])) {
+            return $event[0];
+        } else {
+            return null;
+        }
+    }
+
 }

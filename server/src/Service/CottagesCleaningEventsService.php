@@ -7,6 +7,12 @@ use App\Entity\CottagesCleaningEvents;
 use App\Entity\Events;
 use Doctrine\ORM\EntityManagerInterface;
 
+/**
+ * Class CottagesCleaningEventsService to manage CottagesCleaningEvents records.
+ *
+ * @package App\Service
+ * @author Tomasz Zymni <tomasz.zymni@gmail.com>
+ */
 class CottagesCleaningEventsService
 {
     /**
@@ -26,91 +32,28 @@ class CottagesCleaningEventsService
     }
 
     /**
-     * @param Events $event
-     * @return array|null
-     */
-    public function getCottageCleaningEventsByEvent(Events $event): ?array
-    {
-        $cottageEvent = null;
-
-        $cottageEvents = $this->em->getRepository('App:CottagesCleaningEvents')->findBy(
-            array("event" => $event),
-            array('cottage' => 'ASC')
-        );
-
-        if (isset($cottageEvents) && isset($cottageEvents[0])) {
-            return $cottageEvents;
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * @param Cottages $cottage
-     * @param Events $event
-     * @return object|null
-     */
-    public function findCottageEventByRelations(Cottages $cottage, Events $event)
-    {
-        $cottageEvent = null;
-
-        $cottageEvent = $this->em->getRepository('App:CottagesCleaningEvents')->findBy(
-            array("cottage" => $cottage, "event" => $event),
-            array(),
-            array(1)
-        );
-
-        if (isset($cottageEvent) && isset($cottageEvent[0])) {
-            return $cottageEvent[0];
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * @param Events $event
-     * @return mixed|null
-     */
-    public function countCottagesByEvent(Events $event)
-    {
-        $cottageEvent = null;
-
-        $eventId = $event->getId();
-        $cottageEvent = $this->em->getRepository('App:CottagesCleaningEvents')->createQueryBuilder('p')
-            ->select(
-                'COUNT(p.id) as events_number'
-            )
-            ->andWhere('p.event = :eventId')
-            ->setParameter('eventId', $eventId)
-            ->getQuery()->execute();
-
-        if (isset($cottageEvent) && isset($cottageEvent[0])) {
-
-            return $cottageEvent[0]['events_number'];
-        } else {
-            return null;
-        }
-
-    }
-
-    /**
+     * Create new CottagesCleaningEvents record.
+     *
      * @param Events $event
      * @param Cottages $cottage
      */
-    public function createCottageEventRecord(Events $event, Cottages $cottage)
+    public function createCottageEventRecord(Events $event, Cottages $cottage): Events
     {
 
-        $cottageEvent = $this->findCottageEventByRelations($cottage, $event);
+        $cottagesCleaningEventsRepo = $this->em->getRepository(CottagesCleaningEvents::class);
+        if (method_exists($cottagesCleaningEventsRepo, 'findCottageEventByRelations')) {
+            $cottageEvent = $cottagesCleaningEventsRepo->findCottageEventByRelations($cottage, $event);
+        }
 
         if (empty($cottageEvent)) {
-
             $cottageEvent = new CottagesCleaningEvents();
             $cottageEvent->setCottage($cottage);
             $cottageEvent->setEvent($event);
             $this->em->persist($cottageEvent);
             $this->em->flush();
-
         }
+
+        return $event;
     }
 
     /**
@@ -119,10 +62,10 @@ class CottagesCleaningEventsService
      */
     public function generateCottageCleaningEventDetails($eventId): array
     {
-        $eventsService = new EventsService($this->em);
         $reservationService = new ReservationService($this->em);
-        $event = $eventsService->getActiveEventById($eventId);
-        $cottageCleaningEvents = $this->getCottageCleaningEventsByEvent($event);
+
+        $event = $this->em->getRepository('App:Events')->getActiveById($eventId);
+        $cottageCleaningEvents = $this->em->getRepository(CottagesCleaningEvents::class)->getCottageCleaningEventsByEvent($event);
 
         $details = array();
         foreach ($cottageCleaningEvents as $cottageCleaningEvent) {
@@ -156,18 +99,10 @@ class CottagesCleaningEventsService
      */
     public function getAllCottagesCleaningEvents(): ?array
     {
-
-        $cottageEvent = null;
-
-        $cottageEvents = $this->em->getRepository('App:CottagesCleaningEvents')->findBy(
-            array(),
-            array('cottage' => 'ASC')
-        );
-
-        if (isset($cottageEvents) && isset($cottageEvents[0])) {
-            return $cottageEvents;
-        } else {
-            return null;
+        $cottagesCleaningEventsRepo = $this->em->getRepository(CottagesCleaningEvents::class);
+        if (method_exists($cottagesCleaningEventsRepo, 'getAllCottagesCleaningEvents')) {
+            return $cottages = $cottagesCleaningEventsRepo->getAllCottagesCleaningEvents();
         }
+
     }
 }

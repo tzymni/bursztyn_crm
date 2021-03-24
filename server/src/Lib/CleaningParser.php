@@ -87,10 +87,10 @@ class CleaningParser implements EventParser
 
         $numberOfCottages = null;
         if ($event instanceof Events) {
-            $cleaningCottagesEvent = new CottagesCleaningEventsService($this->em);
-            $numberOfCottages = $cleaningCottagesEvent->countCottagesByEvent($event);
-
-            if ($cleaningCottagesEvent->findCottageEventByRelations($data['cottage'], $event)) {
+            $numberOfCottages = $this->em->getRepository(CottagesCleaningEvents::class)->countCottagesAssignedToEvent($event);
+            $cottageEvent = $this->em->getRepository(CottagesCleaningEvents::class)->findCottageEventByRelations($data['cottage'],
+                $event);
+            if ($cottageEvent) {
                 $cottageWillBeAdded = false;
             }
         }

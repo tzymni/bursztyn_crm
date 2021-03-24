@@ -2,7 +2,6 @@
 
 namespace App\Lib;
 
-use App\Entity\Events;
 use App\Service\CottagesCleaningEventsService;
 
 /**
@@ -16,9 +15,9 @@ class CleaningCreator extends EventCreator
 
     /**
      * @param $data
-     * @return Events|mixed|void
+     * @return mixed|void
      */
-    public function create($data): Events
+    public function create($data)
     {
 
         $data = $this->getEvent()->parseData($data);
