@@ -4,6 +4,7 @@ namespace App\Service;
 use App\Entity\Cottages;
 use App\Entity\Events;
 use App\Entity\Reservations;
+use App\Repository\CottagesRepository;
 use App\Service\interfaces\DecorateEventInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -39,8 +40,11 @@ class ReservationService implements DecorateEventInterface
      */
     public function createReservation(Events $event, array $data, $reservation = null)
     {
-        $cottageService = new CottageService($this->em);
-        $cottageResponse = $cottageService->getActiveCottageById($data['cottage_id']);
+        $cottageRepository = $this->em->getRepository(Cottages::class);
+        $cottageResponse = null;
+        if ($cottageRepository instanceof CottagesRepository) {
+            $cottageResponse = $cottageRepository->findActiveById($data['cottage_id']);
+        }
 
         if (!$cottageResponse instanceof Cottages) {
             throw new \Exception($cottageResponse);
@@ -105,8 +109,11 @@ class ReservationService implements DecorateEventInterface
      */
     public function checkCottageAvailability($cottageId, $dateFrom, $dateTo, $eventId = null): bool
     {
-        $cottageService = new CottageService($this->em);
-        $cottageResponse = $cottageService->getActiveCottageById($cottageId);
+        $cottageRepository = $this->em->getRepository(Cottages::class);
+        $cottageResponse = null;
+        if ($cottageRepository instanceof CottagesRepository) {
+            $cottageResponse = $cottageRepository->findActiveById($cottageId);
+        }
 
         if (!$cottageResponse instanceof Cottages) {
             throw new \Exception($cottageResponse);

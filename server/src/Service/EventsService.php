@@ -43,7 +43,7 @@ class EventsService implements DecorateEventInterface
      */
     public function getEventDetails(int $eventId): array
     {
-        $event = $this->em->getRepository('App:Events')->getActiveById($eventId);
+        $event = $this->em->getRepository('App:Events')->findActiveById($eventId);
 
         if ($event instanceof Events) {
 
@@ -94,7 +94,7 @@ class EventsService implements DecorateEventInterface
      */
     public function getActiveEventById($id)
     {
-        $event = $this->em->getRepository('App:Events')->getActiveById($id);
+        $event = $this->em->getRepository('App:Events')->findActiveById($id);
 
         if (empty($event)) {
             return sprintf("Can't find event!");

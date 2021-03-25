@@ -2,8 +2,10 @@
 
 namespace App\Command;
 
+use App\Entity\Cottages;
 use App\Lib\CleaningCreator;
 use App\Lib\ReservationCreator;
+use App\Repository\CottagesRepository;
 use App\Service\CottageService;
 use App\Service\CottagesFromApiParserService;
 use App\Service\EventsService;
@@ -103,6 +105,7 @@ class SynchronizeAPIData extends Command
             }
 
         } catch (\Exception $exception) {
+            print_r($exception);
             $this->logger->critical($exception->getMessage());
         }
 
@@ -120,7 +123,6 @@ class SynchronizeAPIData extends Command
         $reservationsFromAPI = json_decode($reservationsFromAPI, true);
 
         $reservations = $reservationsFromAPI['result']['reservations'];
-        $cottageService = new CottageService($this->em);
         $eventService = new EventsService($this->em);
         $reservationService = new ReservationService($this->em);
         $reservationsFromAPIParser = new ReservationsFromApiParserService();
@@ -137,7 +139,7 @@ class SynchronizeAPIData extends Command
 
             foreach ($itemsToReservation as $item) {
 
-                $reservationData = $reservationsFromAPIParser->parseApiDataToSystemFormat($cottageService, $item,
+                $reservationData = $reservationsFromAPIParser->parseApiDataToSystemFormat($this->em, $item,
                     $reservation, $client);
 
                 if (!is_array($reservationData)) {
@@ -187,7 +189,11 @@ class SynchronizeAPIData extends Command
         foreach ($parsedCottages as $parsedCottage) {
             $externalId = $parsedCottage['external_id'];
 
-            $cottage = $cottageService->getCottageByExternalId($externalId);
+            $cottageRepository = $this->em->getRepository(Cottages::class);
+            $cottage = null;
+            if ($cottageRepository instanceof CottagesRepository) {
+                $cottage = $cottageRepository->findByExternalId($externalId);
+            }
 
             if (empty($cottage)) {
                 $parsedCottage['color'] = $cottageService->getUnusedColor();
@@ -207,8 +213,12 @@ class SynchronizeAPIData extends Command
 
             foreach ($externalCottagesIds as $externalCottagesId) {
 
-                $cottage = $cottageService->getCottageById($externalCottagesId);
-                $cottageService->deleteCottage($cottage);
+                $cottagesRepository = $this->em->getRepository(Cottages::class);
+
+                if ($cottagesRepository instanceof CottagesRepository) {
+                    $cottage = $cottagesRepository->findByExternalId($externalCottagesId);
+                    $cottageService->deleteCottage($cottage);
+                }
 
             }
         }

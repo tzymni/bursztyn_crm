@@ -41,7 +41,7 @@ class EventsRepository extends ServiceEntityRepository
      * @param $id
      * @return object|string
      */
-    public function getActiveById($id)
+    public function findActiveById($id)
     {
         $event = $this->findBy(
             array("is_active" => true, "id" => $id),

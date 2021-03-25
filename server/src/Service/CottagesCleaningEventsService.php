@@ -36,6 +36,7 @@ class CottagesCleaningEventsService
      *
      * @param Events $event
      * @param Cottages $cottage
+     * @return Events
      */
     public function createCottageEventRecord(Events $event, Cottages $cottage): Events
     {
@@ -64,7 +65,7 @@ class CottagesCleaningEventsService
     {
         $reservationService = new ReservationService($this->em);
 
-        $event = $this->em->getRepository('App:Events')->getActiveById($eventId);
+        $event = $this->em->getRepository('App:Events')->findActiveById($eventId);
         $cottageCleaningEvents = $this->em->getRepository(CottagesCleaningEvents::class)->getCottageCleaningEventsByEvent($event);
 
         $details = array();

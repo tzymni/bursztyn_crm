@@ -3,6 +3,10 @@
 namespace App\Service;
 
 
+use App\Entity\Cottages;
+use App\Repository\CottagesRepository;
+use Doctrine\ORM\EntityManagerInterface;
+
 /**
  *
  * @author Tomasz Zymni <tomasz.zymni@gmail.com>
@@ -13,14 +17,14 @@ class ReservationsFromApiParserService
     /**
      * Parse data from API to format used in the system to proparly save reservation in the database.
      *
-     * @param CottageService $cottageService
+     * @param EntityManagerInterface $em
      * @param array $item
-     * @param array|null $client
      * @param array $reservation
+     * @param array|null $client
      * @return array|null
      */
     public function parseApiDataToSystemFormat(
-        CottageService $cottageService,
+        EntityManagerInterface $em,
         array $item,
         array $reservation,
         array $client = null
@@ -28,6 +32,7 @@ class ReservationsFromApiParserService
         $reservationEvent = array();
 
         if (!isset($reservation['id'])) {
+            echo "AA123";
             return null;
 
         }
@@ -40,7 +45,11 @@ class ReservationsFromApiParserService
         $reservationEvent['date_from'] = $dateFrom;
         $reservationEvent['date_to'] = $dateTo;
 
-        $cottage = $cottageService->getCottageByExternalId($item['objectItemId']);
+        $cottageRepository = $em->getRepository(Cottages::class);
+        $cottage = null;
+        if ($cottageRepository instanceof CottagesRepository) {
+            $cottage = $cottageRepository->findByExternalId($item['objectItemId']);
+        }
 
         if (empty($cottage)) {
             return null;
