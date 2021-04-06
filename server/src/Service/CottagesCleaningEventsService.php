@@ -58,6 +58,8 @@ class CottagesCleaningEventsService
     }
 
     /**
+     * Create details about cleaning event (which cottages, when next reservation, how long etc).
+     *
      * @param $eventId
      * @return array
      */
@@ -73,7 +75,7 @@ class CottagesCleaningEventsService
             $tmp = array();
             $tmp['cottage_id'] = $cottageCleaningEvent->getCottage()->getId();
             $tmp['cottage_name'] = $cottageCleaningEvent->getCottage()->getName();
-            $nextReservation = $reservationService->getNextActiveReservationByCottage($cottageCleaningEvent->getCottage(),
+            $nextReservation = $reservationService->getNextActiveReservationInCottage($cottageCleaningEvent->getCottage(),
                 $event->getDateTo());
             $periodInDays = 0;
             if (!empty($nextReservation)) {
