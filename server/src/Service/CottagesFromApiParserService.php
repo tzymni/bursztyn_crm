@@ -5,14 +5,22 @@ namespace App\Service;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
+ * Service to parse data about cottages downloaded from API to format used in the system.
  *
  * @author Tomasz Zymni <tomasz.zymni@gmail.com>
  **/
 class CottagesFromApiParserService
 {
 
+    /**
+     * @var EntityManagerInterface
+     */
     public $em;
 
+    /**
+     * CottagesFromApiParserService constructor.
+     * @param EntityManagerInterface $entityManager
+     */
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->em = $entityManager;

@@ -4,6 +4,7 @@ namespace App\Lib;
 
 use App\Entity\CottagesCleaningEvents;
 use App\Entity\Events;
+use App\Repository\EventsRepository;
 use App\Service\CottagesCleaningEventsService;
 use App\Service\EventsService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -42,8 +43,13 @@ class CleaningParser implements EventParser
         $data['is_active'] = true;
         $data['date_from'] = $data['date_to'];
         $data['date_to'] = $data['date_from'];
-        $eventService = new EventsService($this->em);
-        $event = $eventService->getActiveEventByDateAndType($data['type'], $data['date_from'], $data['date_to']);
+
+        $repository = $this->em->getRepository('App:Events');
+
+        $event = null;
+        if ($repository instanceof EventsRepository) {
+            $event = $repository->findActiveEventByDateAndType($data['type'], $data['date_from'], $data['date_to']);
+        }
 
         if ($event instanceof Events) {
             $data['event'] = $event;

@@ -115,8 +115,10 @@ class CleaningEventsController extends AbstractController implements TokenAuthen
             $status = JsonResponse::HTTP_OK;
 
         } catch (\Exception $exception) {
+            echo $exception->getMessage();
+            die();
             $status = JsonResponse::HTTP_BAD_REQUEST;
-            $response = $errorDecorator->decorateError($status, 'Something goes wrong!');
+            $response = $errorDecorator->decorateError($status, $exception->getMessage());
         }
         return new JsonResponse($response, $status);
 

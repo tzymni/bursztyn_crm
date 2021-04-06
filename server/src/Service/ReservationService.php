@@ -207,9 +207,9 @@ class ReservationService implements DecorateEventInterface
      * Get ID of cottage by external_id.
      *
      * @param $externalId
-     * @return Cottages|null
+     * @return object|null
      */
-    public function getReservationByExternalId($externalId)
+    public function getReservationByExternalId($externalId): ?object
     {
 
         $reservation = null;

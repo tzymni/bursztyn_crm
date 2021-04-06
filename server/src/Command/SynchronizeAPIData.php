@@ -157,8 +157,11 @@ class SynchronizeAPIData extends Command
                     $this->em->beginTransaction();
                     $eventService->createEvent(new ReservationCreator($this->em), $reservationData);
 
-                    // add cleaning event
-                    $eventService->createEvent(new CleaningCreator($this->em), $reservationData);
+                    // add cleaning event if reservation is active
+                    if ($reservationData['is_active'] === true) {
+                        $eventService->createEvent(new CleaningCreator($this->em), $reservationData);
+                    }
+
                     $this->em->commit();
 
                 } catch (\Exception $exception) {

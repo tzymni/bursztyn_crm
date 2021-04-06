@@ -14,25 +14,32 @@ use Doctrine\Common\Persistence\ManagerRegistry;
  */
 class EventsRepository extends ServiceEntityRepository
 {
+
+    /**
+     * EventsRepository constructor.
+     * @param ManagerRegistry $registry
+     */
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Events::class);
     }
 
     /**
-     * Find all active cottages/
+     * Find all active cottages.
      *
+     * @param null $type
      * @return array
      */
-    public function findAllActive(): array
+    public function findActiveEvents($type = null): array
     {
-        $qb = $this->createQueryBuilder('p')
-            ->select('p.id,p.date_from_unix_utc, p.date_to_unix_utc, p.title, p.is_active, p.type')
-            ->andWhere('p.is_active = :active')
-            ->setParameter('active', true)
-            ->getQuery();
+        if (empty($type) || $type == 'ALL') {
+            $conditions = array("is_active" => true);
 
-        return $qb->execute();
+        } else {
+            $conditions = array("is_active" => true, "type" => $type);
+        }
+
+        return $this->findBy($conditions, array());
     }
 
     /**
@@ -56,4 +63,56 @@ class EventsRepository extends ServiceEntityRepository
         }
     }
 
+    /**
+     * Find active event by date and type.
+     *
+     * @param $type
+     * @param $dateFrom
+     * @param $dateTo
+     * @return object|string
+     */
+    public function findActiveEventByDateAndType($type, $dateFrom, $dateTo)
+    {
+        $event = $this->findBy(
+            array("is_active" => true, "type" => $type, "date_from" => $dateFrom, "date_to" => $dateTo),
+            array(),
+            array(1)
+        );
+
+        if (isset($event) && isset($event[0])) {
+            return $event[0];
+        } else {
+            return sprintf("Can't find event!");
+        }
+    }
+
+    /**
+     * Find active events with date_from >= now.
+     *
+     * @param $type
+     * @return int|mixed|string|null
+     */
+    public function findActiveNextEventsByType($type)
+    {
+
+        $dateFrom = gmdate("Y-m-d 00:00:00");
+
+        $query = $this->createQueryBuilder('e')
+            ->select(array())
+            ->where('e.is_active = :isActive')
+            ->andWhere('e.type = :type')
+            ->andWhere('e.date_from >= :dateFrom')
+            ->orderBy('e.date_from ', 'ASC')
+            ->setParameter('isActive', true)
+            ->setParameter('type', $type)
+            ->setParameter('dateFrom', $dateFrom);
+
+        $events = $query->getQuery()->getResult();
+
+        if (isset($events) && isset($events[0])) {
+            return $events;
+        } else {
+            return null;
+        }
+    }
 }

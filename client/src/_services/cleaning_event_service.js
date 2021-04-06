@@ -55,7 +55,7 @@ function getCleaningEvent(id) {
     var token = sessionStorage.getItem("token");
     var AuthStr = "Bearer ".concat(token);
     return axios
-        .get("http://localhost:8000/event/" + id + "/type/cleaning" , {
+        .get("http://localhost:8000/event/" + id + "/type/CLEANING" , {
             headers: {Authorization: AuthStr},
         })
         .then(function (response) {

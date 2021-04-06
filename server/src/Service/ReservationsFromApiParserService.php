@@ -2,8 +2,8 @@
 
 namespace App\Service;
 
-
 use App\Entity\Cottages;
+use App\Entity\Reservations;
 use App\Repository\CottagesRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -32,7 +32,6 @@ class ReservationsFromApiParserService
         $reservationEvent = array();
 
         if (!isset($reservation['id'])) {
-            echo "AA123";
             return null;
 
         }
@@ -73,11 +72,13 @@ class ReservationsFromApiParserService
         $reservationEvent['advance_payment'] = true;
         $reservationEvent['status'] = $reservationDetails['status'];
         $reservationEvent['date_add'] = $reservationDetails['dateAdd'];
-        $reservationEvent['type'] = EventsService::RESERVATION_EVENT;
+        $reservationEvent['type'] = Reservations::EVENT_TYPE;
         $reservationEvent['extra_info'] = $reservationDetails['internalNote'];
 
         if ($reservationEvent['status'] == 'canceled') {
             $reservationEvent['is_active'] = false;
+        } else {
+            $reservationEvent['is_active'] = true;
         }
 
         return $reservationEvent;

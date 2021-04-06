@@ -7,6 +7,7 @@ use App\Entity\Reservations;
 use App\Service\CottageService;
 use App\Service\ReservationService;
 use App\Service\ResponseErrorDecoratorService;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -74,7 +75,7 @@ class ReservationsController extends AbstractController
             }
 
             $status = JsonResponse::HTTP_OK;
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             $status = JsonResponse::HTTP_BAD_REQUEST;
             $responseData = $errorDecorator->decorateError($status, $exception->getMessage());
         }
@@ -90,7 +91,7 @@ class ReservationsController extends AbstractController
      * @param ReservationService $reservationService
      * @param CottageService $cottageService
      * @return JsonResponse
-     * @throws \Exception
+     * @throws Exception
      */
     public function checkCottagesAvailabilityForReservation(
         ResponseErrorDecoratorService $errorDecorator,

@@ -76,7 +76,7 @@ function createReservation(data) {
     let user_id = user.id;
     data.user_id = user_id;
 
-    return axios.post('http://localhost:8000/event/reservation', data, {headers: {Authorization: AuthStr}})
+    return axios.post('http://localhost:8000/event/RESERVATION', data, {headers: {Authorization: AuthStr}})
         .then(function (response) {
             return response.data;
         })
@@ -105,7 +105,7 @@ function updateReservation(data) {
     data.user_id = user_id;
 
     return axios
-        .put("http://localhost:8000/event/reservation/" + data.id, data, {
+        .put("http://localhost:8000/event/RESERVATION/" + data.id, data, {
             headers: {Authorization: AuthStr},
         })
         .then(function (response) {
@@ -127,7 +127,7 @@ function getReservation(eventId) {
     var token = sessionStorage.getItem("token");
     var AuthStr = "Bearer ".concat(token);
     return axios
-        .get("http://localhost:8000/event/" + eventId + "/type/reservation", {
+        .get("http://localhost:8000/event/" + eventId + "/type/RESERVATION", {
             headers: {Authorization: AuthStr},
         })
         .then(function (response) {

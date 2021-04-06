@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\CottagesCleaningEvents;
 use App\Entity\Events;
+use App\Entity\Reservations;
 use App\Lib\EventDecorator;
 use App\Service\EventsService;
 use App\Service\ReservationService;
@@ -98,11 +99,11 @@ class EventsController extends AbstractController implements TokenAuthenticatedC
             $eventDecorator = new EventDecorator($event);
             $eventType = null;
             switch ($type) {
-                case EventsService::RESERVATION_EVENT:
+                case Reservations::EVENT_TYPE;
                     $eventType = $reservationService;
                     break;
 
-                case EventsService::CLEANING_EVENT:
+                case CottagesCleaningEvents::EVENT_TYPE:
                     $eventType = $eventsService;
                     break;
             }

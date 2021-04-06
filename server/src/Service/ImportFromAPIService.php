@@ -4,6 +4,7 @@ namespace App\Service;
 
 use App\Service\interfaces\DecorateEventInterface;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 
@@ -75,18 +76,12 @@ class ImportFromAPIService implements DecorateEventInterface
 
     }
 
-    public function getEventDetails(int $eventId)
-    {
-        // TODO: Implement getEventDetails() method.
-    }
-
     /**
      * Import cottages from API and return them in JSON format.
      *
-     * @return string
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws GuzzleException
      */
-    public function getCottagesFromApi(): string
+    public function getCottagesFromApi()
     {
         $this->logger->info("Started importing");
 
@@ -142,7 +137,7 @@ class ImportFromAPIService implements DecorateEventInterface
      * Import reservations from API.
      *
      * @return string
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws GuzzleException
      */
     public function getReservationsFromApi(): string
     {
@@ -165,5 +160,10 @@ class ImportFromAPIService implements DecorateEventInterface
             echo $exception->getMessage();
         }
 
+    }
+
+    public function getEventDetails(int $eventId)
+    {
+        // TODO: Implement getEventDetails() method.
     }
 }

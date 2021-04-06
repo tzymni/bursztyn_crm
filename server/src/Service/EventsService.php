@@ -5,21 +5,20 @@ namespace App\Service;
 use App\Entity\Events;
 use App\Entity\Users;
 use App\Lib\EventCreator;
+use App\Repository\EventsRepository;
 use App\Service\interfaces\DecorateEventInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use App\EventListener\ReservationAfterEventSave;
+use Exception;
 
 /**
  * Class EventsService
- * @package App\Service
  *
+ * @package App\Service
  * @author Tomasz Zymni <tomasz.zymni@gmail.com>
  */
 class EventsService implements DecorateEventInterface
 {
-
-    const RESERVATION_EVENT = 'reservation';
-    const CLEANING_EVENT = 'cleaning';
 
     /**
      * EntityManager.
@@ -38,12 +37,16 @@ class EventsService implements DecorateEventInterface
     }
 
     /**
+     * Get more information about the event.
+     *
+     *
      * @param int $eventId
      * @return array
      */
     public function getEventDetails(int $eventId): array
     {
-        $event = $this->em->getRepository('App:Events')->findActiveById($eventId);
+
+        $event = $this->getActiveEventById($eventId);
 
         if ($event instanceof Events) {
 
@@ -65,7 +68,7 @@ class EventsService implements DecorateEventInterface
      * @param EventCreator $eventCreator
      * @param $data
      * @return Events|string
-     * @throws \Exception
+     * @throws Exception
      */
     public function createEvent(EventCreator $eventCreator, $data)
     {
@@ -79,7 +82,7 @@ class EventsService implements DecorateEventInterface
         $userResponse = $userService->getActiveUserById($createdById);
 
         if (!$userResponse instanceof Users) {
-            throw new \Exception($userResponse);
+            throw new Exception($userResponse);
         }
 
         $data['user_id'] = $userResponse;
@@ -94,7 +97,13 @@ class EventsService implements DecorateEventInterface
      */
     public function getActiveEventById($id)
     {
-        $event = $this->em->getRepository('App:Events')->findActiveById($id);
+
+        $repository = $this->em->getRepository('App:Events');
+
+        $event = null;
+        if ($repository instanceof EventsRepository) {
+            $event = $repository->findActiveById($id);
+        }
 
         if (empty($event)) {
             return sprintf("Can't find event!");
@@ -104,48 +113,21 @@ class EventsService implements DecorateEventInterface
     }
 
     /**
+     * Get all future active events.
+     *
      * @param $type
-     * @param $dateFrom
-     * @param $dateTo
-     * @return object|string
-     */
-    public function getActiveEventByDateAndType($type, $dateFrom, $dateTo)
-    {
-        $event = $this->em->getRepository('App:Events')->findBy(
-            array("is_active" => true, "type" => $type, "date_from" => $dateFrom, "date_to" => $dateTo),
-            array(),
-            array(1)
-        );
-
-        if (isset($event) && isset($event[0])) {
-            return $event[0];
-        } else {
-            return sprintf("Can't find event!");
-        }
-    }
-
-    /**
-     * @param $type
-     * @param $dateFrom
      * @return object|string
      */
     public function getAllFutureActiveEventsByType($type)
     {
-        $dateFrom = gmdate("Y-m-d 00:00:00");
-        $query = $this->em->createQueryBuilder()
-            ->select(array('e'))
-            ->from('App:Events', 'e')
-            ->where('e.is_active = :isActive')
-            ->andWhere('e.type = :type')
-            ->andWhere('e.date_from >= :dateFrom')
-            ->orderBy('e.date_from ', 'ASC')
-            ->setParameter('isActive', true)
-            ->setParameter('type', $type)
-            ->setParameter('dateFrom', $dateFrom);
+        $events = null;
+        $repository = $this->em->getRepository('App:Events');
 
-        $events = $query->getQuery()->getResult();
+        if ($repository instanceof EventsRepository) {
+                $events = $repository->findActiveNextEventsByType($type);
+        }
 
-        if (isset($events) && isset($events[0])) {
+        if (!empty($events)) {
             return $events;
         } else {
             return sprintf("Can't find event!");
@@ -160,17 +142,15 @@ class EventsService implements DecorateEventInterface
      */
     public function getActiveEvents($type = null): array
     {
-        if (empty($type) || $type == 'ALL') {
-            $conditions = array("is_active" => true);
 
-        } else {
-            $conditions = array("is_active" => true, "type" => $type);
+        $events = null;
+        $repository = $this->em->getRepository('App:Events');
+
+        if ($repository instanceof EventsRepository) {
+            $events = $repository->findActiveEvents($type);
         }
 
-        return $this->em->getRepository('App:Events')->findBy(
-            $conditions,
-            array()
-        );
+        return $events;
     }
 
 }
