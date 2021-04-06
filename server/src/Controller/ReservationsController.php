@@ -19,7 +19,7 @@ use Symfony\Component\Routing\Annotation\Route;
  * @package App\Controller
  * @author Tomasz Zymni <tomasz.zymni@gmail.com>
  */
-class ReservationsController extends AbstractController
+class ReservationsController extends AbstractController implements TokenAuthenticatedController
 {
 
     /**
