@@ -5,10 +5,6 @@ namespace App\Service;
 use App\Entity\Users;
 use App\Repository\UsersRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Symfony\Bridge\Doctrine\RegistryInterface;
-use Doctrine\ORM\EntityManager;
 
 /**
  * Class UsersService.
@@ -19,6 +15,9 @@ use Doctrine\ORM\EntityManager;
 class UsersService
 {
 
+    /**
+     * @var EntityManagerInterface
+     */
     private $em;
 
     public function __construct(EntityManagerInterface $em)
@@ -63,27 +62,6 @@ class UsersService
     {
         $user = $this->em->getRepository('App:Users')->findBy(
             array("is_active" => true, "id" => $id),
-            array(),
-            array(1)
-        );
-
-        if (isset($user) && isset($user[0])) {
-            return $user[0];
-        } else {
-            return sprintf("Can't find user!");
-        }
-    }
-
-    /**
-     * Get user by id no matter of status is_active.
-     *
-     * @param $id
-     * @return object|string
-     */
-    public function getUserById($id)
-    {
-        $user = $this->em->getRepository('App:Users')->findBy(
-            array("id" => $id),
             array(),
             array(1)
         );
@@ -185,8 +163,22 @@ class UsersService
         }
     }
 
-    public function getActiveUsers()
+    /**
+     * Find all active users.
+     *
+     * @return array
+     */
+    public function getActiveUsers(): array
     {
-        return $this->em->getRepository(Users::class)->findAllActiveUsers();
+
+        $userRepository = $this->em->getRepository(Users::class);
+        $users = null;
+        if ($userRepository instanceof UsersRepository) {
+            $users = $userRepository->findAllActiveUsers();
+        } else {
+            $users = array();
+        }
+
+        return $users;
     }
 }

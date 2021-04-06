@@ -2,7 +2,6 @@
 
 namespace App\Service;
 
-use App\Service\interfaces\DecorateEventInterface;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use Psr\Log\LoggerInterface;
@@ -14,7 +13,7 @@ use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
  *
  * @package App\Service
  */
-class ImportFromAPIService implements DecorateEventInterface
+class ImportFromAPIService
 {
 
     /**
@@ -81,7 +80,7 @@ class ImportFromAPIService implements DecorateEventInterface
      *
      * @throws GuzzleException
      */
-    public function getCottagesFromApi()
+    public function getCottagesFromApi(): string
     {
         $this->logger->info("Started importing");
 
@@ -162,8 +161,4 @@ class ImportFromAPIService implements DecorateEventInterface
 
     }
 
-    public function getEventDetails(int $eventId)
-    {
-        // TODO: Implement getEventDetails() method.
-    }
 }

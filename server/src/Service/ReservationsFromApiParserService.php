@@ -4,10 +4,13 @@ namespace App\Service;
 
 use App\Entity\Cottages;
 use App\Entity\Reservations;
+use App\Entity\Users;
 use App\Repository\CottagesRepository;
+use App\Repository\UsersRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
+ * Class to parse data from idosell system to current system.
  *
  * @author Tomasz Zymni <tomasz.zymni@gmail.com>
  **/
@@ -15,7 +18,7 @@ class ReservationsFromApiParserService
 {
 
     /**
-     * Parse data from API to format used in the system to proparly save reservation in the database.
+     * Parse data from API to format used in the system to properly save reservation in the database.
      *
      * @param EntityManagerInterface $em
      * @param array $item
@@ -50,13 +53,22 @@ class ReservationsFromApiParserService
             $cottage = $cottageRepository->findByExternalId($item['objectItemId']);
         }
 
+        $userRepository = $em->getRepository(Users::class);
+        $users = null;
+        if ($userRepository instanceof UsersRepository) {
+            $users = $userRepository->findAllActiveUsers();
+            $user = current($users);
+        } else {
+            $user = array();
+        }
+
         if (empty($cottage)) {
             return null;
         }
         $cottageId = $cottage->getId();
         $reservationEvent['cottage_id'] = $cottageId;
         $reservationEvent['cottage'] = $cottage;
-        $reservationEvent['user_id'] = 1;
+        $reservationEvent['user_id'] = $user['id'];
         $reservationEvent['guest_first_name'] = isset($client['firstName']) ? $client['firstName'] : '-';
         $reservationEvent['guest_last_name'] = isset($client['lastName']) ? $client['lastName'] : '-';
         $reservationEvent['guest_phone_number'] = isset($client['phone']) ? $client['phone'] : '-';
