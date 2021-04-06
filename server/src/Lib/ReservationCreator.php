@@ -5,10 +5,13 @@ namespace App\Lib;
 use App\Entity\Events;
 use App\Entity\Reservations;
 use App\Service\ReservationService;
+use Exception;
 
 /**
- * Class ReservationCreator
+ * Class to create Reservation event.
+ *
  * @package App\Lib
+ * @author Tomasz Zymni <tomasz.zymni@gmail.com>
  */
 class ReservationCreator extends EventCreator
 {
@@ -20,8 +23,7 @@ class ReservationCreator extends EventCreator
 
     /**
      * @param $data
-     * @return Events|mixed|void
-     * @throws \Exception
+     * @throws Exception
      */
     public function create($data)
     {
@@ -44,9 +46,11 @@ class ReservationCreator extends EventCreator
     }
 
     /**
+     * Valid reservation data.
+     *
      * @param $data
      * @return bool
-     * @throws \Exception
+     * @throws Exception
      */
     private function validateData($data): bool
     {
@@ -64,6 +68,7 @@ class ReservationCreator extends EventCreator
     }
 
     /**
+     *
      * @return EventParser
      */
     public function getEvent(): EventParser

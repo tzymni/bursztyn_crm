@@ -10,8 +10,14 @@ use Doctrine\ORM\Mapping as ORM;
 class Reservations
 {
 
+    /**
+     * Ending reservation hour.
+     */
     const HOUR_OF_START = '14';
 
+    /**
+     * Starting reservation hour.
+     */
     const HOUR_OF_END = '11';
 
     /**

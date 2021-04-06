@@ -5,9 +5,14 @@ namespace App\Lib;
 use App\Entity\Cottages;
 use App\Entity\Reservations;
 use App\Repository\CottagesRepository;
-use App\Service\CottageService;
 use Doctrine\ORM\EntityManagerInterface;
 
+/**
+ * Parse data for reservation event.
+ *
+ * @package App\Lib
+ * @author Tomasz Zymni <tomasz.zymni@gmail.com>
+ */
 class ReservationParser implements EventParser
 {
 
@@ -26,6 +31,8 @@ class ReservationParser implements EventParser
     }
 
     /**
+     * Create title for reservation event.
+     *
      * @param $data
      * @return string
      * @throws \Exception
@@ -52,6 +59,8 @@ class ReservationParser implements EventParser
     }
 
     /**
+     * Parse reservation data.
+     *
      * @param $data
      * @return array
      * @throws \Exception

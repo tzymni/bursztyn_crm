@@ -5,14 +5,13 @@ namespace App\Lib;
 use App\Entity\CottagesCleaningEvents;
 use App\Entity\Events;
 use App\Repository\EventsRepository;
-use App\Service\CottagesCleaningEventsService;
-use App\Service\EventsService;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
- * Parse data to cleaning event.
+ * Parse data for cleaning event.
  *
  * @package App\Lib
+ * @author Tomasz Zymni <tomasz.zymni@gmail.com>
  */
 class CleaningParser implements EventParser
 {

@@ -14,19 +14,22 @@ class CleaningCreator extends EventCreator
 {
 
     /**
+     * Create cleaning event.
+     *
      * @param $data
      * @return mixed|void
      */
     public function create($data)
     {
-
         $data = $this->getEvent()->parseData($data);
         $createdEvent = parent::create($data);
         $cottagesCleaningEventsService = new CottagesCleaningEventsService($this->em);
-        $cottagesCleaningEventsService->createCottageEventRecord($createdEvent, $data['cottage']);
+        $cottagesCleaningEventsService->createCottageCleaningEvent($createdEvent, $data['cottage']);
     }
 
     /**
+     * Get event.
+     *
      * @return EventParser
      */
     public function getEvent(): EventParser
@@ -34,11 +37,4 @@ class CleaningCreator extends EventCreator
         return new CleaningParser($this->em);
     }
 
-    /**
-     * @return mixed
-     */
-    public function getType()
-    {
-        return self::EVENT_TYPE;
-    }
 }

@@ -67,11 +67,11 @@ class SynchronizeAPIData extends Command
     {
         $this
             // the short description shown while running "php bin/console list"
-            ->setDescription('Import cottages from remote API and save it to the database.')
+            ->setDescription('Import cottages and reservations from remote API and save it to the database.')
 
             // the full command description shown when running the command with
             // the "--help" option
-            ->setHelp('This command allows you to create a user...');
+            ->setHelp('This command allows you to import/update cottages and reservations...');
     }
 
     /**
@@ -80,7 +80,7 @@ class SynchronizeAPIData extends Command
      * @return int
      * @throws GuzzleException
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
 
         $output->writeln('Getting cottages from API...');
@@ -105,7 +105,7 @@ class SynchronizeAPIData extends Command
             }
 
         } catch (\Exception $exception) {
-            print_r($exception);
+            $output->writeln($exception->getMessage());
             $this->logger->critical($exception->getMessage());
         }
 
@@ -114,18 +114,19 @@ class SynchronizeAPIData extends Command
     }
 
     /**
-     * Save Reservations from API to the system.
+     * Process of import reservations from API to the system.
+     *
      *
      * @param $reservationsFromAPI
      */
     protected function processReservations($reservationsFromAPI)
     {
-        $reservationsFromAPI = json_decode($reservationsFromAPI, true);
-
-        $reservations = $reservationsFromAPI['result']['reservations'];
         $eventService = new EventsService($this->em);
         $reservationService = new ReservationService($this->em);
         $reservationsFromAPIParser = new ReservationsFromApiParserService();
+
+        $reservationsFromAPI = json_decode($reservationsFromAPI, true);
+        $reservations = $reservationsFromAPI['result']['reservations'];
 
         foreach ($reservations as $reservation) {
 
@@ -142,16 +143,17 @@ class SynchronizeAPIData extends Command
                 $reservationData = $reservationsFromAPIParser->parseApiDataToSystemFormat($this->em, $item,
                     $reservation, $client);
 
+                // continue if was a problem with parsing data
                 if (!is_array($reservationData)) {
                     continue;
                 }
 
-                $reservationObj = $reservationService->getReservationByExternalId($reservationData['external_id']);
+                $reservationInSystem = $reservationService->getReservationByExternalId($reservationData['external_id']);
                 try {
 
-                    if ($reservationObj) {
-                        $reservationData['event'] = $reservationObj->getEvent();
-                        $reservationData['reservation'] = $reservationObj;
+                    if ($reservationInSystem) {
+                        $reservationData['event'] = $reservationInSystem->getEvent();
+                        $reservationData['reservation'] = $reservationInSystem;
                     }
 
                     $this->em->beginTransaction();
@@ -184,9 +186,9 @@ class SynchronizeAPIData extends Command
         $cottagesFromAPI
     ) {
         $cottageParser = new CottagesFromApiParserService($this->em);
-        $parsedCottages = $cottageParser->parseCottagesToSystemFormat($cottagesFromAPI);
         $cottageService = new CottageService($this->em);
 
+        $parsedCottages = $cottageParser->parseCottagesToSystemFormat($cottagesFromAPI);
         $externalCottagesIds = $cottageService->getAllIdsOfExternalCottages();
 
         foreach ($parsedCottages as $parsedCottage) {
@@ -202,12 +204,10 @@ class SynchronizeAPIData extends Command
                 $parsedCottage['color'] = $cottageService->getUnusedColor();
                 $cottageService->createCottage($parsedCottage);
             } else {
-
                 if (in_array($cottage->getId(), $externalCottagesIds)) {
                     $key = array_search($cottage->getId(), $externalCottagesIds);
                     unset($externalCottagesIds[$key]);
                 }
-
                 $cottageService->updateCottage($cottage, $parsedCottage);
             }
         }

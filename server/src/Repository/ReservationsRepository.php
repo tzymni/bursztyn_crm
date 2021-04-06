@@ -3,7 +3,6 @@
 namespace App\Repository;
 
 use App\Entity\Cottages;
-use App\Entity\Events;
 use App\Entity\Reservations;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;

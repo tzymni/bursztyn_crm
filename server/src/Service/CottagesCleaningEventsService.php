@@ -38,7 +38,7 @@ class CottagesCleaningEventsService
      * @param Cottages $cottage
      * @return Events
      */
-    public function createCottageEventRecord(Events $event, Cottages $cottage): Events
+    public function createCottageCleaningEvent(Events $event, Cottages $cottage): Events
     {
 
         $cottagesCleaningEventsRepo = $this->em->getRepository(CottagesCleaningEvents::class);
@@ -46,6 +46,7 @@ class CottagesCleaningEventsService
             $cottageEvent = $cottagesCleaningEventsRepo->findCottageEventByRelations($cottage, $event);
         }
 
+        // create event only if there are not cottages cleaning events with the same cottage and event
         if (empty($cottageEvent)) {
             $cottageEvent = new CottagesCleaningEvents();
             $cottageEvent->setCottage($cottage);
