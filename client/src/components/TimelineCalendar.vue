@@ -1,7 +1,7 @@
 <template>
   <div>
     <h1>
-      <font-awesome-icon icon="calendar-alt" />
+      <font-awesome-icon icon="calendar-alt"/>
       || {{ header }}
     </h1>
     <div class="calendar-controls">
@@ -293,7 +293,7 @@ export default {
         }
       });
     }, setCleaningEvents() {
-      var self = this;
+      const self = this
       cleaningEventServices.getAllCleaningEvents().then(function (response) {
 
             let list = []
@@ -324,18 +324,18 @@ export default {
           }
       ).catch(function (error) {
         if (error) {
-          self.errorNotify = error;
-          self.loading = false;
+          self.errorNotify = error
+          self.loading = false
         }
       });
     },
     setCottages() {
-      var self = this;
+      const self = this;
       cottageService
           .getCottages()
           .then(function (response) {
 
-            const rows = {};
+            const rows = {}
 
             response.map(function (cottage) {
 
@@ -352,13 +352,13 @@ export default {
 
           .catch(function (error) {
             if (error) {
-              self.errorNotify = error;
-              self.loading = false;
+              self.errorNotify = error
+              self.loading = false
             }
           });
     },
     checkAvailabilityFormModal() {
-      this.$bvModal.show("check-form-modal");
+      this.$bvModal.show("check-form-modal")
     }
   },
   computed: {

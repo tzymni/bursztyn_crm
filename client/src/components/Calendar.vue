@@ -103,6 +103,7 @@ import {
   CalendarViewHeader,
   CalendarMathMixin,
 } from "vue-simple-calendar"
+import {config} from "@/config";
 
 require("vue-simple-calendar/static/css/default.css")
 require("vue-simple-calendar/static/css/holidays-us.css")
@@ -138,12 +139,12 @@ export default {
       useTodayIcons: true,
       editId: null,
       form: {
-        option: 'ALL',
+        option: config.event.allType,
       },
       eventTypes: [
-        {text: 'Wszystkie', value: 'ALL'},
-        {text: 'Tylko rezerwacje', value: 'RESERVATION'},
-        {text: 'Tylko zmiany', value: 'CLEANING'}
+        {text: 'Wszystkie', value: config.event.allType},
+        {text: 'Tylko rezerwacje', value: config.event.reservationType},
+        {text: 'Tylko zmiany', value: config.event.cleaningType}
       ],
       items: [],
       clickedStartDate: null,

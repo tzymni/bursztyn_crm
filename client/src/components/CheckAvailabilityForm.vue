@@ -127,17 +127,16 @@ export default {
           tmp_response += "Dostępne domki w okresie " + response.request_details.date_from + " - " + response.request_details.date_to + ":\n"
 
           response.available_cottages.map(function (value) {
-            tmp_response += "-" +value.name + "\n"
+            tmp_response += "-" + value.name + "\n"
           })
         }
-
 
         self.availability_response = tmp_response
       })
           .catch(function (error) {
             if (error) {
-              self.errorNotify = error;
-              self.loading = false;
+              self.errorNotify = error
+              self.loading = false
             }
           })
 
@@ -169,13 +168,8 @@ export default {
             }
           });
     },
-
   }
-  ,
-  computed: {}
-  ,
-}
-;
+};
 </script>
 <style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
 

@@ -92,9 +92,9 @@ class ReservationService implements DecorateEventInterface
 
     /**
      * @param int $eventId
-     * @return string
+     * @return array
      */
-    public function getEventDetails(int $eventId): string
+    public function getEventDetails(int $eventId): array
     {
         return $this->getActiveReservationByEventId($eventId);
     }
@@ -172,8 +172,7 @@ class ReservationService implements DecorateEventInterface
         if ($reservationRepository instanceof ReservationsRepository) {
             $reservations = $reservationRepository->findActiveReservationByEventId($eventId);
         }
-
-        return current($reservations);
+        return $reservations[0];
     }
 
     /**

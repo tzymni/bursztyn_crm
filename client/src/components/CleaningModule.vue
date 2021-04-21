@@ -84,16 +84,13 @@ export default {
     getEvents() {
       const self = this
       cleaningEventServices.getFutureCleaningEventsWithDetails().then(function (response) {
-
         self.items = response
-
       }).catch(function (error) {
         if (error) {
-          self.errorNotify = error;
-          self.loading = false;
+          self.errorNotify = error
+          self.loading = false
         }
       });
-
     }
   },
   mounted() {
@@ -107,7 +104,3 @@ export default {
 
 }
 </script>
-
-<style scoped>
-
-</style>
