@@ -1,9 +1,7 @@
 export const config = {
     apiURL: {
-        detectDomain: true,
         port: 8000,
-        path: 'http://localhost:',
-        // path: 'http://api.bursztyn-wicie.pl:',
+        path: '',
     },
     event: {
       reservationType: 'RESERVATION',

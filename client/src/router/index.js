@@ -74,10 +74,10 @@ export const router = new Router({
 
 router.beforeEach((to, from, next) => {
   // redirect to login page if not logged in and trying to access a restricted page
-  const publicPages = ["/login"];
-  const authRequired = !publicPages.includes(to.path);
-  const loggedIn = sessionStorage.getItem("token");
-  document.title = to.meta.title;
+  const publicPages = ["/login"]
+  const authRequired = !publicPages.includes(to.path)
+  const loggedIn = sessionStorage.getItem("token")
+  document.title = to.meta.title
 
   if (authRequired && !loggedIn) {
     return next({
@@ -85,5 +85,5 @@ router.beforeEach((to, from, next) => {
     });
   }
 
-  next();
+  next()
 });

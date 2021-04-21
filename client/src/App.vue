@@ -2,7 +2,6 @@
     <div id="app">
         <component v-bind:is="component"/>
     </div>
-
 </template>
 <script>
     import Menu from './components/Menu.vue'

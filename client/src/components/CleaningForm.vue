@@ -83,11 +83,9 @@ export default {
 
       const self = this
       cleaningEventServices.getCleaningEvent(id).then(function (data) {
-
             self.title = data.details.name
             self.date = data.details.date
             self.id = data.details.id
-
           }
       )
           .catch(function (error) {
@@ -108,13 +106,7 @@ export default {
               self.errorNotify = error;
             }
           });
-
     },
-
   }
 }
 </script>
-
-<style scoped>
-
-</style>

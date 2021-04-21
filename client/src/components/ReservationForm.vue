@@ -117,12 +117,6 @@
         >
           Opłata z góry
         </b-form-checkbox>
-        <!--<label class="custom-checkbox" for="advance_payment">Advance payment?
-                        <input type="checkbox" v-model="advance_payment" name="advance_payment"
-                        class="custom-checkbox"
-                        :class="{ 'is-invalid': submitted && !advance_payment }"/>
-
-                    </label>-->
       </div>
       <div class="form-group">
         <label for="extra_info">Dodatkowe informacje</label>
@@ -180,7 +174,7 @@ export default {
   mounted() {
 
     if (typeof this.editId != 'undefined' && this.editId != null) {
-      this.getReservationById(this.editId);
+      this.getReservationById(this.editId)
     }
 
     if (
@@ -208,7 +202,17 @@ export default {
     handleSubmit() {
       this.submitted = true;
       let id = this.editId;
-      const {date_from, date_to, cottage_id, guest_first_name, guest_last_name, guest_phone_number, guests_number, extra_info, advance_payment} = this;
+      const {
+        date_from,
+        date_to,
+        cottage_id,
+        guest_first_name,
+        guest_last_name,
+        guest_phone_number,
+        guests_number,
+        extra_info,
+        advance_payment
+      } = this;
 
       // stop here if form is invalid
       if (!(date_from && date_to && cottage_id) && !id) {
@@ -228,72 +232,71 @@ export default {
         id
       };
 
-      var self = this;
+      const self = this
 
       reservationService.saveReservation(data).then(function () {
             self.editId = null
-            self.$bvModal.hide("reservation-form-modal");
+            self.$bvModal.hide("reservation-form-modal")
           }
       )
           .catch(function (error) {
             if (error) {
-              self.errorNotify = error;
+              self.errorNotify = error
             }
           });
     },
     getCottages() {
-      var self = this;
+      const self = this
       cottageService.getCottages().then(function (response) {
-            let list = [];
+            let list = []
             response.map(function (value) {
-              let text = value.name;
-              let color = value.color;
-              list.push({value: value.id, text: text, color: color});
+              let text = value.name
+              let color = value.color
+              list.push({value: value.id, text: text, color: color})
             });
-            self.options = list;
+            self.options = list
           }
       ).catch(function (error) {
         if (error) {
-          self.errorNotify = error;
-          self.loading = false;
+          self.errorNotify = error
+          self.loading = false
         }
       });
-
     },
     getReservationById(id) {
 
-      var self = this;
+      const self = this
       reservationService.getReservation(id).then(function (data) {
-            self.cottage_id = data.details.cottage_id;
-            self.date_from = data.event.date_from;
-            self.date_to = data.event.date_to;
-            self.guests_number = data.details.guests_number;
-            self.guest_first_name = data.details.guest_first_name;
-            self.guest_last_name = data.details.guest_last_name;
-            self.guest_phone_number = data.details.guest_phone_number;
-            self.advance_payment = data.details.advance_payment;
-            self.extra_info = data.details.extra_info;
-            self.id = data.id;
+            self.cottage_id = data.details.cottage_id
+            self.date_from = data.event.date_from
+            self.date_to = data.event.date_to
+            self.guests_number = data.details.guests_number
+            self.guest_first_name = data.details.guest_first_name
+            self.guest_last_name = data.details.guest_last_name
+            self.guest_phone_number = data.details.guest_phone_number
+            self.advance_payment = data.details.advance_payment
+            self.extra_info = data.details.extra_info
+            self.id = data.id
           }
       )
           .catch(function (error) {
             if (error) {
-              self.errorNotify = error;
+              self.errorNotify = error
             }
           });
 
     },
     changeColor: function () {
-      var s = document.getElementById("square");
-      s.style.color = this.scolor();
+      const square = document.getElementById("square")
+      square.style.color = this.scolor()
     },
     scolor: function () {
       if (this.cottage_id === null) {
-        return "#fff";
+        return "#fff"
       } else {
-        let y = this.cottage_id;
-        let x = this.options.findIndex((x) => x.value === y);
-        return this.options[x].color;
+        let y = this.cottage_id
+        let x = this.options.findIndex((x) => x.value === y)
+        return this.options[x].color
       }
     },
 
