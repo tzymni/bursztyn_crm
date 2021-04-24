@@ -24,9 +24,7 @@ function login(username, password) {
             }
     }
 
-    console.log(config.apiURL.path)
-
-    return axios.post('http://localhost:'+ config.apiURL.port + '/api/authenticate', {}, requestOptions)
+    return axios.post(config.apiURL.path+ config.apiURL.port + '/api/authenticate', {}, requestOptions)
         .then(function (response) {
             if (response.data.token) {
                 let token = response.data.token
