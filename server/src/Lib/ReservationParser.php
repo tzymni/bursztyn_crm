@@ -4,9 +4,15 @@ namespace App\Lib;
 
 use App\Entity\Cottages;
 use App\Entity\Reservations;
-use App\Service\CottageService;
+use App\Repository\CottagesRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
+/**
+ * Parse data for reservation event.
+ *
+ * @package App\Lib
+ * @author Tomasz Zymni <tomasz.zymni@gmail.com>
+ */
 class ReservationParser implements EventParser
 {
 
@@ -25,6 +31,8 @@ class ReservationParser implements EventParser
     }
 
     /**
+     * Create title for reservation event.
+     *
      * @param $data
      * @return string
      * @throws \Exception
@@ -36,8 +44,11 @@ class ReservationParser implements EventParser
         $dateFrom = $data['date_from'];
         $dateTo = $data['date_to'];
 
-        $cottageService = new CottageService($this->em);
-        $cottageResponse = $cottageService->getActiveCottageById($data['cottage_id']);
+        $cottageRepository = $this->em->getRepository(Cottages::class);
+        $cottageResponse = null;
+        if ($cottageRepository instanceof CottagesRepository) {
+            $cottageResponse = $cottageRepository->findActiveById($data['cottage_id']);
+        }
 
         if (!$cottageResponse instanceof Cottages) {
             throw new \Exception($cottageResponse);
@@ -47,8 +58,9 @@ class ReservationParser implements EventParser
             $dateFrom, $dateTo);
     }
 
-
     /**
+     * Parse reservation data.
+     *
      * @param $data
      * @return array
      * @throws \Exception
@@ -60,7 +72,6 @@ class ReservationParser implements EventParser
         $data['title'] = $this->generateTitle($data);
         $data['date_to'] = strtotime($data['date_to'] . ' UTC');
         $data['date_from'] = strtotime($data['date_from'] . ' UTC');
-
 
         return $data;
     }

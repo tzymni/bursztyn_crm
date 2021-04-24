@@ -6,16 +6,6 @@
     </h1>
     <div class="container">
       <div class="calendar-controls">
-        <!-- 
-          ADD RESERVATION - functionality suspended!
-          
-          <b-button
-            class="btn btn-info"
-            id="show-reservation-form-modal"
-            @click="showReservationFormModal()"
-        >
-          Dodaj rezerwacje
-        </b-button> -->
         <button class="btn btn-info" id="expend-collapse" @click="expandCollapseTable()">{{ button.text }}</button>&nbsp;
         <button class="btn btn-info" id="todays-date" @click="setDateToToday()">Od dzis</button>&nbsp;
         <b-modal
@@ -83,34 +73,34 @@ export default {
       expandTable: true,
       columns: [
         {
-          label: 'Date from',
+          label: 'Data od',
           field: 'date_from',
           type: 'string',
           filterOptions: {
             enabled: true,
             filterValue: this.todaysDate,
             filterFn: function (data, filterString) {
-              var x = parseInt(Date.parse(filterString));
+              const filteredData = parseInt(Date.parse(filterString));
               data = parseInt(Date.parse(data));
-              return data >= x;
+              return data >= filteredData;
             }
           },
         },
         {
-          label: 'Date to',
+          label: 'Data do',
           field: 'date_to',
           type: 'string',
           filterOptions: {
             enabled: true,
             filterFn: function (data, filterString) {
-              var x = parseInt(Date.parse(filterString));
+              const filteredData = parseInt(Date.parse(filterString));
               data = parseInt(Date.parse(data));
-              return data <= x;
+              return data <= filteredData;
             }
           },
         },
         {
-          label: 'Full name',
+          label: 'Rezerwujący',
           field: 'full_name',
           type: 'string',
           filterOptions: {
@@ -118,14 +108,14 @@ export default {
           },
         },
         {
-          label: 'Phone number',
+          label: 'Numer telefonur',
           field: 'phone_number',
           type: 'numeric',
           filterOptions: {
             enabled: true,
           },
         }, {
-          label: 'Number of guests',
+          label: 'Liczba gości',
           field: 'number_of_guests',
           type: 'numeric',
           filterOptions: {
@@ -133,15 +123,7 @@ export default {
           },
         },
         {
-          label: 'Advance payment',
-          field: 'advance_payment',
-          type: 'boolean',
-          filterOptions: {
-            enabled: true,
-          },
-        },
-        {
-          label: 'Action',
+          label: 'Opcje',
           field: 'action',
         }
       ],
@@ -188,7 +170,6 @@ export default {
                   let date_to = reservation.event.date_to
                   let event_id = reservation.event.id
                   let number_of_guests = reservation.guests_number
-                  let advance_payment = reservation.advance_payment
                   let phone_number = reservation.guest_phone
 
                   children.push({
@@ -197,7 +178,6 @@ export default {
                     id: event_id,
                     date_to: date_to,
                     number_of_guests: number_of_guests,
-                    advance_payment: advance_payment,
                     phone_number: phone_number,
                   });
                 })
@@ -217,8 +197,8 @@ export default {
           }
       ).catch(function (error) {
         if (error) {
-          self.errorNotify = error;
-          self.loading = false;
+          self.errorNotify = error
+          self.loading = false
         }
       });
     },
@@ -228,9 +208,9 @@ export default {
       if (date === '' || typeof date == 'undefined') {
         date = moment(String(Date(Date.now()))).format('YYYY/MM/DD')
       } else {
-        date = '';
+        date = ''
       }
-      this.columns[0].filterOptions.filterValue = date;
+      this.columns[0].filterOptions.filterValue = date
     },
   }
 };

@@ -5,10 +5,13 @@ namespace App\Lib;
 use App\Entity\Events;
 use App\Entity\Reservations;
 use App\Service\ReservationService;
+use Exception;
 
 /**
- * Class ReservationCreator
+ * Class to create Reservation event.
+ *
  * @package App\Lib
+ * @author Tomasz Zymni <tomasz.zymni@gmail.com>
  */
 class ReservationCreator extends EventCreator
 {
@@ -20,31 +23,36 @@ class ReservationCreator extends EventCreator
 
     /**
      * @param $data
-     * @return Events|mixed|void
-     * @throws \Exception
+     * @throws Exception
      */
     public function create($data)
     {
         $this->reservationService = new ReservationService($this->em);
         $data = $this->getEvent()->parseData($data);
-        $this->validateData($data);
 
-        $createdEvent = parent::create($data);
+        if ($this->validateData($data)) {
 
-        if(isset($data['reservation']) && $data['reservation'] instanceof  Reservations) {
-            $reservation = $data['reservation'];
-        } else {
-            $reservation = null;
+            $createdEvent = parent::create($data);
+
+            if (isset($data['reservation']) && $data['reservation'] instanceof Reservations) {
+                $reservation = $data['reservation'];
+            } else {
+                $reservation = null;
+            }
+
+            $this->reservationService->createReservation($createdEvent, $data, $reservation);
+
         }
-
-        $this->reservationService->createReservation($createdEvent, $data, $reservation );
     }
 
     /**
+     * Valid reservation data.
+     *
      * @param $data
-     * @throws \Exception
+     * @return bool
+     * @throws Exception
      */
-    private function validateData($data)
+    private function validateData($data): bool
     {
 
         $cottageId = $data['cottage_id'];
@@ -54,11 +62,13 @@ class ReservationCreator extends EventCreator
             $event = $data['event'];
             $eventId = $event->getId();
         }
-        $reservationService->checkCottageAvailability($cottageId, $data['date_from'], $data['date_to'], $eventId);
+        return $reservationService->checkCottageAvailability($cottageId, $data['date_from'], $data['date_to'],
+            $eventId);
 
     }
 
     /**
+     *
      * @return EventParser
      */
     public function getEvent(): EventParser

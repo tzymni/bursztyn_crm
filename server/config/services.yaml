@@ -8,6 +8,7 @@ parameters:
     jwt_secret: tomaszBursztyn2020
 imports:
     - { resource: 'api.yaml' }
+    - { resource: 'jst.yaml' }
 services:
     # default configuration for services in *this* file
     _defaults:

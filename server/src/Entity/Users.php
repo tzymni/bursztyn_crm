@@ -7,10 +7,10 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
- * @ORM\Table(name="user")
+ * @ORM\Entity(repositoryClass="App\Repository\UsersRepository")
+ * @ORM\Table(name="users")
  */
-class User
+class Users
 {
 
     /**

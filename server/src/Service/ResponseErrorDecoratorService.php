@@ -12,7 +12,14 @@ namespace App\Service;
  */
 class ResponseErrorDecoratorService
 {
-    public function decorateError(int $status, $message)
+    /**
+     * Decorate error.
+     *
+     * @param int $status
+     * @param $message
+     * @return array[]
+     */
+    public function decorateError(int $status, $message): array
     {
         return [
             'error' => [

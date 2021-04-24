@@ -1,6 +1,11 @@
 <template>
   <div>
     <div id="calendar">
+      <h1>
+        <font-awesome-icon icon="calendar-alt" />
+        || {{ header }}
+      </h1>
+
       <div class="calendar-controls">
 
         <b-modal
@@ -28,6 +33,7 @@
 
         <b-button
             class="btn btn-info"
+            id="timeline-calendar"
             href="#/timeline-calendar"
         >Kalendarz liniowy
         </b-button
@@ -36,7 +42,7 @@
         <b-button
             class="btn btn-info"
             id="check-avaliability"
-            @click="checkAvaliabilityFormModal()"
+            @click="checkAvailabilityFormModal()"
         >Sprawdź dostępność
         </b-button
         >
@@ -47,18 +53,15 @@
                            :options="eventTypes"/>
           </b-form-group>
         </div>
-
-
         <b-modal
             @hide="setEvents()"
             id="check-form-modal"
             title="Sprawdź dostępność"
             hide-footer
         >
-          <CheckAvaliabilityForm/>
+          <CheckAvailabilityForm/>
         </b-modal>
       </div>
-
 
 
       <div class="calendar-parent">
@@ -73,10 +76,8 @@
             :display-period-count="displayPeriodCount"
             :starting-day-of-week="startingDayOfWeek"
             :class="themeClasses"
-            :period-changed-callback="periodChanged"
             :current-period-label="useTodayIcons ? 'icons' : ''"
             @drop-on-date="onDrop"
-            @click-date="onClickDay"
             @click-event="onClickItem"
         >
           <calendar-view-header
@@ -91,20 +92,20 @@
   </div>
 </template>
 <script>
-// Load CSS from the published version
 import ReservationForm from "./ReservationForm";
 import CleaningForm from "./CleaningForm.vue";
 import {reservationService} from "../_services/reservation.service";
-import CheckAvaliabilityForm from "./CheckAvaliabilityForm";
-
-require("vue-simple-calendar/static/css/default.css")
-require("vue-simple-calendar/static/css/holidays-us.css")
-
+import CheckAvailabilityForm from "./CheckAvailabilityForm";
 import {
   CalendarView,
   CalendarViewHeader,
   CalendarMathMixin,
 } from "vue-simple-calendar"
+import {config} from "@/config";
+
+require("vue-simple-calendar/static/css/default.css")
+require("vue-simple-calendar/static/css/holidays-us.css")
+
 
 export default {
   name: "Calendar",
@@ -113,13 +114,14 @@ export default {
     CleaningForm,
     CalendarView,
     CalendarViewHeader,
-    CheckAvaliabilityForm,
+    CheckAvailabilityForm,
   },
   mixins: [CalendarMathMixin],
   data() {
     return {
       /* Show the current month, and give it some fake items to show */
       showDate: this.thisMonth(1),
+      header: "Kalendarz",
       message: "",
       startingDayOfWeek: 1,
       disablePast: false,
@@ -135,22 +137,14 @@ export default {
       useTodayIcons: true,
       editId: null,
       form: {
-        option: 'ALL',
+        option: config.event.allType,
       },
       eventTypes: [
-        {text: 'Wszystkie', value: 'ALL'},
-        {text: 'Tylko rezerwacje', value: 'RESERVATION'},
-        {text: 'Tylko zmiany', value: 'CLEANING'}
+        {text: 'Wszystkie', value: config.event.allType},
+        {text: 'Tylko rezerwacje', value: config.event.reservationType},
+        {text: 'Tylko zmiany', value: config.event.cleaningType}
       ],
-      items: [
-        // {
-        //   id: "e4",
-        //   startDate: this.thisMonth(20),
-        //   title: "My Birthday!",
-        //   classes: "birthday",
-        //   url: "https://en.wikipedia.org/wiki/Birthday",
-        // }
-      ],
+      items: [],
       clickedStartDate: null,
     }
   },
@@ -183,7 +177,7 @@ export default {
     showReservationFormModal() {
       this.$bvModal.show("reservation-form-modal");
     },
-    checkAvaliabilityFormModal() {
+    checkAvailabilityFormModal() {
       this.$bvModal.show("check-form-modal");
     },
     filterCalendarEvents(selected) {
@@ -192,7 +186,7 @@ export default {
     },
     setEvents(type) {
       this.clickedStartDate = null;
-      var self = this;
+      const self = this;
       reservationService.getEvents(type).then(function (response) {
 
             let list = [];
@@ -218,21 +212,9 @@ export default {
         }
       });
     },
-    periodChanged() {
-      // range, eventSource) {
-      // Demo does nothing with this information, just including the method to demonstrate how
-      // you can listen for changes to the displayed range and react to them (by loading items, etc.)
-      //console.log(eventSource)
-      //console.log(range)
-    },
     thisMonth(d, h, m) {
       const t = new Date()
       return new Date(t.getFullYear(), t.getMonth(), d, h || 0, m || 0)
-    },
-    onClickDay(d) {
-      this.editId = null
-      this.clickedStartDate = d.toLocaleDateString()
-      this.$bvModal.show("reservation-form-modal")
     },
     onClickItem(e) {
 
@@ -250,7 +232,7 @@ export default {
       this.showDate = d
     },
     onDrop(item, date) {
-      console.log("DROPPED")
+
       this.message = `You dropped ${item.id} on ${date.toLocaleDateString()}`
       // Determine the delta between the old start date and the date chosen,
       // and apply that delta to both the start and end date to move the item.

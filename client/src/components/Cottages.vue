@@ -1,24 +1,18 @@
 <template>
   <div class="cottages">
     <h1>
-      <font-awesome-icon icon="home" />
+      <font-awesome-icon icon="home"/>
       || {{ header }}
     </h1>
-
     <div class="container">
      <div>
-      <!-- ADD COTTAGE - functionality suspended!
-        <b-button class="btn btn-info" id="show-modal" @click="showModal()"
-          >Nowy domek</b-button
-        >
-      -->
         <b-modal
-          @hide="setCottages()"
-          id="cottage-form-modal"
-          title="Domek"
-          hide-footer
+            @hide="setCottages()"
+            id="cottage-form-modal"
+            title="Domek"
+            hide-footer
         >
-          <CottageForm :editId="$data.editId" v-on:childToParent="showModal" />
+          <CottageForm :editId="$data.editId" v-on:childToParent="showModal"/>
         </b-modal>
       </div>
       <div class="col extra-info" style="display: none">
@@ -28,18 +22,18 @@
       <div class="row">
         <div class="table-wrap col">
           <b-table
-            id="Cottages"
-            ref="cottages"
-            :per-page="perPage"
-            :current-page="currentPage"
-            selectable
-            :select-mode="selectMode"
-            @row-selected="onRowSelected"
-            small
-            class="table-cottages text-uppercase"
-            :fields="fields"
-            :items="cottages"
-            thead-class="thead-dark"
+              id="Cottages"
+              ref="cottages"
+              :per-page="perPage"
+              :current-page="currentPage"
+              selectable
+              :select-mode="selectMode"
+              @row-selected="onRowSelected"
+              small
+              class="table-cottages text-uppercase"
+              :fields="fields"
+              :items="cottages"
+              thead-class="thead-dark"
           >
             <template v-slot:head(id)="data">
               <p class="hide">{{ data.field.id }}</p>
@@ -47,19 +41,19 @@
             <template v-slot:cell(id)="data">
               <p class="hide">{{ data.item.id }}</p>
               <p class="text-center">
-                <font-awesome-icon class="icon" icon="home" />
+                <font-awesome-icon class="icon" icon="home"/>
               </p>
             </template>
             <template v-slot:cell(color)="data">
               <p class="hide">{{ data.item.color }}</p>
               <v-btn
-                inactive
-                block
-                small
-                tile
-                depressed
-                :color="data.item.color"
-                class="color-rectangle"
+                  inactive
+                  block
+                  small
+                  tile
+                  depressed
+                  :color="data.item.color"
+                  class="color-rectangle"
               ></v-btn>
             </template>
             <template v-slot:cell(extra_info)="data">
@@ -87,21 +81,16 @@
             </template>
             <template v-slot:cell(is_active)="data">
               <p class="hide">{{ data.item.is_active }}</p>
-              <!--  DELETE COTTAGE - functionality suspended!
-                
-                <a @click="deleteCottage(data.item.id)" class="btn btn-danger">
-                <font-awesome-icon icon="trash-alt" />
-              </a> -->
               <a @click="showModal(data.item.id)" class="btn btn-primary">
-                <font-awesome-icon icon="edit" />
+                <font-awesome-icon icon="edit"/>
               </a>
             </template>
           </b-table>
           <b-pagination
-            v-model="currentPage"
-            :total-rows="rows"
-            :per-page="perPage"
-            aria-controls="Cottages"
+              v-model="currentPage"
+              :total-rows="rows"
+              :per-page="perPage"
+              aria-controls="Cottages"
           ></b-pagination>
         </div>
 
@@ -111,13 +100,13 @@
 </template>
 
 <script>
-import CottageForm from "./CottageForm";
-import { cottageService } from "../_services/cottage.service";
+import CottageForm from "./CottageForm"
+import {cottageService} from "../_services/cottage.service"
 
 export default {
   name: "Cottages",
-  components: { CottageForm },
-  data: function() {
+  components: {CottageForm},
+  data: function () {
     return {
       header: "Domki",
       cottages: [],
@@ -126,7 +115,7 @@ export default {
       fields: [],
       selectMode: "single",
       selected: [
-        { name: "Extra Information", extra_info: "About your cottage..." },
+        {name: "Extra Information", extra_info: "About your cottage..."},
       ],
       selected_title: "Extra Information",
       selected_info: "About your cottage...",
@@ -134,62 +123,41 @@ export default {
     };
   },
   mounted() {
-    this.setCottages();
+    this.setCottages()
   },
   methods: {
     showModal(id = null) {
-      this.editId = id;
-      this.$bvModal.show("cottage-form-modal");
+      this.editId = id
+      this.$bvModal.show("cottage-form-modal")
     },
     setCottages() {
-      var self = this;
+      const self = this
       cottageService
-        .getCottages()
-        .then(function(response) {
-          self.cottages = response;
-        })
-        .catch(function(error) {
-          if (error) {
-            self.errorNotify = error;
-            self.loading = false;
-          }
-        });
+          .getCottages()
+          .then(function (response) {
+            self.cottages = response
+          })
+          .catch(function (error) {
+            if (error) {
+              self.errorNotify = error
+              self.loading = false
+            }
+          });
     },
-    // DELETE COTTAGE - functionality suspended!
-    // deleteCottage(id) {
-    //   this.$confirm(
-    //     "Czy na pewno chcesz usunąć domek?",
-    //     "Usuń",
-    //     "error"
-    //   ).then(() => {
-    //     var self = this;
-    //     cottageService
-    //       .deleteCottage(id)
-    //       .then(function() {
-    //         self.setCottages();
-    //       })
-    //       .catch(function(error) {
-    //         if (error) {
-    //           self.errorNotify = error;
-    //           self.loading = false;
-    //         }
-    //       });
-    //   });
-    // },
     onRowSelected(items) {
-      this.selected = items;
-      this.displaySelected();
+      this.selected = items
+      this.displaySelected()
     },
-    displaySelected: function() {
-      let x = document.getElementById("desc-title");
-      let y = document.getElementById("extra-info");
+    displaySelected: function () {
+      let x = document.getElementById("desc-title")
+      let y = document.getElementById("extra-info")
 
       if (this.selected.length === 0) {
-        x.innerHTML = "Extra information";
-        y.innerHTML = "About your cottage...";
+        x.innerHTML = "Extra information"
+        y.innerHTML = "About your cottage..."
       } else {
-        x.innerHTML = this.selected[0].name;
-        y.innerHTML = this.selected[0].extra_info;
+        x.innerHTML = this.selected[0].name
+        y.innerHTML = this.selected[0].extra_info
       }
     },
   },
@@ -198,8 +166,8 @@ export default {
       return this.cottages.length;
     },
   },
-};
-export { CottageForm };
+}
+export {CottageForm};
 </script>
 <style scoped>
 .cottages {

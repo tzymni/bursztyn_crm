@@ -3,22 +3,22 @@
 namespace App\Service;
 
 use App\Entity\Events;
-use App\Entity\User;
+use App\Entity\Users;
 use App\Lib\EventCreator;
+use App\Repository\EventsRepository;
+use App\Service\interfaces\DecorateEventInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use App\EventListener\ReservationAfterEventSave;
+use Exception;
 
 /**
  * Class EventsService
- * @package App\Service
  *
+ * @package App\Service
  * @author Tomasz Zymni <tomasz.zymni@gmail.com>
  */
-class EventsService
+class EventsService implements DecorateEventInterface
 {
-
-    const RESERVATION_EVENT = 'reservation';
-    const CLEANING_EVENT = 'cleaning';
 
     /**
      * EntityManager.
@@ -37,18 +37,29 @@ class EventsService
     }
 
     /**
-     * Check if type is valid.
+     * Get more information about the event.
      *
-     * @param string $type
-     * @return bool
+     *
+     * @param int $eventId
+     * @return array
      */
-    protected function isValidType(string $type): bool
+    public function getEventDetails(int $eventId): array
     {
-        if (in_array($type, array(self::RESERVATION_EVENT, self::CLEANING_EVENT))) {
-            return true;
+
+        $event = $this->getActiveEventById($eventId);
+
+        if ($event instanceof Events) {
+
+            $data = [
+                'id' => $event->getId(),
+                'name' => $event->getTitle(),
+                'date' => $event->getDateFrom(),
+            ];
+        } else {
+            $data = array();
         }
 
-        return false;
+        return $data;
     }
 
     /**
@@ -56,9 +67,8 @@ class EventsService
      *
      * @param EventCreator $eventCreator
      * @param $data
-     * @param null $event
      * @return Events|string
-     * @throws \Exception
+     * @throws Exception
      */
     public function createEvent(EventCreator $eventCreator, $data)
     {
@@ -67,12 +77,12 @@ class EventsService
         $data['is_active'] = isset($data['is_active']) ? $data['is_active'] : true;
         $data['date_from'] = !empty($data['date_from']) ? $data['date_from'] : null;
         $data['date_to'] = !empty($data['date_to']) ? $data['date_to'] : null;
-        $userService = new UserService($this->em);
+        $userService = new UsersService($this->em);
 
         $userResponse = $userService->getActiveUserById($createdById);
 
-        if (!$userResponse instanceof User) {
-            throw new \Exception($userResponse);
+        if (!$userResponse instanceof Users) {
+            throw new Exception($userResponse);
         }
 
         $data['user_id'] = $userResponse;
@@ -87,44 +97,38 @@ class EventsService
      */
     public function getActiveEventById($id)
     {
-        $event = $this->em->getRepository('App:Events')->findBy(
-            array("is_active" => true, "id" => $id),
-            array(),
-            array(1)
-        );
 
-        if (isset($event) && isset($event[0])) {
-            return $event[0];
-        } else {
+        $repository = $this->em->getRepository('App:Events');
+
+        $event = null;
+        if ($repository instanceof EventsRepository) {
+            $event = $repository->findActiveById($id);
+        }
+
+        if (empty($event)) {
             return sprintf("Can't find event!");
+        } else {
+            return $event;
         }
     }
 
-    public function getNextEventByDateAndType($dateFrom, $type)
+    /**
+     * Get all future active events.
+     *
+     * @param $type
+     * @return object|string
+     */
+    public function getAllFutureActiveEventsByType($type)
     {
-        $event = $this->em->getRepository('App:Events')->findBy(
-            array("is_active" => true, "type" => $type, "date_from >= $dateFrom"),
-            array(),
-            array(1)
-        );
+        $events = null;
+        $repository = $this->em->getRepository('App:Events');
 
-        if (isset($event) && isset($event[0])) {
-            return $event[0];
-        } else {
-            return sprintf("Can't find event!");
+        if ($repository instanceof EventsRepository) {
+                $events = $repository->findActiveNextEventsByType($type);
         }
-    }
 
-    public function getActiveEventByDateAndType($type, $dateFrom, $dateTo)
-    {
-        $event = $this->em->getRepository('App:Events')->findBy(
-            array("is_active" => true, "type" => $type, "date_from" => $dateFrom, "date_to" => $dateTo),
-            array(),
-            array(1)
-        );
-
-        if (isset($event) && isset($event[0])) {
-            return $event[0];
+        if (!empty($events)) {
+            return $events;
         } else {
             return sprintf("Can't find event!");
         }
@@ -138,17 +142,15 @@ class EventsService
      */
     public function getActiveEvents($type = null): array
     {
-        if (empty($type) || $type == 'ALL') {
-            $conditions = array("is_active" => true);
 
-        } else {
-            $conditions = array("is_active" => true, "type" => $type);
+        $events = null;
+        $repository = $this->em->getRepository('App:Events');
+
+        if ($repository instanceof EventsRepository) {
+            $events = $repository->findActiveEvents($type);
         }
 
-        return $this->em->getRepository('App:Events')->findBy(
-            $conditions,
-            array()
-        );
+        return $events;
     }
 
 }

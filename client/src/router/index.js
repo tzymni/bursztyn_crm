@@ -6,6 +6,7 @@ import Cottages from "../components/Cottages";
 import Reservations from "../components/Reservations";
 import LoginPanel from "../components/LoginPanel";
 import Logout from "../components/Logout";
+import CleaningModule from "@/components/CleaningModule";
 
 import TimelineCalendar from "@/components/TimelineCalendar";
 Vue.use(Router);
@@ -16,42 +17,49 @@ export const router = new Router({
       path: "/",
       component: Calendar,
       meta: {
-        title: "Bursztyn - Calendar",
+        title: "Bursztyn - Kalendarz",
       },
     },
     {
       path: "/users",
       component: Users,
       meta: {
-        title: "Bursztyn - Users",
+        title: "Bursztyn - Użytkownicy",
       },
     },
     {
       path: "/cottages",
       component: Cottages,
       meta: {
-        title: "Bursztyn - Cottages",
+        title: "Bursztyn - Domki",
       },
     },
     {
       path: "/timeline-calendar",
       component: TimelineCalendar,
       meta: {
-        title: "Bursztyn - Cottages",
+        title: "Bursztyn - Kalendarz liniowy",
       },
     },
     {
       path: "/reservations",
       component: Reservations,
       meta: {
-        title: "Bursztyn - Manage reservations",
+        title: "Bursztyn - Rezerwacje",
+      },
+    },
+    {
+      path: "/cleaning-module",
+      component: CleaningModule,
+      meta: {
+        title: "Bursztyn - Nadchodzące zmiany",
       },
     },
     {
       path: "/login",
       component: LoginPanel,
       meta: {
-        title: "Bursztyn - Login Panel",
+        title: "Bursztyn - Panel logowania",
       },
     },
     {
@@ -66,10 +74,10 @@ export const router = new Router({
 
 router.beforeEach((to, from, next) => {
   // redirect to login page if not logged in and trying to access a restricted page
-  const publicPages = ["/login"];
-  const authRequired = !publicPages.includes(to.path);
-  const loggedIn = sessionStorage.getItem("token");
-  document.title = to.meta.title;
+  const publicPages = ["/login"]
+  const authRequired = !publicPages.includes(to.path)
+  const loggedIn = sessionStorage.getItem("token")
+  document.title = to.meta.title
 
   if (authRequired && !loggedIn) {
     return next({
@@ -77,5 +85,5 @@ router.beforeEach((to, from, next) => {
     });
   }
 
-  next();
+  next()
 });

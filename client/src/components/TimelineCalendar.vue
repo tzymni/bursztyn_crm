@@ -1,5 +1,9 @@
 <template>
   <div>
+    <h1>
+      <font-awesome-icon icon="calendar-alt"/>
+      || {{ header }}
+    </h1>
     <div class="calendar-controls">
       <b-modal
           id="reservation-form-modal"
@@ -27,7 +31,20 @@
       >Kalendarz szczegółowy
       </b-button
       >
-
+      <b-button
+          class="btn btn-info"
+          id="check-avaliability"
+          @click="checkAvailabilityFormModal()"
+      >Sprawdź dostępność
+      </b-button
+      >
+      <b-modal
+          id="check-form-modal"
+          title="Sprawdź dostępność"
+          hide-footer
+      >
+        <CheckAvaliabilityForm/>
+      </b-modal>
       <div>
         <b-form-group id="mySelect" label="Wybierz typ zdarzenia" label-for="mySelect">
           <b-form-select id="mySelect" @change="filterCalendarEvents({ currentValue})" v-model="form.option"
@@ -35,10 +52,6 @@
         </b-form-group>
       </div>
 
-    </div>
-    <div class="toolbox">
-      <!--      <button @click="updateFirstRow">Update first row</button>-->
-      <!--      <button @click="changeZoomLevel">Change zoom level</button>-->
     </div>
     <div class="gstc-wrapper" ref="gstc"></div>
   </div>
@@ -55,6 +68,8 @@ import {reservationService} from "@/_services/reservation.service";
 import {cleaningEventServices} from "@/_services/cleaning_event_service";
 import ReservationForm from "@/components/ReservationForm";
 import CleaningForm from "@/components/CleaningForm";
+import CheckAvaliabilityForm from "./CheckAvailabilityForm";
+
 let gstc, state;
 
 // main component
@@ -62,10 +77,12 @@ export default {
   name: 'TimelineCalendar',
   components: {
     ReservationForm,
-    CleaningForm
+    CleaningForm,
+    CheckAvaliabilityForm
   },
   data: function () {
     return {
+      header: "Kalendarz liniowy",
       state: null,
       cottages: {},
       form: {
@@ -140,7 +157,7 @@ export default {
         chart: {
           items: this.generateItems(),
           time: {
-            zoom: 20
+            zoom: 22
           }
         }
       }
@@ -276,7 +293,7 @@ export default {
         }
       });
     }, setCleaningEvents() {
-      var self = this;
+      const self = this
       cleaningEventServices.getAllCleaningEvents().then(function (response) {
 
             let list = []
@@ -307,18 +324,18 @@ export default {
           }
       ).catch(function (error) {
         if (error) {
-          self.errorNotify = error;
-          self.loading = false;
+          self.errorNotify = error
+          self.loading = false
         }
       });
     },
     setCottages() {
-      var self = this;
+      const self = this;
       cottageService
           .getCottages()
           .then(function (response) {
 
-            const rows = {};
+            const rows = {}
 
             response.map(function (cottage) {
 
@@ -335,11 +352,14 @@ export default {
 
           .catch(function (error) {
             if (error) {
-              self.errorNotify = error;
-              self.loading = false;
+              self.errorNotify = error
+              self.loading = false
             }
           });
     },
+    checkAvailabilityFormModal() {
+      this.$bvModal.show("check-form-modal")
+    }
   },
   computed: {
     currentValue() {

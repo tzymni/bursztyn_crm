@@ -2,8 +2,15 @@
 
 namespace App\Service;
 
+use App\Entity\Cottages;
+use App\Entity\Reservations;
+use App\Entity\Users;
+use App\Repository\CottagesRepository;
+use App\Repository\UsersRepository;
+use Doctrine\ORM\EntityManagerInterface;
 
 /**
+ * Class to parse data from idosell system to current system.
  *
  * @author Tomasz Zymni <tomasz.zymni@gmail.com>
  **/
@@ -11,16 +18,16 @@ class ReservationsFromApiParserService
 {
 
     /**
-     * Parse data from API to format used in the system to proparly save reservation in the database.
+     * Parse data from API to format used in the system to properly save reservation in the database.
      *
-     * @param CottageService $cottageService
+     * @param EntityManagerInterface $em
      * @param array $item
-     * @param array|null $client
      * @param array $reservation
+     * @param array|null $client
      * @return array|null
      */
     public function parseApiDataToSystemFormat(
-        CottageService $cottageService,
+        EntityManagerInterface $em,
         array $item,
         array $reservation,
         array $client = null
@@ -40,7 +47,20 @@ class ReservationsFromApiParserService
         $reservationEvent['date_from'] = $dateFrom;
         $reservationEvent['date_to'] = $dateTo;
 
-        $cottage = $cottageService->getCottageByExternalId($item['objectItemId']);
+        $cottageRepository = $em->getRepository(Cottages::class);
+        $cottage = null;
+        if ($cottageRepository instanceof CottagesRepository) {
+            $cottage = $cottageRepository->findByExternalId($item['objectItemId']);
+        }
+
+        $userRepository = $em->getRepository(Users::class);
+        $users = null;
+        if ($userRepository instanceof UsersRepository) {
+            $users = $userRepository->findAllActiveUsers();
+            $user = current($users);
+        } else {
+            $user = array();
+        }
 
         if (empty($cottage)) {
             return null;
@@ -48,7 +68,7 @@ class ReservationsFromApiParserService
         $cottageId = $cottage->getId();
         $reservationEvent['cottage_id'] = $cottageId;
         $reservationEvent['cottage'] = $cottage;
-        $reservationEvent['user_id'] = 1;
+        $reservationEvent['user_id'] = $user['id'];
         $reservationEvent['guest_first_name'] = isset($client['firstName']) ? $client['firstName'] : '-';
         $reservationEvent['guest_last_name'] = isset($client['lastName']) ? $client['lastName'] : '-';
         $reservationEvent['guest_phone_number'] = isset($client['phone']) ? $client['phone'] : '-';
@@ -64,11 +84,13 @@ class ReservationsFromApiParserService
         $reservationEvent['advance_payment'] = true;
         $reservationEvent['status'] = $reservationDetails['status'];
         $reservationEvent['date_add'] = $reservationDetails['dateAdd'];
-        $reservationEvent['type'] = EventsService::RESERVATION_EVENT;
+        $reservationEvent['type'] = Reservations::EVENT_TYPE;
         $reservationEvent['extra_info'] = $reservationDetails['internalNote'];
 
         if ($reservationEvent['status'] == 'canceled') {
             $reservationEvent['is_active'] = false;
+        } else {
+            $reservationEvent['is_active'] = true;
         }
 
         return $reservationEvent;

@@ -2,22 +2,21 @@
 
 namespace App\Controller;
 
-use App\Entity\User;
+use App\Entity\Users;
 use App\Service\ResponseErrorDecoratorService;
-use App\Service\UserService;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use App\Service\UsersService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * Class UserController to menage API requests for User.
+ * Class UsersController to menage API requests for Users.
  *
- * @author Tomasz Zymni <tomasz.zymni@gmail.com>
  * @package App\Controller
+ * @author Tomasz Zymni <tomasz.zymni@gmail.com>
  */
-class UserController extends AbstractController implements TokenAuthenticatedController
+class UsersController extends AbstractController implements TokenAuthenticatedController
 {
 
     /**
@@ -25,19 +24,19 @@ class UserController extends AbstractController implements TokenAuthenticatedCon
      *
      * @Route("/user", methods={"POST"})
      * @param Request $request
-     * @param UserService $userService
+     * @param UsersService $userService
      * @param ResponseErrorDecoratorService $errorDecorator
      * @return JsonResponse
      */
     public function createUser(
         Request $request,
-        UserService $userService,
+        UsersService $userService,
         ResponseErrorDecoratorService $errorDecorator
-    ) {
+    ): JsonResponse {
         $body = $request->getContent();
         $data = json_decode($body, true);
 
-        $dataIsCorrect = (!is_null($data) && !empty($data['email']) && !empty($data['password'])) ? true : false;
+        $dataIsCorrect = !is_null($data) && !empty($data['email']) && !empty($data['password']);
 
         if (!$dataIsCorrect) {
             $status = JsonResponse::HTTP_BAD_REQUEST;
@@ -49,10 +48,10 @@ class UserController extends AbstractController implements TokenAuthenticatedCon
 
         $user = $userService->createUser($data);
 
-        if ($user instanceof User && empty($response)) {
+        if ($user instanceof Users && empty($response)) {
             $status = JsonResponse::HTTP_OK;
             $response = array();
-        } elseif (empty($status)) {
+        } else {
             $errorResponse = $user;
             $status = JsonResponse::HTTP_BAD_REQUEST;
             $response = $errorDecorator->decorateError($status, $errorResponse);
@@ -65,26 +64,43 @@ class UserController extends AbstractController implements TokenAuthenticatedCon
      * Get active user list.
      *
      * @Route("/user/list", methods={"GET"})
+     * @param UsersService $usersService
      * @param ResponseErrorDecoratorService $errorDecorator
+     * @return JsonResponse
      */
     public function getUserList(
+        UsersService $usersService,
         ResponseErrorDecoratorService $errorDecorator
-    ) {
-        $users = $this->getDoctrine()->getRepository(User::class)->findAllActiveUsers();
-        $status = JsonResponse::HTTP_OK;
 
-        return new JsonResponse($users, $status);
+    ): JsonResponse {
+
+        try {
+
+            $response = $usersService->getActiveUsers();
+            $status = JsonResponse::HTTP_OK;
+
+        } catch (\Exception $exception) {
+
+            $status = JsonResponse::HTTP_BAD_REQUEST;
+            $response = $errorDecorator->decorateError($status, $exception->getMessage());
+        }
+        return new JsonResponse($response, $status);
     }
 
     /**
+     * Get user by id.
+     *
      * @Route("/user/{id}", methods={"GET"})
+     * @param Request $request
+     * @param UsersService $userService
      * @param ResponseErrorDecoratorService $errorDecorator
+     * @return JsonResponse
      */
     public function getUserById(
         Request $request,
-        UserService $userService,
+        UsersService $userService,
         ResponseErrorDecoratorService $errorDecorator
-    ) {
+    ): JsonResponse {
         $id = $request->get('id');
 
         if (empty($id) || !is_numeric($id)) {
@@ -93,7 +109,7 @@ class UserController extends AbstractController implements TokenAuthenticatedCon
         } else {
             $result = $userService->getActiveUserById($id);
 
-            if ($result instanceof User) {
+            if ($result instanceof Users) {
                 $status = JsonResponse::HTTP_OK;
                 $data = [
                     'id' => $result->getId(),
@@ -114,26 +130,29 @@ class UserController extends AbstractController implements TokenAuthenticatedCon
     /**
      * @Route("/user/{id}", methods={"DELETE"})
      * @param Request $request
+     * @param UsersService $userService
+     * @param ResponseErrorDecoratorService $errorDecorator
+     * @return JsonResponse
      */
     public function deleteUser(
         Request $request,
-        UserService $userService,
+        UsersService $userService,
         ResponseErrorDecoratorService $errorDecorator
-    ) {
+    ): JsonResponse {
         $id = $request->get('id');
         $deletedUserResponse = null;
 
         if (!empty($id)) {
             $user = $userService->getActiveUserById($id);
 
-            if ($user instanceof User) {
+            if ($user instanceof Users) {
                 $deletedUserResponse = $userService->deleteUser($user);
             } else {
                 $deletedUserResponse = $user;
             }
         }
 
-        if ($deletedUserResponse instanceof User) {
+        if ($deletedUserResponse instanceof Users) {
             $status = JsonResponse::HTTP_OK;
             $data = array();
         } else {
@@ -146,12 +165,16 @@ class UserController extends AbstractController implements TokenAuthenticatedCon
 
     /**
      * @Route("/user/{id}", methods={"PUT"})
+     * @param Request $request
+     * @param UsersService $userService
+     * @param ResponseErrorDecoratorService $errorDecorator
+     * @return JsonResponse
      */
     public function updateUser(
         Request $request,
-        UserService $userService,
+        UsersService $userService,
         ResponseErrorDecoratorService $errorDecorator
-    ) {
+    ): JsonResponse {
         $body = $request->getContent();
         $data = json_decode($body, true);
 
@@ -168,7 +191,7 @@ class UserController extends AbstractController implements TokenAuthenticatedCon
         $user = $userService->getActiveUserById($data);
 
         $result = $userService->updateUser($user, $data);
-        if ($result instanceof User) {
+        if ($result instanceof Users) {
             $status = JsonResponse::HTTP_OK;
             $response = array();
         } else {

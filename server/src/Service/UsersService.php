@@ -2,23 +2,22 @@
 
 namespace App\Service;
 
-use App\Entity\User;
-use App\Repository\UserRepository;
+use App\Entity\Users;
+use App\Repository\UsersRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Symfony\Bridge\Doctrine\RegistryInterface;
-use Doctrine\ORM\EntityManager;
 
 /**
- * Class UserService.
+ * Class UsersService.
  *
  * @package App\Service
  * @author Tomasz Zymni <tomasz.zymni@gmail.com>
  */
-class UserService
+class UsersService
 {
 
+    /**
+     * @var EntityManagerInterface
+     */
     private $em;
 
     public function __construct(EntityManagerInterface $em)
@@ -35,7 +34,7 @@ class UserService
     public function getUserByEmail($email)
     {
         try {
-            $rep = $this->em->getRepository('App:User');
+            $rep = $this->em->getRepository('App:Users');
 
             $user = $rep->findBy(
                 array("is_active" => true, "email" => $email),
@@ -61,29 +60,8 @@ class UserService
      */
     public function getActiveUserById($id)
     {
-        $user = $this->em->getRepository('App:User')->findBy(
+        $user = $this->em->getRepository('App:Users')->findBy(
             array("is_active" => true, "id" => $id),
-            array(),
-            array(1)
-        );
-
-        if (isset($user) && isset($user[0])) {
-            return $user[0];
-        } else {
-            return sprintf("Can't find user!");
-        }
-    }
-
-    /**
-     * Get user by id no matter of status is_active.
-     *
-     * @param $id
-     * @return object|string
-     */
-    public function getUserById($id)
-    {
-        $user = $this->em->getRepository('App:User')->findBy(
-            array("id" => $id),
             array(),
             array(1)
         );
@@ -98,10 +76,10 @@ class UserService
     /**
      * @param $data
      *    $data = [
-     *      'name' => (string) User name. Required.
-     *      'password' => (string) User (plain) password. Required.
+     *      'name' => (string) Users name. Required.
+     *      'password' => (string) Users (plain) password. Required.
      *    ]
-     * @return User|string User entity or string in case of error
+     * @return Users|string Users entity or string in case of error
      */
     public function createUser($data)
     {
@@ -112,7 +90,7 @@ class UserService
         $firstName = isset($data['first_name']) ? $data['first_name'] : '';
         $lastName = isset($data['last_name']) ? $data['last_name'] : '';
 
-        $user = new User();
+        $user = new Users();
         $user->setEmail($email);
         $encoded = password_hash($plainPassword, PASSWORD_DEFAULT);
         $user->setPassword($encoded);
@@ -126,7 +104,7 @@ class UserService
 
             return $user;
         } catch (\Doctrine\DBAL\Exception\UniqueConstraintViolationException $ex) {
-            return sprintf("User with email %s already exist!", $email);
+            return sprintf("Users with email %s already exist!", $email);
         } catch (\Exception $ex) {
             return "Error with creating user";
         }
@@ -135,11 +113,11 @@ class UserService
     /**
      * Update user.
      *
-     * @param User $user
+     * @param Users $user
      * @param array $data
-     * @return User|string
+     * @return Users|string
      */
-    public function updateUser(User $user, array $data)
+    public function updateUser(Users $user, array $data)
     {
         try {
             if (isset($data['first_name']) && !empty($data['first_name'])) {
@@ -160,7 +138,7 @@ class UserService
 
             return $user;
         } catch (\Doctrine\DBAL\Exception\UniqueConstraintViolationException $ex) {
-            return "User with given name already exists";
+            return "Users with given name already exists";
         } catch (\Exception $ex) {
             return "Unable to update user";
         }
@@ -169,10 +147,10 @@ class UserService
     /**
      * Soft delete user (change is_active = 0).
      *
-     * @param User $user
-     * @return User|string
+     * @param Users $user
+     * @return Users|string
      */
-    public function deleteUser(User $user)
+    public function deleteUser(Users $user)
     {
         $user->setIsActive(false);
 
@@ -185,4 +163,22 @@ class UserService
         }
     }
 
+    /**
+     * Find all active users.
+     *
+     * @return array
+     */
+    public function getActiveUsers(): array
+    {
+
+        $userRepository = $this->em->getRepository(Users::class);
+        $users = null;
+        if ($userRepository instanceof UsersRepository) {
+            $users = $userRepository->findAllActiveUsers();
+        } else {
+            $users = array();
+        }
+
+        return $users;
+    }
 }

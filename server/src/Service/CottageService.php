@@ -3,15 +3,22 @@
 namespace App\Service;
 
 use App\Entity\Cottages;
+use App\Repository\CottagesRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
- * Description of CottageService
+ * Class CottageService to manage cottages (adding, removing, updating, etc).
  *
- * @author tzymni
+ * @package App\Service
+ * @author Tomasz Zymni <tomasz.zymni@gmail.com>
  */
 class CottageService
 {
+    /**
+     * Available list of cottages colors.
+     *
+     * @var string[]
+     */
     public $colorList = array(
         "#4D4D4D",
         "#999999",
@@ -65,28 +72,28 @@ class CottageService
     }
 
     /**
-     * Check if color is hex.
+     * Check if color is in hexadecimal format.
      *
      * @param $color
      * @return bool
      */
-    public function validHexColor($color)
+    public function validHexColor($color): bool
     {
-        if (preg_match('/^#[a-f0-9]{6}$/i', $color)) //hex color is valid
-        {
+        if (preg_match('/^#[a-f0-9]{6}$/i', $color)) {
             return true;
         }
-
         return false;
     }
 
     /**
+     * Add cottage to the database.
+     *
      * @param $data
      *    $data = [
-     *      'name' => (string) User name. Required.
-     *      'password' => (string) User (plain) password. Required.
+     *      'name' => (string) Users name. Required.
+     *      'password' => (string) Users (plain) password. Required.
      *    ]
-     * @return User|string User entity or string in case of error
+     * @return Users|string Users entity or string in case of error
      */
     public function createCottage($data)
     {
@@ -112,24 +119,10 @@ class CottageService
 
         try {
             $this->em->persist($cottage);
-
             $this->em->flush();
-
             return $cottage;
         } catch (\Exception $ex) {
             return "Can't create cottage!" . $ex->getMessage();
-        }
-    }
-
-    public function getCottageById($id)
-    {
-        $cottage = $this->em->getRepository('App:Cottages')
-            ->findOneBy(['id' => $id]);
-
-        if ($cottage) {
-            return $cottage;
-        } else {
-            return "Can't find cottage!";
         }
     }
 
@@ -141,16 +134,16 @@ class CottageService
      */
     public function getActiveCottageById($id)
     {
-        $cottage = $this->em->getRepository('App:Cottages')->findBy(
-            array("is_active" => true, "id" => $id),
-            array(),
-            array(1)
-        );
+        $cottageRepository = $this->em->getRepository(Cottages::class);
 
-        if (isset($cottage) && isset($cottage[0])) {
-            return $cottage[0];
-        } else {
+        if ($cottageRepository instanceof CottagesRepository) {
+            $cottage = $cottageRepository->findActiveById($id);
+        }
+
+        if (empty($cottage)) {
             return sprintf("Can't find cottage!");
+        } else {
+            return $cottage;
         }
     }
 
@@ -161,12 +154,15 @@ class CottageService
      */
     public function getActiveCottages()
     {
-        $cottage = $this->em->getRepository('App:Cottages')->findBy(
-            array("is_active" => true)
-        );
 
-        if (isset($cottage) && isset($cottage[0])) {
-            return $cottage;
+        $cottageRepository = $this->em->getRepository(Cottages::class);
+
+        if ($cottageRepository instanceof CottagesRepository) {
+            $cottages = $cottageRepository->findAllActive();
+        }
+
+        if (isset($cottages) && isset($cottages[0])) {
+            return $cottages;
         } else {
             return sprintf("Can't find active cottages!");
         }
@@ -247,16 +243,16 @@ class CottageService
      *
      * @return string
      */
-    public function getUnusedColor()
+    public function getUnusedColor(): string
     {
 
-        $query = $this->em->createQueryBuilder()
-            ->select('e.color')
-            ->from('App:Cottages', 'e')
-            ->andWhere('e.is_active = :is_active')
-            ->setParameter('is_active', true);
+        $cottagesRepository = $this->em->getRepository(Cottages::class);
 
-        $colorsInDB = $query->getQuery()->getResult();
+        if ($cottagesRepository instanceof CottagesRepository) {
+            $colorsInDB = $cottagesRepository->findAllColorsOfActiveCottages();
+        } else {
+            $colorsInDB = null;
+        }
 
         $usedColors = array();
         foreach ($colorsInDB as $color) {
@@ -264,9 +260,7 @@ class CottageService
         }
 
         $colorList = $this->colorList;
-
         foreach ($usedColors as $usedColor) {
-
             if (($key = array_search($usedColor, $colorList)) !== false) {
                 unset($colorList[$key]);
             }
@@ -283,48 +277,21 @@ class CottageService
     }
 
     /**
-     * Get ID of cottage by external_id.
-     *
-     * @param $externalId
-     * @return Cottages|null
-     */
-    public function getCottageByExternalId($externalId)
-    {
-
-        $cottage = null;
-
-        $cottage = $this->em->getRepository('App:Cottages')->findBy(
-            array("is_active" => true, "external_id" => $externalId),
-            array(),
-            array(1)
-        );
-
-        if (isset($cottage) && isset($cottage[0])) {
-            return $cottage[0];
-        } else {
-            return null;
-        }
-    }
-
-    /**
      * Get all ids of external cottages.
      *
      * @return array
      */
     public function getAllIdsOfExternalCottages(): array
     {
-        $query = $this->em->createQueryBuilder()
-            ->select('e.id')
-            ->from('App:Cottages', 'e')
-            ->andWhere('e.is_active = :is_active')
-            ->andWhere('e.external_id IS NOT NULL')
-            ->setParameter('is_active', true);
-
-        $externalCottages = $query->getQuery()->getResult();
+        $cottageRepository = $this->em->getRepository(Cottages::class);
+        $externalCottages = null;
+        if ($cottageRepository instanceof CottagesRepository) {
+            $externalCottages = $cottageRepository->findAllExternalActiveCottages();
+        };
 
         $ids = array();
         foreach ($externalCottages as $externalCottage) {
-            $ids[] = $externalCottage['id'];
+            $ids[] = $externalCottage->getId();
         }
 
         return $ids;

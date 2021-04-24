@@ -4,14 +4,14 @@ namespace App\Lib;
 
 use App\Entity\CottagesCleaningEvents;
 use App\Entity\Events;
-use App\Service\CottagesCleaningEventsService;
-use App\Service\EventsService;
+use App\Repository\EventsRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
- * Parse data to cleaning event.
+ * Parse data for cleaning event.
  *
  * @package App\Lib
+ * @author Tomasz Zymni <tomasz.zymni@gmail.com>
  */
 class CleaningParser implements EventParser
 {
@@ -42,8 +42,13 @@ class CleaningParser implements EventParser
         $data['is_active'] = true;
         $data['date_from'] = $data['date_to'];
         $data['date_to'] = $data['date_from'];
-        $eventService = new EventsService($this->em);
-        $event = $eventService->getActiveEventByDateAndType($data['type'], $data['date_from'], $data['date_to']);
+
+        $repository = $this->em->getRepository('App:Events');
+
+        $event = null;
+        if ($repository instanceof EventsRepository) {
+            $event = $repository->findActiveEventByDateAndType($data['type'], $data['date_from'], $data['date_to']);
+        }
 
         if ($event instanceof Events) {
             $data['event'] = $event;
@@ -87,10 +92,10 @@ class CleaningParser implements EventParser
 
         $numberOfCottages = null;
         if ($event instanceof Events) {
-            $cleaningCottagesEvent = new CottagesCleaningEventsService($this->em);
-            $numberOfCottages = $cleaningCottagesEvent->countCottagesByEvent($event);
-
-            if ($cleaningCottagesEvent->findCottageEventByRelations($data['cottage'], $event)) {
+            $numberOfCottages = $this->em->getRepository(CottagesCleaningEvents::class)->countCottagesAssignedToEvent($event);
+            $cottageEvent = $this->em->getRepository(CottagesCleaningEvents::class)->findCottageEventByRelations($data['cottage'],
+                $event);
+            if ($cottageEvent) {
                 $cottageWillBeAdded = false;
             }
         }

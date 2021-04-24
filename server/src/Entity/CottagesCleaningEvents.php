@@ -9,7 +9,15 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class CottagesCleaningEvents
 {
+    /**
+     * Event type.
+     */
     const EVENT_TYPE = 'CLEANING';
+
+    /**
+     * Color of event in calendar module.
+     */
+    const EVENT_COLOR = '#e5e5e5';
 
     /**
      * @ORM\Id()

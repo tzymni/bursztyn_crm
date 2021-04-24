@@ -1,18 +1,15 @@
 <?php
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 namespace App\Service;
 
 use App\Entity\Cottages;
 use App\Entity\Events;
 use App\Entity\Reservations;
+use App\Repository\CottagesRepository;
+use App\Repository\ReservationsRepository;
 use App\Service\interfaces\DecorateEventInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 
 /**
  * Class ReservationService
@@ -42,15 +39,18 @@ class ReservationService implements DecorateEventInterface
      * @param Events $event
      * @param array $data
      * @param null $reservation
-     * @throws \Exception
+     * @throws Exception
      */
     public function createReservation(Events $event, array $data, $reservation = null)
     {
-        $cottageService = new CottageService($this->em);
-        $cottageResponse = $cottageService->getActiveCottageById($data['cottage_id']);
+        $cottageRepository = $this->em->getRepository(Cottages::class);
+        $cottageResponse = null;
+        if ($cottageRepository instanceof CottagesRepository) {
+            $cottageResponse = $cottageRepository->findActiveById($data['cottage_id']);
+        }
 
         if (!$cottageResponse instanceof Cottages) {
-            throw new \Exception($cottageResponse);
+            throw new Exception($cottageResponse);
         }
 
         $guestsNumber = empty($data['guests_number']) ? 0 : intval($data['guests_number']);
@@ -65,9 +65,9 @@ class ReservationService implements DecorateEventInterface
             $isActive = $data['is_active'];
         }
 
-        $status = isset($data['status']) ? $data['status'] : 'DEFAULT';
+        $status = $data['status'] ?? 'DEFAULT';
 
-        $dateAdd = isset($data['date_add']) ? $data['date_add'] : gmdate("Y-m-d H:i:s");
+        $dateAdd = $data['date_add'] ?? gmdate("Y-m-d H:i:s");
         $dateAdd = \DateTime::createFromFormat("Y-m-d H:i:s", $dateAdd);
 
         $reservation->setCottage($cottageResponse);
@@ -90,7 +90,11 @@ class ReservationService implements DecorateEventInterface
         $this->em->flush();
     }
 
-    public function getEventDetails(int $eventId)
+    /**
+     * @param int $eventId
+     * @return array
+     */
+    public function getEventDetails(int $eventId): array
     {
         return $this->getActiveReservationByEventId($eventId);
     }
@@ -102,49 +106,33 @@ class ReservationService implements DecorateEventInterface
      * @param $cottageId
      * @param $dateFrom
      * @param $dateTo
+     * @param null $eventId
      * @return bool
-     * @throws \Exception
+     * @throws Exception
      */
     public function checkCottageAvailability($cottageId, $dateFrom, $dateTo, $eventId = null): bool
     {
-        $cottageService = new CottageService($this->em);
-        $cottageResponse = $cottageService->getActiveCottageById($cottageId);
+        $cottageRepository = $this->em->getRepository(Cottages::class);
+        $cottageResponse = null;
+        if ($cottageRepository instanceof CottagesRepository) {
+            $cottageResponse = $cottageRepository->findActiveById($cottageId);
+        }
 
         if (!$cottageResponse instanceof Cottages) {
-            throw new \Exception($cottageResponse);
+            throw new Exception($cottageResponse);
         }
 
-        $query = $this->em->createQueryBuilder()
-            ->select('e.id, r.id')
-            ->from('App:Reservations', 'r')
-            ->leftJoin('r.event', 'e')
-            ->andWhere('(e.date_from_unix_utc >= :dateFrom AND e.date_from_unix_utc < :dateTo)')
-            ->orWhere('(e.date_to_unix_utc <= :dateTo AND e.date_to_unix_utc > :dateFrom)')
-            ->orWhere('(e.date_from_unix_utc < :dateFrom AND e.date_to_unix_utc > :dateTo)')
-            ->andWhere('r.cottage=:cottageId')
-            ->setParameter('cottageId', $cottageId)
-            ->setParameter('dateFrom', $dateFrom)
-            ->setParameter('dateTo', $dateTo);
+        $reservationRepository = $this->em->getRepository(Reservations::class);
 
-        if ($eventId > 0) {
-            $query->andWhere('r.event != :eventId')
-                ->setParameter('eventId', $eventId);
+        $reservations = array();
+        if ($reservationRepository instanceof ReservationsRepository) {
+            $reservations = $reservationRepository->findActiveReservationForCottageBetweenDates($cottageId, $dateFrom, $dateTo, $eventId);
         }
 
-        $result = $query->getQuery()->getResult();
-
-        if (empty($result)) {
+        if (empty($reservations)) {
             return true;
         } else {
-            $dateFrom = gmdate("Y-m-d", $dateFrom);
-            $dateTo = gmdate("Y-m-d", $dateTo);
-            $message = sprintf(
-                "There is a reservation between %s and %s for cottage %s",
-                $dateFrom,
-                $dateTo,
-                $cottageResponse->getName()
-            );
-            throw new \Exception($message);
+            return false;
         }
     }
 
@@ -153,73 +141,55 @@ class ReservationService implements DecorateEventInterface
      * @param $dateFrom
      * @return array
      */
-    public function getNextActiveReservationByCottage(Cottages $cottages, $dateFrom): array
+    public function getNextActiveReservationInCottage(Cottages $cottages, $dateFrom): array
     {
-        $event = $this->em->getRepository('App:Reservations')->createQueryBuilder('p')
-            ->select(
-                'p.id as reservation_id, p.guest_first_name, p.guest_last_name,  p.guests_number,
-                  Events.id as event_id, Events.date_from, Events.date_to, Events.title  '
-            )
-            ->andWhere('p.is_active = :active')
-            ->andWhere('p.cottage = :cottage')
-            ->andWhere('Events.date_from >= :date_from')
-            ->setParameter('active', true)
-            ->setParameter('cottage', $cottages->getId())
-            ->setParameter('date_from', $dateFrom)
-            ->leftJoin('p.event', 'Events')
-            ->addOrderBy('Events.date_from', 'ASC')
-            ->setMaxResults(1)
-            ->getQuery()->execute();
+        $reservationRepository = $this->em->getRepository(Reservations::class);
 
-        if (isset($event) && isset($event[0])) {
-            return $event[0];
+        $reservation = array();
+        if ($reservationRepository instanceof ReservationsRepository) {
+            $reservation = $reservationRepository->findNextReservationInCottage($cottages, $dateFrom);
+        }
+
+        if (isset($reservation) && isset($reservation[0])) {
+            return $reservation[0];
         } else {
-
-            return array();
+            return $reservation;
         }
     }
 
     /**
+     * Get active reservation by event id.
+     *
      * @param $eventId
+     * @return array
      */
-    public function getActiveReservationByEventId($eventId)
+    public function getActiveReservationByEventId($eventId): array
     {
 
-        $event = $this->em->getRepository('App:Reservations')->createQueryBuilder('p')
-            ->select(
-                'p.id as reservation_id, p.guest_first_name, p.guest_last_name, p.guest_phone_number, p.guests_number,
-                 p.advance_payment, p.extra_info, Cottages.id as cottage_id  '
-            )
-            ->andWhere('p.is_active = :active')
-            ->andWhere('p.event = :eventId')
-            ->setParameter('active', true)
-            ->setParameter('eventId', $eventId)
-            ->leftJoin('p.cottage', 'Cottages')
-            ->getQuery()->execute();
+        $reservationRepository = $this->em->getRepository(Reservations::class);
 
-        if (isset($event) && isset($event[0])) {
-            return $event[0];
-        } else {
-            return sprintf("Can't find event!");
+        $reservations = array();
+        if ($reservationRepository instanceof ReservationsRepository) {
+            $reservations = $reservationRepository->findActiveReservationByEventId($eventId);
         }
+        return $reservations[0];
     }
 
     /**
      * Get ID of cottage by external_id.
      *
      * @param $externalId
-     * @return Cottages|null
+     * @return object|null
      */
-    public function getReservationByExternalId($externalId)
+    public function getReservationByExternalId($externalId): ?object
     {
 
-        $reservation = null;
+        $reservationRepository = $this->em->getRepository(Reservations::class);
 
-        $reservation = $this->em->getRepository('App:Reservations')->findBy(
-            array("external_id" => $externalId),
-            array(),
-            array(1)
-        );
+        $reservation = array();
+        if ($reservationRepository instanceof ReservationsRepository) {
+            $reservation = $reservationRepository->findReservationByExternalId($externalId);
+        }
 
         if (isset($reservation) && isset($reservation[0])) {
             return $reservation[0];
