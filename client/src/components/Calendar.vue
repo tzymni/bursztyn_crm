@@ -197,7 +197,7 @@ export default {
                 startDate: new Date(value.date_from * 1000),
                 endDate: new Date(value.date_to * 1000),
                 title: value.title,
-                style: 'background-color: ' + value.color,
+                style: 'height:28px; background-color: ' + value.color,
                 type: value.type
               }
               list.push(newEvent)
