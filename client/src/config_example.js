@@ -8,5 +8,5 @@ export const config = {
       cleaningType: 'CLEANING',
       allType: 'ALL'
     },
-    systemVersion: '0.20.2'
+    systemVersion: '0.20.3'
 }
