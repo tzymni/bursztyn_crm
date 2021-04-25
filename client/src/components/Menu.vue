@@ -107,9 +107,6 @@ body {
 #menuPanel.collapsed {
   padding-left: 50px;
 }
-.container {
-  max-width: 80%;
-}
 pre {
   font-family: Consolas, monospace;
   color: #000;
