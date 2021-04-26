@@ -1,6 +1,6 @@
 {
-  "name": "clent_vue",
-  "version": "0.1.0",
+  "name": "BursztynCRM",
+  "version": "0.23.0",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",

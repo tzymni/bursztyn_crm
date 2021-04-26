@@ -2,13 +2,13 @@
 
 
 ### Technical details / Requirements:
-- Current project is built using Symfony 4.1 framework
+- Current project is built using Symfony 4.4 framework
 - It is based on microservice/API symfony project (symfony/skeleton)
 	- https://symfony.com/download
 - PHPUnit;	
-- PHP 7.4;
+- PHP 7.3;
 - MariaDB;
-- composer;
+- Composer 1.10;
 
 ### Installation:
     
@@ -27,7 +27,8 @@
 
 ## Usage/testing:
 
-Import SQL query to create a test user. 
+
+#### Import SQL query to create a test user. 
 
 ````
 
@@ -35,8 +36,16 @@ mysql -u username -p database_name < users.sql
 
 ````
 
-We can use POSTMAN to access all endpoints:
-    
+  
+##### Import your reservations and cottages from Idosell API. 
+
+
+```
+php bin/console app:synchronize-api-data
+```
+
+#### We can use POSTMAN to test all endpoints:
+
 
     Authenticate (acquire JWT token) for just created user to be able to make REST API calls: 
     
@@ -53,4 +62,3 @@ We can use POSTMAN to access all endpoints:
     }
     
     copy JWT token you got (without quotes)	to clipboard
-  
