@@ -12,7 +12,7 @@ namespace PackageVersions;
  */
 final class Versions
 {
-    public const ROOT_PACKAGE_NAME = '__root__';
+    public const ROOT_PACKAGE_NAME = 'bursztyn-crm/bursztyn-crm';
     /**
      * Array of all available composer packages.
      * Dont read this array from your calling code, but use the \PackageVersions\Versions::getVersion() method instead.
@@ -132,11 +132,11 @@ final class Versions
   'symfony/test-pack' => 'v1.0.6@ff87e800a67d06c423389f77b8209bc9dc469def',
   'symfony/web-profiler-bundle' => 'v4.4.6@76c21d0137f0b9c6bbbc93ac2672cadfdf2e625a',
   'symfony/web-server-bundle' => 'v4.4.6@fe438443231563da8e58dcbd7bb62f4ee4bda383',
-  'symfony/polyfill-iconv' => '*@7c648f1f91c9e4ed407db71f44c10fd45e98d502',
-  'symfony/polyfill-php71' => '*@7c648f1f91c9e4ed407db71f44c10fd45e98d502',
-  'symfony/polyfill-php70' => '*@7c648f1f91c9e4ed407db71f44c10fd45e98d502',
-  'symfony/polyfill-php56' => '*@7c648f1f91c9e4ed407db71f44c10fd45e98d502',
-  '__root__' => 'dev-master@7c648f1f91c9e4ed407db71f44c10fd45e98d502',
+  'symfony/polyfill-iconv' => '*@',
+  'symfony/polyfill-php71' => '*@',
+  'symfony/polyfill-php70' => '*@',
+  'symfony/polyfill-php56' => '*@',
+  'bursztyn-crm/bursztyn-crm' => '1.0.0@',
 );
 
     private function __construct()
