@@ -12,7 +12,7 @@ namespace PackageVersions;
  */
 final class Versions
 {
-    public const ROOT_PACKAGE_NAME = 'bursztyn-crm/bursztyn-crm';
+    public const ROOT_PACKAGE_NAME = '__root__';
     /**
      * Array of all available composer packages.
      * Dont read this array from your calling code, but use the \PackageVersions\Versions::getVersion() method instead.
@@ -42,6 +42,8 @@ final class Versions
   'guzzlehttp/promises' => 'v1.3.1@a59da6cf61d80060647ff4d3eb2c03a2bc694646',
   'guzzlehttp/psr7' => '1.6.1@239400de7a173fe9901b9ac7c06497751f00727a',
   'jdorn/sql-formatter' => 'v1.2.17@64990d96e0959dff8e059dfcdc1af130728d92bc',
+  'laminas/laminas-eventmanager' => '3.3.1@966c859b67867b179fde1eff0cd38df51472ce4a',
+  'laminas/laminas-zendframework-bridge' => '1.2.0@6cccbddfcfc742eb02158d6137ca5687d92cee32',
   'monolog/monolog' => '1.25.3@fa82921994db851a8becaf3787a9e73c5976b6f1',
   'nelmio/cors-bundle' => '1.5.6@10a24c10f242440211ed31075e74f81661c690d9',
   'ocramius/package-versions' => '1.5.1@1d32342b8c1eb27353c8887c366147b4c2da673c',
@@ -75,8 +77,9 @@ final class Versions
   'symfony/flex' => 'v1.6.2@e4f5a2653ca503782a31486198bd1dd1c9a47f83',
   'symfony/form' => 'v4.4.6@3a287b3b5ecd1a534af62b8b530f181e636e72c9',
   'symfony/framework-bundle' => 'v4.4.6@f0ef822516463bef83625e7d33f8e047093f310e',
-  'symfony/http-foundation' => 'v4.4.6@0a3b7711229f816a06fac805f4ed4a8f4641c719',
-  'symfony/http-kernel' => 'v4.4.6@02ee1d0d616b031fb48a1c9c3e5dc092dd7e448d',
+  'symfony/http-client-contracts' => 'v2.4.0@7e82f6084d7cae521a75ef2cb5c9457bbda785f4',
+  'symfony/http-foundation' => 'v4.4.20@02d968647fe61b2f419a8dc70c468a9d30a48d3a',
+  'symfony/http-kernel' => 'v4.4.21@0248214120d00c5f44f1cd5d9ad65f0b38459333',
   'symfony/inflector' => 'v4.4.6@f419ab2853cc00471ffd7fc18e544b5f5a90adb1',
   'symfony/intl' => 'v4.4.6@345aa50278b9d02a9cc75a5f19596c21646aa8d8',
   'symfony/lts' => 'dev-master@c1affae45b78aee036effa1759237e7fa96d4af2',
@@ -91,6 +94,7 @@ final class Versions
   'symfony/polyfill-mbstring' => 'v1.15.0@81ffd3a9c6d707be22e3012b827de1c9775fc5ac',
   'symfony/polyfill-php72' => 'v1.15.0@37b0976c78b94856543260ce09b460a7bc852747',
   'symfony/polyfill-php73' => 'v1.15.0@0f27e9f464ea3da33cbe7ca3bdf4eb66def9d0f7',
+  'symfony/polyfill-php80' => 'v1.22.1@dc3063ba22c2a1fd2f45ed856374d79114998f91',
   'symfony/process' => 'v4.4.6@b9863d0f7b684d7c4c13e665325b5ff047de0aee',
   'symfony/property-access' => 'v4.4.6@a35574237897b511e9a30a7bd161d49ec8999661',
   'symfony/property-info' => 'v4.4.6@e6355ba81c738be31c3c3b3cd7929963f98da576',
@@ -117,7 +121,6 @@ final class Versions
   'twig/twig' => 'v3.0.3@3b88ccd180a6b61ebb517aea3b1a8906762a1dc2',
   'webmozart/assert' => '1.7.0@aed98a490f9a8f78468232db345ab9cf606cf598',
   'zendframework/zend-code' => '3.4.1@268040548f92c2bfcba164421c1add2ba43abaaa',
-  'zendframework/zend-eventmanager' => '3.2.1@a5e2583a211f73604691586b8406ff7296a946dd',
   'easycorp/easy-log-handler' => 'v1.0.9@224e1dfcf9455aceee89cd0af306ac097167fac1',
   'nikic/php-parser' => 'v4.3.0@9a9981c347c5c49d6dfe5cf826bb882b824080dc',
   'symfony/browser-kit' => 'v4.4.6@4e9a171559f5a9018c90ba9e85b4084d4e045186',
@@ -132,11 +135,11 @@ final class Versions
   'symfony/test-pack' => 'v1.0.6@ff87e800a67d06c423389f77b8209bc9dc469def',
   'symfony/web-profiler-bundle' => 'v4.4.6@76c21d0137f0b9c6bbbc93ac2672cadfdf2e625a',
   'symfony/web-server-bundle' => 'v4.4.6@fe438443231563da8e58dcbd7bb62f4ee4bda383',
-  'symfony/polyfill-iconv' => '*@',
-  'symfony/polyfill-php71' => '*@',
-  'symfony/polyfill-php70' => '*@',
-  'symfony/polyfill-php56' => '*@',
-  'bursztyn-crm/bursztyn-crm' => '1.0.0@',
+  'symfony/polyfill-iconv' => '*@512000cfe7c7cbbb9aa386a8aeb3cd5a23e9169d',
+  'symfony/polyfill-php71' => '*@512000cfe7c7cbbb9aa386a8aeb3cd5a23e9169d',
+  'symfony/polyfill-php70' => '*@512000cfe7c7cbbb9aa386a8aeb3cd5a23e9169d',
+  'symfony/polyfill-php56' => '*@512000cfe7c7cbbb9aa386a8aeb3cd5a23e9169d',
+  '__root__' => 'dev-master@512000cfe7c7cbbb9aa386a8aeb3cd5a23e9169d',
 );
 
     private function __construct()
