@@ -36,7 +36,10 @@
     "symfony/validator": "^4.1",
     "symfony/web-link": "^4.1",
     "symfony/webpack-encore-pack": "*",
-    "symfony/yaml": "^4.1"
+    "symfony/yaml": "^4.1",
+    "symfony/http-kernel": "4.4.13",
+    "symfony/http-foundation": "4.4.7",
+    "symfony/security-http": "4.4.7"
   },
   "require-dev": {
     "symfony/debug-pack": "*",
