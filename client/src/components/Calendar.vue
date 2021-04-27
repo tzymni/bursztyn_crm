@@ -20,7 +20,6 @@
           />
         </b-modal>
         <b-modal
-            @hide="setEvents()"
             id="cleaning-form-modal"
             title="Sprzątanie domków"
             hide-footer
