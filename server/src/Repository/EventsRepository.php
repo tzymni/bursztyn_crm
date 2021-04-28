@@ -4,7 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Events;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @method Events|null find($id, $lockMode = null, $lockVersion = null)
@@ -17,7 +17,6 @@ class EventsRepository extends ServiceEntityRepository
 
     /**
      * EventsRepository constructor.
-     * @param ManagerRegistry $registry
      */
     public function __construct(ManagerRegistry $registry)
     {

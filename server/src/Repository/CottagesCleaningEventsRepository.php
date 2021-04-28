@@ -6,7 +6,7 @@ use App\Entity\Cottages;
 use App\Entity\CottagesCleaningEvents;
 use App\Entity\Events;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @method CottagesCleaningEvents|null find($id, $lockMode = null, $lockVersion = null)
