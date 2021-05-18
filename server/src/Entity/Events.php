@@ -45,7 +45,7 @@ class Events
     private $created_by;
 
     /**
-     * @ORM\Column(type="string", length=255, columnDefinition="ENUM('RESERVATION', 'CLEANING')")
+     * @ORM\Column(type="string", length=255, columnDefinition="ENUM('RESERVATION', 'CLEANING', 'PRESENCE')")
      */
     private $type;
 
