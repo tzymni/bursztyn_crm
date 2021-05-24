@@ -66,7 +66,7 @@ class CleaningParser implements EventParser
      * @param $numberOfCottages
      * @return string
      */
-    private function generateTitle($numberOfCottages): string
+    public function generateTitle($numberOfCottages): string
     {
         if ($numberOfCottages == 1) {
             $changeString = 'zmiana';

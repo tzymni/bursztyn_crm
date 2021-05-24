@@ -11,6 +11,11 @@ use Doctrine\ORM\Mapping as ORM;
 class UserPresences
 {
     /**
+     * Event type in events table.
+     */
+    const EVENT_TYPE = 'PRESENCE';
+
+    /**
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")

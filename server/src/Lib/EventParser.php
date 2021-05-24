@@ -10,4 +10,6 @@ namespace App\Lib;
 interface EventParser
 {
     public function parseData($data): array;
+
+    public function generateTitle($data): string;
 }
