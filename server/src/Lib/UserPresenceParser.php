@@ -3,10 +3,37 @@
 namespace App\Lib;
 
 use App\Entity\UserPresences;
+use App\Service\UsersService;
+use Doctrine\ORM\EntityManagerInterface;
 
+/**
+ * Class UserPresenceParser to parse UserPresence data before save it into the database.
+ *
+ * @package App\Lib
+ * @author Tomasz Zymni <tomasz.zymni@gmail.com>
+ */
 class UserPresenceParser implements EventParser
 {
+    /**
+     * @var EntityManagerInterface
+     */
+    private $em;
 
+    /**
+     * ReservationParser constructor.
+     * @param EntityManagerInterface $entityManager
+     */
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->em = $entityManager;
+    }
+
+    /**
+     * Parse event data.
+     *
+     * @param $data
+     * @return array
+     */
     public function parseData($data): array
     {
 
@@ -19,9 +46,18 @@ class UserPresenceParser implements EventParser
         return $data;
     }
 
+    /**
+     * Generate title of the event.
+     *
+     * @param $data
+     * @return string
+     */
     public function generateTitle($data): string
     {
-        return "TEST";
-        // TODO: Implement generateTitle() method.
+        $userId = $data['user_id'];
+
+        $userService = new UsersService($this->em);
+        $user = $userService->getActiveUserById($userId);
+        return sprintf("Obecność: %s (%s)", $user->getFirstName(), $data['extra_info']);
     }
 }

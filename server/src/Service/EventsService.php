@@ -78,7 +78,6 @@ class EventsService implements DecorateEventInterface
         $data['date_from'] = !empty($data['date_from']) ? $data['date_from'] : null;
         $data['date_to'] = !empty($data['date_to']) ? $data['date_to'] : null;
 
-        echo "DYP";
         $userService = new UsersService($this->em);
 
         $userResponse = $userService->getActiveUserById($createdById);
@@ -88,8 +87,6 @@ class EventsService implements DecorateEventInterface
         }
 
         $data['user_id'] = $userResponse;
-
-        echo "DUPA 2";
         $eventCreator->create($data);
     }
 

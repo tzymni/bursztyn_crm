@@ -43,8 +43,6 @@ class UserPresencesController extends AbstractController
             );
         }
 
-        echo "DUPA";
-
         try {
             $eventsService->createEvent(new UserPresenceCreator($eventsService->em), $data);
 
@@ -54,21 +52,6 @@ class UserPresencesController extends AbstractController
 
         die();
 
-//
-
-//
-
-//
-//        $user = $userPresenceService->createUserPresence($data);
-//
-//        if ($user instanceof UserPresences && empty($response)) {
-//            $status = JsonResponse::HTTP_OK;
-//            $response = array();
-//        } else {
-//            $errorResponse = $user;
-//            $status = JsonResponse::HTTP_BAD_REQUEST;
-//            $response = $errorDecorator->decorateError($status, $errorResponse);
-//        }
 //
 //        return new JsonResponse($response, $status);
     }

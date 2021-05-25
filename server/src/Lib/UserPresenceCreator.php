@@ -2,11 +2,14 @@
 
 namespace App\Lib;
 
-use App\Entity\Events;
-use App\Entity\Reservations;
-use App\Service\ReservationService;
 use App\Service\UserPresenceService;
 
+/**
+ * Class UserPresenceCreator
+ *
+ * @package App\Lib
+ * @author Tomasz Zymni <tomasz.zymni@gmail.com>
+ */
 class UserPresenceCreator extends EventCreator
 {
 
