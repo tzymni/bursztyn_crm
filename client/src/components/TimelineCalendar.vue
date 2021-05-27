@@ -65,7 +65,7 @@ import {Plugin as HighlightWeekends} from 'gantt-schedule-timeline-calendar/dist
 import 'gantt-schedule-timeline-calendar/dist/style.css';
 import {cottageService} from "@/_services/cottage.service";
 import {reservationService} from "@/_services/reservation.service";
-import {cleaningEventServices} from "@/_services/cleaning_event_service";
+import {cleaningEventServices} from "@/_services/cleaning_event.service";
 import ReservationForm from "@/components/ReservationForm";
 import CleaningForm from "@/components/CleaningForm";
 import CheckAvaliabilityForm from "./CheckAvailabilityForm";
@@ -91,7 +91,9 @@ export default {
       },
       eventTypes: [
         {text: 'Tylko rezerwacje', value: config.event.reservationType},
-        {text: 'Tylko zmiany', value: config.event.cleaningType}
+        {text: 'Tylko zmiany', value: config.event.cleaningType},
+        {text: 'Tylko obecności', value: config.event.userPresencesType}
+
       ],
       editId: null,
       config: {

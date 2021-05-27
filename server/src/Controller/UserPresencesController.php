@@ -39,6 +39,8 @@ class UserPresencesController extends AbstractController
                 $status,
                 "Invalid data!"
             );
+
+            return new JsonResponse($responseData, $status);
         }
 
         try {

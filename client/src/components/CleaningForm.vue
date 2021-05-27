@@ -42,7 +42,7 @@
 </template>
 
 <script>
-import {cleaningEventServices} from "@/_services/cleaning_event_service";
+import {cleaningEventServices} from "@/_services/cleaning_event.service";
 
 export default {
   name: "CleaningForm",

@@ -2,7 +2,7 @@
   <div>
     <div id="calendar">
       <h1>
-        <font-awesome-icon icon="calendar-alt" />
+        <font-awesome-icon icon="calendar-alt"/>
         || {{ header }}
       </h1>
 
@@ -45,7 +45,11 @@
         >Sprawdź dostępność
         </b-button
         >
-
+        <b-button class="btn btn-info" id="show-modal"
+                  @click="showUserPresenceFormModal()"
+        >Nowa obecność
+        </b-button
+        >
         <div>
           <b-form-group id="mySelect" label="Wybierz typ zdarzenia" label-for="mySelect">
             <b-form-select id="mySelect" @change="filterCalendarEvents({ currentValue})" v-model="form.option"
@@ -53,13 +57,23 @@
           </b-form-group>
         </div>
         <b-modal
-            @hide="setEvents()"
             id="check-form-modal"
             title="Sprawdź dostępność"
             hide-footer
         >
           <CheckAvailabilityForm/>
         </b-modal>
+        <div>
+
+          <b-modal
+              id="user-presence-form-modal"
+              title="Obecność"
+              @hide="setEvents()"
+              hide-footer
+          >
+            <UserPresenceForm :editId="$data.editId" v-on:childToParent="showUserPresenceFormModal"/>
+          </b-modal>
+        </div>
       </div>
 
 
@@ -101,10 +115,9 @@ import {
   CalendarMathMixin,
 } from "vue-simple-calendar"
 import {config} from "@/config";
-
+import UserPresenceForm from "@/components/UserPresenceForm";
 require("vue-simple-calendar/static/css/default.css")
 require("vue-simple-calendar/static/css/holidays-us.css")
-
 
 export default {
   name: "Calendar",
@@ -114,6 +127,7 @@ export default {
     CalendarView,
     CalendarViewHeader,
     CheckAvailabilityForm,
+    UserPresenceForm
   },
   mixins: [CalendarMathMixin],
   data() {
@@ -143,7 +157,6 @@ export default {
         {text: 'Tylko rezerwacje', value: config.event.reservationType},
         {text: 'Tylko zmiany', value: config.event.cleaningType},
         {text: 'Tylko obecność', value: config.event.userPresencesType}
-
       ],
       items: [],
       clickedStartDate: null,
@@ -175,6 +188,11 @@ export default {
     this.clickedStartDate = null
   },
   methods: {
+
+    showUserPresenceFormModal(id = null) {
+      this.editId = id;
+      this.$bvModal.show("user-presence-form-modal");
+    },
     showReservationFormModal() {
       this.$bvModal.show("reservation-form-modal");
     },
