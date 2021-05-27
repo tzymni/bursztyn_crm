@@ -141,7 +141,9 @@ export default {
       eventTypes: [
         {text: 'Wszystkie', value: config.event.allType},
         {text: 'Tylko rezerwacje', value: config.event.reservationType},
-        {text: 'Tylko zmiany', value: config.event.cleaningType}
+        {text: 'Tylko zmiany', value: config.event.cleaningType},
+        {text: 'Tylko obecność', value: config.event.userPresencesType}
+
       ],
       items: [],
       clickedStartDate: null,

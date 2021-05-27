@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\CottagesCleaningEvents;
 use App\Entity\Events;
 use App\Entity\Reservations;
+use App\Entity\UserPresences;
 use App\Lib\EventDecorator;
 use App\Service\EventsService;
 use App\Service\ReservationService;
@@ -60,6 +61,8 @@ class EventsController extends AbstractController implements TokenAuthenticatedC
 
                     if ($event->getType() == CottagesCleaningEvents::EVENT_TYPE) {
                         $tmp['color'] = CottagesCleaningEvents::EVENT_COLOR;
+                    } elseif ($event->getType() == UserPresences::EVENT_TYPE) {
+                        $tmp['color'] = '#E7D27C';
                     }
 
                     $response[] = $tmp;
