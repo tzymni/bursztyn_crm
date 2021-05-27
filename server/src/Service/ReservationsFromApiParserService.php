@@ -68,7 +68,7 @@ class ReservationsFromApiParserService
         $cottageId = $cottage->getId();
         $reservationEvent['cottage_id'] = $cottageId;
         $reservationEvent['cottage'] = $cottage;
-        $reservationEvent['user_id'] = $user['id'];
+        $reservationEvent['created_by_id'] = $user['id'];
         $reservationEvent['guest_first_name'] = isset($client['firstName']) ? $client['firstName'] : '-';
         $reservationEvent['guest_last_name'] = isset($client['lastName']) ? $client['lastName'] : '-';
         $reservationEvent['guest_phone_number'] = isset($client['phone']) ? $client['phone'] : '-';

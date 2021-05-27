@@ -59,7 +59,7 @@ abstract class EventCreator
             $data['date_to'] = strtotime($data['date_to'] . ' UTC');
         }
 
-        $event->setCreatedBy($data['user_id']);
+        $event->setCreatedBy($data['created_by_id']);
         $event->setType($data['type']);
         $event->setTitle($data['title']);
         $event->setDateFromUnixUtc($data['date_from']);

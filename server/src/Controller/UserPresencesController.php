@@ -2,9 +2,7 @@
 
 namespace App\Controller;
 
-use App\Entity\CottagesCleaningEvents;
 use App\Lib\UserPresenceCreator;
-use App\Service\CottagesCleaningEventsService;
 use App\Service\EventsService;
 use App\Service\ResponseErrorDecoratorService;
 use App\Service\UserPresenceService;
@@ -33,11 +31,11 @@ class UserPresencesController extends AbstractController
 
         $body = $request->getContent();
         $data = json_decode($body, true);
-        print_r($data);
-        $dataIsCorrect = !is_null($data) && !empty($data['user_id']) && !empty($data['date_from']) && !empty($data['date_to']);
+
+        $dataIsCorrect = !is_null($data) && !empty($data['user_id']) && !empty($data['date_from']) && !empty($data['date_to']) && !empty($data['created_by_id']);
         if (!$dataIsCorrect) {
             $status = JsonResponse::HTTP_BAD_REQUEST;
-            $response = $errorDecorator->decorateError(
+            $responseData = $errorDecorator->decorateError(
                 $status,
                 "Invalid data!"
             );
@@ -45,15 +43,15 @@ class UserPresencesController extends AbstractController
 
         try {
             $eventsService->createEvent(new UserPresenceCreator($eventsService->em), $data);
-
+            $responseData = 'OK';
+            $status = JsonResponse::HTTP_OK;
         } catch (\Exception $exception) {
-            echo $exception->getMessage();
+            $status = JsonResponse::HTTP_BAD_REQUEST;
+            $responseData = $errorDecorator->decorateError($status, $exception->getMessage());
         }
 
-        die();
+        return new JsonResponse($responseData, $status);
 
-//
-//        return new JsonResponse($response, $status);
     }
 
 }

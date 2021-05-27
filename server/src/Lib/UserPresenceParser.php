@@ -58,6 +58,15 @@ class UserPresenceParser implements EventParser
 
         $userService = new UsersService($this->em);
         $user = $userService->getActiveUserById($userId);
-        return sprintf("Obecność: %s (%s)", $user->getFirstName(), $data['extra_info']);
+
+        $extraInfo = $data['extra_info'];
+
+        if($extraInfo) {
+            $title = sprintf("Obecność: %s. (%s - %s) (%s).", $user->getFirstName(), $data['date_from'], $data['date_to'], $data['extra_info']);
+        } else {
+            $title = sprintf("Obecność: %s. (%s - %s).", $user->getFirstName(), $data['date_from'], $data['date_to'],);
+        }
+
+        return $title;
     }
 }

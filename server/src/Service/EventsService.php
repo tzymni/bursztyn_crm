@@ -72,7 +72,7 @@ class EventsService implements DecorateEventInterface
      */
     public function createEvent(EventCreator $eventCreator, $data)
     {
-        $createdById = empty($data['user_id']) ? null : $data['user_id'];
+        $createdById = empty($data['created_by_id']) ? null : $data['created_by_id'];
         $data['type'] = empty($data['type']) ? null : $data['type'];
         $data['is_active'] = isset($data['is_active']) ? $data['is_active'] : true;
         $data['date_from'] = !empty($data['date_from']) ? $data['date_from'] : null;
@@ -86,7 +86,7 @@ class EventsService implements DecorateEventInterface
             throw new Exception($userResponse);
         }
 
-        $data['user_id'] = $userResponse;
+        $data['created_by_id'] = $userResponse;
         $eventCreator->create($data);
     }
 
