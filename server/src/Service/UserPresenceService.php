@@ -2,12 +2,9 @@
 
 namespace App\Service;
 
-use App\Entity\Cottages;
 use App\Entity\Events;
-use App\Entity\Reservations;
 use App\Entity\UserPresences;
-use App\Lib\UserPresenceCreator;
-use App\Repository\CottagesRepository;
+use App\Repository\UserPresencesRepository;
 use App\Service\interfaces\DecorateEventInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -27,9 +24,8 @@ class UserPresenceService implements DecorateEventInterface
         $this->em = $em;
     }
 
-
-    public function createUserPresence(Events $event, array $data, $userPresence = null) {
-
+    public function createUserPresence(Events $event, array $data, $userPresence = null)
+    {
 
         if (empty($userPresence) || !$userPresence instanceof UserPresences) {
             $userPresence = new UserPresences();
@@ -37,7 +33,6 @@ class UserPresenceService implements DecorateEventInterface
 
         $userService = new UsersService($this->em);
         $user = $userService->getActiveUserById($data['user_id']);
-
 
         $dateAdd = $data['date_add'] ?? gmdate("Y-m-d H:i:s");
         $dateAdd = \DateTime::createFromFormat("Y-m-d H:i:s", $dateAdd);
@@ -47,15 +42,37 @@ class UserPresenceService implements DecorateEventInterface
         $userPresence->setExtraInfo($data['extra_info']);
         $userPresence->setUser($user);
 
-
-
         $this->em->persist($userPresence);
 
         $this->em->flush();
     }
 
+    /**
+     * @param int $eventId
+     * @return mixed|void
+     */
     public function getEventDetails(int $eventId)
     {
-        // TODO: Implement getEventDetails() method.
+        return $this->getActiveUserPresenceByEventId($eventId);
+    }
+
+    /**
+     * @param int $eventId
+     * @return mixed
+     */
+    public function getActiveUserPresenceByEventId(int $eventId)
+    {
+
+        $userPresenceRepository = $this->em->getRepository(UserPresences::class);
+
+        $userPresence = array();
+
+        if ($userPresenceRepository instanceof UserPresencesRepository) {
+
+            $userPresence = $userPresenceRepository->findActiveUserPresenceByEventId($eventId);
+        }
+
+        return $userPresence[0];
+
     }
 }

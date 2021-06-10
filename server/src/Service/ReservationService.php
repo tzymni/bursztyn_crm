@@ -165,7 +165,6 @@ class ReservationService implements DecorateEventInterface
      */
     public function getActiveReservationByEventId($eventId): array
     {
-
         $reservationRepository = $this->em->getRepository(Reservations::class);
 
         $reservations = array();

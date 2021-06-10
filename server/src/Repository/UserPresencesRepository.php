@@ -19,6 +19,21 @@ class UserPresencesRepository extends ServiceEntityRepository
         parent::__construct($registry, UserPresences::class);
     }
 
+    /**
+     * @param $eventId
+     * @return int|mixed|string
+     */
+    public function findActiveUserPresenceByEventId($eventId) {
+        return $this->createQueryBuilder('p')
+            ->select(
+                'p.id as user_presence_id, p.extra_info,  Users.id as user_id  '
+            )
+            ->andWhere('p.event = :eventId')
+            ->setParameter('eventId', $eventId)
+            ->leftJoin('p.user', 'Users')
+            ->getQuery()->execute();
+    }
+
     // /**
     //  * @return UserPresences[] Returns an array of UserPresences objects
     //  */

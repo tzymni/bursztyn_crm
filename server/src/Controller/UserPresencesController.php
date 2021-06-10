@@ -11,6 +11,12 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * Class UserPresencesController
+ *
+ * @package App\Controller
+ * @author Tomasz Zymni <tomasz.zymni@gmail.com>
+ */
 class UserPresencesController extends AbstractController
 {
 
@@ -19,7 +25,7 @@ class UserPresencesController extends AbstractController
      *
      * @Route("/user_presence", methods={"POST"})
      * @param Request $request
-     * @param UserPresenceService $presenceService
+     * @param EventsService $eventsService
      * @param ResponseErrorDecoratorService $errorDecorator
      * @return JsonResponse
      */
@@ -55,5 +61,4 @@ class UserPresencesController extends AbstractController
         return new JsonResponse($responseData, $status);
 
     }
-
 }

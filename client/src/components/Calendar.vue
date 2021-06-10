@@ -68,7 +68,6 @@
           <b-modal
               id="user-presence-form-modal"
               title="Obecność"
-              @hide="setEvents()"
               hide-footer
           >
             <UserPresenceForm :editId="$data.editId" v-on:childToParent="showUserPresenceFormModal"/>
@@ -238,12 +237,14 @@ export default {
     onClickItem(e) {
 
       this.editId = e.id
-      if (e.originalEvent.type == 'RESERVATION') {
+      if (e.originalEvent.type == config.event.reservationType) {
         this.$bvModal.show("reservation-form-modal")
 
-      } else {
+      } else if (e.originalEvent.type == config.event.cleaningType) {
         this.$bvModal.show("cleaning-form-modal")
-
+      }
+      else if (e.originalEvent.type == config.event.userPresencesType) {
+        this.$bvModal.show("user-presence-form-modal")
       }
     },
     setShowDate(d) {

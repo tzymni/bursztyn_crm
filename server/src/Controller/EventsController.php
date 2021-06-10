@@ -10,6 +10,7 @@ use App\Lib\EventDecorator;
 use App\Service\EventsService;
 use App\Service\ReservationService;
 use App\Service\ResponseErrorDecoratorService;
+use App\Service\UserPresenceService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -83,6 +84,7 @@ class EventsController extends AbstractController implements TokenAuthenticatedC
      * @param Request $request
      * @param EventsService $eventsService
      * @param ReservationService $reservationService
+     * @param UserPresenceService $userPresenceService
      * @param ResponseErrorDecoratorService $errorDecoratorService
      * @return JsonResponse
      */
@@ -90,6 +92,7 @@ class EventsController extends AbstractController implements TokenAuthenticatedC
         Request $request,
         EventsService $eventsService,
         ReservationService $reservationService,
+        UserPresenceService $userPresenceService,
         ResponseErrorDecoratorService $errorDecoratorService
 
     ): JsonResponse {
@@ -97,17 +100,20 @@ class EventsController extends AbstractController implements TokenAuthenticatedC
         $type = $request->get('type');
 
         $event = $eventsService->getActiveEventById($id);
-
         if ($event instanceof Events) {
             $eventDecorator = new EventDecorator($event);
             $eventType = null;
             switch ($type) {
-                case Reservations::EVENT_TYPE;
+                case Reservations::EVENT_TYPE:
                     $eventType = $reservationService;
                     break;
 
                 case CottagesCleaningEvents::EVENT_TYPE:
                     $eventType = $eventsService;
+                    break;
+
+                case UserPresences::EVENT_TYPE:
+                    $eventType = $userPresenceService;
                     break;
             }
 

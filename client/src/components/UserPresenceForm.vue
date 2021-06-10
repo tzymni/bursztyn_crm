@@ -65,7 +65,7 @@ export default {
   mounted() {
 
     if (typeof this.editId != 'undefined' && this.editId != null) {
-      // this.getUserPresenceById(this.editId);
+      this.getUserPresenceById(this.editId);
     }
 
     this.getUsers()
@@ -114,24 +114,22 @@ export default {
       });
     },
 
-    // getUserPresenceById(id) {
-    //
-    //   const self = this
-    //   userService.getUser(id).then(function (data) {
-    //
-    //         self.first_name = data.first_name
-    //         self.last_name = data.last_name
-    //         self.email = data.email
-    //         self.id = data.id
-    //         self.disabledEmailField = true
-    //       }
-    //   )
-    //       .catch(function (error) {
-    //         if (error) {
-    //           self.errorNotify = error
-    //         }
-    //       });
-    // },
+    getUserPresenceById(id) {
+
+      const self = this
+      userPresenceService.getUserPresenceEvent(id).then(function (data) {
+            self.user_id = data.details.user_id
+            self.date_from = data.event.date_from
+            self.date_to = data.event.date_to
+            self.extra_info = data.details.extra_info
+          }
+      )
+          .catch(function (error) {
+            if (error) {
+              self.errorNotify = error
+            }
+          });
+    },
   },
 }
 </script>
