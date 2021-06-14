@@ -54,7 +54,7 @@ class ReservationsRepository extends ServiceEntityRepository
     public function findReservationByExternalId(int $externalId): array
     {
         return $this->findBy(
-            array("external_id" => $externalId),
+            array("external_id" => $externalId, 'is_active' => true),
             array(),
             array(1)
         );

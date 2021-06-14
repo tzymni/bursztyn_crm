@@ -76,7 +76,7 @@ export default {
   methods: {
     handleSubmit() {
       this.submitted = true
-      let id = this.id
+      let id = this.editId
       const {date_from, date_to, user_id, extra_info} = this
       const data = {date_from, date_to, user_id, extra_info, id}
       const self = this;

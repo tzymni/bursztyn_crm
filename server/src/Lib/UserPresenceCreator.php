@@ -2,6 +2,7 @@
 
 namespace App\Lib;
 
+use App\Entity\UserPresences;
 use App\Entity\Users;
 use App\Service\UserPresenceService;
 use App\Service\UsersService;
@@ -34,7 +35,15 @@ class UserPresenceCreator extends EventCreator
 
             $createdEvent = parent::create($data);
 
-            $this->userPresenceService->createUserPresence($createdEvent, $data);
+            if (isset($data['user_presence']) && $data['user_presence'] instanceof UserPresences) {
+
+                $userPresence = $data['user_presence'];
+            } else {
+                $userPresence = null;
+            }
+
+
+            $this->userPresenceService->createUserPresence($createdEvent, $data, $userPresence);
 
         } else {
             throw new InvalidArgumentException('Validation date error.');

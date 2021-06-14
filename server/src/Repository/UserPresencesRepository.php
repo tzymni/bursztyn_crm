@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Events;
 use App\Entity\UserPresences;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -23,7 +24,8 @@ class UserPresencesRepository extends ServiceEntityRepository
      * @param $eventId
      * @return int|mixed|string
      */
-    public function findActiveUserPresenceByEventId($eventId) {
+    public function findActiveUserPresenceByEventId($eventId)
+    {
         return $this->createQueryBuilder('p')
             ->select(
                 'p.id as user_presence_id, p.extra_info,  Users.id as user_id  '
@@ -34,32 +36,16 @@ class UserPresencesRepository extends ServiceEntityRepository
             ->getQuery()->execute();
     }
 
-    // /**
-    //  * @return UserPresences[] Returns an array of UserPresences objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    /**
+     * @param Events $event
+     * @return UserPresences[]
+     */
+    public function findActiveUserPresenceByEvent(Events $event)
     {
-        return $this->createQueryBuilder('u')
-            ->andWhere('u.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('u.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
+        return $this->findBy(
+            array("event" => $event),
+            array(),
+            array(1));
     }
-    */
 
-    /*
-    public function findOneBySomeField($value): ?UserPresences
-    {
-        return $this->createQueryBuilder('u')
-            ->andWhere('u.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }

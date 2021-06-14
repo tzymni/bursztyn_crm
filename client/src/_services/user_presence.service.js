@@ -35,7 +35,7 @@ function saveUserPresence(data) {
 function updateUserPresence(data) {
     const axios = require('axios');
     const AuthStr = Settings.generateAuthenticationString()
-    return axios.put(config.apiURL.path + config.apiURL.port + '/user/' + data.id, data, {headers: {Authorization: AuthStr}})
+    return axios.put(config.apiURL.path + config.apiURL.port + '/user_presence/' + data.id, data, {headers: {Authorization: AuthStr}})
         .then(function (response) {
             return response.data;
         })

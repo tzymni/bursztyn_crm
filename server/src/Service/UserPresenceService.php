@@ -24,10 +24,15 @@ class UserPresenceService implements DecorateEventInterface
         $this->em = $em;
     }
 
-    public function createUserPresence(Events $event, array $data, $userPresence = null)
+    /**
+     * @param Events $event
+     * @param array $data
+     * @param UserPresences|null $userPresence
+     */
+    public function createUserPresence(Events $event, array $data, UserPresences $userPresence = null)
     {
 
-        if (empty($userPresence) || !$userPresence instanceof UserPresences) {
+        if (empty($userPresence)) {
             $userPresence = new UserPresences();
         }
 
@@ -74,5 +79,26 @@ class UserPresenceService implements DecorateEventInterface
 
         return $userPresence[0];
 
+    }
+
+    /**
+     * @param Events $event
+     * @return UserPresences|mixed|null
+     */
+    public function getUserPresenceByEvent(Events $event)
+    {
+        $userPresenceRepository = $this->em->getRepository(UserPresences::class);
+
+        $userPresence = array();
+
+        if ($userPresenceRepository instanceof UserPresencesRepository) {
+            $userPresence = $userPresenceRepository->findActiveUserPresenceByEvent($event);
+        }
+
+        if (isset($userPresence) && isset($userPresence[0])) {
+            return $userPresence[0];
+        } else {
+            return null;
+        }
     }
 }
