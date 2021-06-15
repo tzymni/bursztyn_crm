@@ -3,6 +3,9 @@
     {{ title }} dnia {{ date }}
     <br/>
     <br/>
+    Kto potwierdził, że będzie? <b>{{ users_presences }}</b>
+    <br/>
+    <br/>
     Lista domków do sprzątania:
 
     <div class="table-wrap">
@@ -51,6 +54,7 @@ export default {
       // childMessage: '',
       id: null,
       title: "",
+      users_presences: "Nikt :(",
       date: "",
       eventDetails: [],
       fields: [
@@ -88,7 +92,7 @@ export default {
             self.id = data.details.id
           }
       )
-          .catch(function (error) {
+      .catch(function (error) {
             if (error) {
               self.errorNotify = error;
             }

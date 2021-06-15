@@ -125,7 +125,7 @@ class EventsService implements DecorateEventInterface
         $repository = $this->em->getRepository('App:Events');
 
         if ($repository instanceof EventsRepository) {
-                $events = $repository->findActiveNextEventsByType($type);
+            $events = $repository->findActiveNextEventsByType($type);
         }
 
         if (!empty($events)) {
@@ -149,6 +149,25 @@ class EventsService implements DecorateEventInterface
 
         if ($repository instanceof EventsRepository) {
             $events = $repository->findActiveEvents($type);
+        }
+
+        return $events;
+    }
+
+    /**
+     * Get list of all active events by type.
+     *
+     * @param null $type
+     * @return object[]
+     */
+    public function getActiveEventsBetweenDate($type, $date): array
+    {
+
+        $events = null;
+        $repository = $this->em->getRepository('App:Events');
+
+        if ($repository instanceof EventsRepository) {
+            $events = $repository->findActiveEventsBetweenDate($type, $date);
         }
 
         return $events;

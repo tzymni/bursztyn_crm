@@ -114,4 +114,27 @@ class EventsRepository extends ServiceEntityRepository
             return null;
         }
     }
+
+
+    public function findActiveEventsBetweenDate($type, $date) {
+
+        $query = $this->createQueryBuilder('e')
+            ->select(array())
+            ->where('e.is_active = :isActive')
+            ->andWhere('e.type = :type')
+            ->andWhere('e.date_from <= :date')
+            ->andWhere('e.date_to >= :date')
+            ->orderBy('e.date_from ', 'ASC')
+            ->setParameter('isActive', true)
+            ->setParameter('type', $type)
+            ->setParameter('date', $date);
+
+        $events = $query->getQuery()->getResult();
+
+        if (isset($events) && isset($events[0])) {
+            return $events;
+        } else {
+            return null;
+        }
+    }
 }

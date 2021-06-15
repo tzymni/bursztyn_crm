@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use App\Entity\Events;
 use App\Entity\UserPresences;
-use App\Lib\EventCreator;
 use App\Lib\UserPresenceCreator;
 use App\Service\EventsService;
 use App\Service\ResponseErrorDecoratorService;
@@ -29,6 +28,8 @@ class UserPresencesController extends AbstractController
      * @Route("/user_presence/{id}", methods={"PUT"})
      * @param Request $request
      * @param ResponseErrorDecoratorService $errorDecorator
+     * @param EventsService $eventsService
+     * @param UserPresenceService $userPresenceService
      * @return JsonResponse
      */
     public function updateUserPresence(
@@ -109,6 +110,48 @@ class UserPresencesController extends AbstractController
 
         return new JsonResponse($responseData, $status);
 
+    }
+
+    /**
+     * Get user by id.
+     *
+     * @Route("/user_presence/cleaning/{cleaning_id}", methods={"GET"})
+     * @param Request $request
+     * @param EventsService $eventsService
+     * @param ResponseErrorDecoratorService $errorDecorator
+     * @return JsonResponse
+     */
+    public function getUserPresenceByCleaningEvent(
+        Request $request,
+        EventsService $eventsService,
+        ResponseErrorDecoratorService $errorDecorator
+    ): JsonResponse {
+
+        $cleaningEventId = $request->get('cleaning_id');
+
+        try {
+
+            $cleaningEvent = $eventsService->getActiveEventById($cleaningEventId);
+            $cleaningStartDate = $cleaningEvent->getDateFrom();
+            $presenceEvents = $eventsService->getActiveEventsBetweenDate(UserPresences::EVENT_TYPE, $cleaningStartDate);
+
+            $data = array();
+            $x = 0;
+            foreach ($presenceEvents as $presenceEvent) {
+                $data[$x]['id'] = $presenceEvent->getId();
+                $data[$x]['title'] = $presenceEvent->getTitle();
+                $x++;
+            }
+            $responseData['data'] = $data;
+            $responseData['status'] = 'OK';
+            $status = JsonResponse::HTTP_OK;
+
+        } catch (\Exception $exception) {
+            $status = JsonResponse::HTTP_BAD_REQUEST;
+            $responseData = $errorDecorator->decorateError($status, $exception->getMessage());
+        }
+
+        return new JsonResponse($responseData, $status);
     }
 
 }
