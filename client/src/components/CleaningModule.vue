@@ -52,11 +52,16 @@ export default {
         {
           key: 'title',
           label: 'Tytuł',
-        }, {
+        },
+        {
           key: 'number_of_cottages',
           label: 'Liczba domków',
           sortable: true
-
+        },
+        {
+          key: 'user_presences',
+          label: 'Obecność',
+          sortable: false
         },
         {
           key: 'show_details',
@@ -104,3 +109,9 @@ export default {
 
 }
 </script>
+
+<style>
+.table tbody tr td {
+  white-space: pre-wrap
+}
+</style>

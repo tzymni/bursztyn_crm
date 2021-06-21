@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\CottagesCleaningEvents;
+use App\Entity\UserPresences;
 use App\Service\CottagesCleaningEventsService;
 use App\Service\EventsService;
 use App\Service\ResponseErrorDecoratorService;
@@ -109,14 +110,29 @@ class CleaningEventsController extends AbstractController implements TokenAuthen
                 $response[$x]['number_of_cottages'] = count($details);
                 $response[$x]['title'] = $cleanEvent->getTitle();
                 $response[$x]['date_from'] = substr($cleanEvent->getDateFrom(), 0, 10);
+
+                $cleaningStartDate = $cleanEvent->getDateFrom();
+                $presenceEvents = $eventsService->getActiveEventsBetweenDate(UserPresences::EVENT_TYPE,
+                    $cleaningStartDate);
+                $data = array();
+
+                $i = 0;
+
+                if (!empty($presenceEvents)) {
+
+                    foreach ($presenceEvents as $presenceEvent) {
+                        $data[$i] = $presenceEvent->getTitle();
+                        $i++;
+                    }
+                }
+
+                $response[$x]['user_presences'] = join(PHP_EOL, $data);
                 $x++;
             }
 
             $status = JsonResponse::HTTP_OK;
 
         } catch (\Exception $exception) {
-            echo $exception->getMessage();
-            die();
             $status = JsonResponse::HTTP_BAD_REQUEST;
             $response = $errorDecorator->decorateError($status, $exception->getMessage());
         }

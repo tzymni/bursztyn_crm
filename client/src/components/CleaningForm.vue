@@ -3,8 +3,17 @@
     {{ title }} dnia {{ date }}
     <br/>
     <br/>
-    Kto potwierdził, że będzie? <b>{{ users_presences }}</b>
+    Kto potwierdził, że będzie? <b></b>
     <br/>
+    <div v-if="users_presences">
+    <ul id="example-1">
+      <li v-if="!users_presences.length">Nikt :(</li>
+      <li v-for="item in users_presences" :key="item.title">
+        {{ item.title }}
+      </li>
+    </ul>
+</div>
+
     <br/>
     Lista domków do sprzątania:
 
@@ -46,6 +55,7 @@
 
 <script>
 import {cleaningEventServices} from "@/_services/cleaning_event.service";
+import {userPresenceService} from "@/_services/user_presence.service";
 
 export default {
   name: "CleaningForm",
@@ -54,7 +64,7 @@ export default {
       // childMessage: '',
       id: null,
       title: "",
-      users_presences: "Nikt :(",
+      users_presences: [],
       date: "",
       eventDetails: [],
       fields: [
@@ -75,8 +85,9 @@ export default {
   },
   mounted() {
     if (typeof this.editId != 'undefined' && this.editId != null) {
-      this.getCleaningEvent(this.editId);
-      this.getCleaningEventDetails(this.editId);
+      this.getCleaningEvent(this.editId)
+      this.getCleaningEventDetails(this.editId)
+      this.getUserPresences(this.editId)
     }
   },
   props: {
@@ -107,10 +118,21 @@ export default {
       )
           .catch(function (error) {
             if (error) {
-              self.errorNotify = error;
+              self.errorNotify = error
             }
           });
     },
+    getUserPresences(id) {
+      const self = this
+      userPresenceService.getUserPresencesByCleaningEvent(id).then(function (data) {
+        console.log(data)
+        self.users_presences = data.data
+      }).catch(function (error) {
+        if (error) {
+          self.errorNotify = error
+        }
+      })
+    }
   }
 }
 </script>

@@ -160,7 +160,7 @@ class EventsService implements DecorateEventInterface
      * @param null $type
      * @return object[]
      */
-    public function getActiveEventsBetweenDate($type, $date): array
+    public function getActiveEventsBetweenDate($type, $date):? array
     {
 
         $events = null;

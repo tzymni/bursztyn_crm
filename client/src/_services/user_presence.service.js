@@ -1,6 +1,7 @@
 export const userPresenceService = {
     saveUserPresence,
-    getUserPresenceEvent
+    getUserPresenceEvent,
+    getUserPresencesByCleaningEvent
 };
 
 import {Settings} from "@/_services/settings";
@@ -75,6 +76,38 @@ function createUserPresence(data) {
         });
 }
 
+/**
+ * Get user presences by cleaning event id.
+ *
+ * @param cleaning_id
+ */
+function getUserPresencesByCleaningEvent(cleaning_id) {
+
+    const AuthStr = Settings.generateAuthenticationString()
+    return axios
+        .get(config.apiURL.path + config.apiURL.port + "/user_presence/cleaning/" + cleaning_id , {
+            headers: {Authorization: AuthStr},
+        })
+        .then(function (response) {
+            return response.data
+        })
+        .catch(function (error) {
+            if (error.response) {
+                const errorData = error.response.data
+                return Promise.reject(errorData.error.message)
+            } else {
+                const errorMessage = "Connection with server problem!"
+                return Promise.reject(errorMessage)
+            }
+        });
+
+}
+
+/**
+ *
+ * @param id
+ * @returns {Promise<AxiosResponse<any>>}
+ */
 function getUserPresenceEvent(id) {
 
     const AuthStr = Settings.generateAuthenticationString()
