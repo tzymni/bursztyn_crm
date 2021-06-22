@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "af20a1f5b42690fbfcbc8ee2fb252668",
+    "content-hash": "eceb97bbf6dbea82f152ddc9f4bfbc3c",
     "packages": [
         {
             "name": "composer/package-versions-deprecated",
@@ -4409,6 +4409,7 @@
                     "type": "tidelift"
                 }
             ],
+            "abandoned": "use `EnglishInflector` from the String component instead",
             "time": "2021-03-17T16:19:54+00:00"
         },
         {
@@ -5978,16 +5979,16 @@
         },
         {
             "name": "symfony/security-core",
-            "version": "v4.4.21",
+            "version": "v4.4.25",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/security-core.git",
-                "reference": "19a7caa988be4f013669a057861a1d2a3eacbbf3"
+                "reference": "ea473c5a76f89900c908c16eb12e62ef32f848b7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/security-core/zipball/19a7caa988be4f013669a057861a1d2a3eacbbf3",
-                "reference": "19a7caa988be4f013669a057861a1d2a3eacbbf3",
+                "url": "https://api.github.com/repos/symfony/security-core/zipball/ea473c5a76f89900c908c16eb12e62ef32f848b7",
+                "reference": "ea473c5a76f89900c908c16eb12e62ef32f848b7",
                 "shasum": ""
             },
             "require": {
@@ -6057,7 +6058,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-03-10T13:26:08+00:00"
+            "time": "2021-05-26T17:39:37+00:00"
         },
         {
             "name": "symfony/security-csrf",
