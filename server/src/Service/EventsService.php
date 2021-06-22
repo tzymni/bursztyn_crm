@@ -173,4 +173,23 @@ class EventsService implements DecorateEventInterface
         return $events;
     }
 
+    /**
+     * Soft delete event (change is_active = 0).
+     *
+     * @param Events $event
+     * @return Events|string
+     */
+    public function deleteEvent(Events $event)
+    {
+        $event->setIsActive(false);
+
+        try {
+            $this->em->persist($event);
+            $this->em->flush();
+            return $event;
+        } catch (Exception $ex) {
+            return "Cant remove event!";
+        }
+    }
+
 }

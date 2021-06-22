@@ -128,4 +128,47 @@ class EventsController extends AbstractController implements TokenAuthenticatedC
 
         return new JsonResponse($result, $status);
     }
+
+    /**
+     * @Route("/event/{id}", methods={"DELETE"})
+     * @param Request $request
+     * @param EventsService $eventsService
+     * @param ResponseErrorDecoratorService $errorDecorator
+     * @return JsonResponse
+     */
+    public function deleteEvent(
+        Request $request,
+        EventsService $eventsService,
+        ResponseErrorDecoratorService $errorDecorator
+    ): JsonResponse {
+        $id = $request->get('id');
+        $deletedEventResponse = null;
+
+        if (!empty($id)) {
+            $event = $eventsService->getActiveEventById($id);
+
+            if($event->getType() != UserPresences::EVENT_TYPE) {
+                $status = JsonResponse::HTTP_BAD_REQUEST;
+                $data = $errorDecorator->decorateError($status, "Wrong event type!");
+                return new JsonResponse($data, $status);
+            }
+
+            if ($event instanceof Events) {
+                $deletedEventResponse = $eventsService->deleteEvent($event);
+            } else {
+                $deletedEventResponse = $event;
+            }
+        }
+
+        if ($deletedEventResponse instanceof Events) {
+            $status = JsonResponse::HTTP_OK;
+            $data = array();
+        } else {
+            $status = JsonResponse::HTTP_BAD_REQUEST;
+            $data = $errorDecorator->decorateError($status, $deletedEventResponse);
+        }
+
+        return new JsonResponse($data, $status);
+    }
+
 }

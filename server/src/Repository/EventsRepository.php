@@ -115,8 +115,13 @@ class EventsRepository extends ServiceEntityRepository
         }
     }
 
-
-    public function findActiveEventsBetweenDate($type, $date) {
+    /**
+     * @param $type
+     * @param $date
+     * @return int|mixed|string|null
+     */
+    public function findActiveEventsBetweenDate($type, $date)
+    {
 
         $query = $this->createQueryBuilder('e')
             ->select(array())

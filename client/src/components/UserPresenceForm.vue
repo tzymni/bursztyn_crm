@@ -4,14 +4,14 @@
 
       <div class="form-group">
         <label htmlFor="date_from">Od</label>
-        <input type="date" v-model="date_from" name="date_from"
+        <input type="date" v-model="date_from" name="date_from" :max="date_to"
                class="form-control"
                :class="{ 'is-invalid': submitted && !date_from }"/>
         <div v-show="submitted && !date_from" class="invalid-feedback">Podaj date od.</div>
       </div>
       <div class="form-group">
         <label htmlFor="date_to">Do</label>
-        <input type="date" v-model="date_to" name="date_to"
+        <input type="date" v-model="date_to" name="date_to" :min="date_from"
                class="form-control"
                :class="{ 'is-invalid': submitted && !date_to }"/>
         <div v-show="submitted && !date_to" class="invalid-feedback">Podaj date do.</div>
@@ -33,6 +33,13 @@
       </div>
       <div class="form-group">
         <button class="btn btn-primary" :disabled="loading">Zapisz</button>
+
+        <div style="display: inline" v-if="editId">
+          <a @click="deleteUserPresence(editId)" class="btn btn-danger">
+            <font-awesome-icon icon="trash-alt"/>
+          </a>
+        </div>
+
         <img v-show="loading"
              src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA=="/>
       </div>
@@ -44,6 +51,7 @@
 <script>
 import {userPresenceService} from "@/_services/user_presence.service";
 import {userService} from "@/_services/user.service";
+import {eventsService} from "@/_services/events.service";
 
 export default {
   name: "UserPresenceForm",
@@ -85,7 +93,6 @@ export default {
       if (!(date_from && date_to && user_id) && !id) {
         return;
       }
-
       userPresenceService.saveUserPresence(data).then(function () {
             self.$bvModal.hide("user-presence-form-modal")
             self.editId = null
@@ -113,7 +120,28 @@ export default {
         }
       });
     },
+    deleteUserPresence(id) {
 
+      this.$confirm(
+          "Czy na pewno chcesz usunąć aktywność?",
+          "Usuń",
+          "error"
+      ).then(() => {
+        const self = this
+        eventsService.deleteEvent(id).then(function () {
+              self.$bvModal.hide("user-presence-form-modal")
+              self.editId = null
+            })
+            .catch(function (error) {
+              if (error) {
+                self.errorNotify = error
+                self.loading = false
+              }
+            });
+      });
+
+
+    },
     getUserPresenceById(id) {
 
       const self = this

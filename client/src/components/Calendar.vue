@@ -45,8 +45,7 @@
         >Sprawdź dostępność
         </b-button
         >
-        <b-button class="btn btn-info" id="show-modal"
-                  @click="showUserPresenceFormModal()"
+        <b-button class="btn btn-info" id="show-modal"                 @click="showUserPresenceFormModal()"
         >Nowa obecność
         </b-button
         >
@@ -68,14 +67,13 @@
           <b-modal
               id="user-presence-form-modal"
               title="Obecność"
+              @hide="setEvents($data.userPresencesType)"
               hide-footer
           >
             <UserPresenceForm :editId="$data.editId" v-on:childToParent="showUserPresenceFormModal"/>
           </b-modal>
         </div>
       </div>
-
-
       <div class="calendar-parent">
         <calendar-view
             :events="items"
@@ -151,6 +149,7 @@ export default {
       form: {
         option: config.event.allType,
       },
+      userPresencesType:  config.event.userPresencesType,
       eventTypes: [
         {text: 'Wszystkie', value: config.event.allType},
         {text: 'Tylko rezerwacje', value: config.event.reservationType},
@@ -203,8 +202,9 @@ export default {
       this.setEvents(type)
     },
     setEvents(type) {
-      this.clickedStartDate = null;
-      const self = this;
+      this.clickedStartDate = null
+      const self = this
+      self.items = []
       reservationService.getEvents(type).then(function (response) {
 
             let list = [];
