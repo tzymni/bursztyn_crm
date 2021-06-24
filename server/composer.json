@@ -2,7 +2,7 @@
     "type": "project",
     "name": "bursztyn-crm/bursztyn-crm",
     "description": "API to manage reservations from Idosell booking portal.",
-    "version": "1.1.0",
+    "version": "1.1.1",
     "authors": [
         {
             "name": "Tomasz Zymni",
