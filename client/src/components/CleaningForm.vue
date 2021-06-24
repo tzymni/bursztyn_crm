@@ -56,7 +56,8 @@
 <script>
 import {cleaningEventServices} from "@/_services/cleaning_event.service";
 import {userPresenceService} from "@/_services/user_presence.service";
-
+import {eventsService} from "@/_services/events.service";
+import {config} from "@/config";
 export default {
   name: "CleaningForm",
   data() {
@@ -97,7 +98,8 @@ export default {
     getCleaningEvent(id) {
 
       const self = this
-      cleaningEventServices.getCleaningEvent(id).then(function (data) {
+
+      eventsService.getEvent(id, config.event.cleaningType).then(function (data) {
             self.title = data.details.name
             self.date = data.details.date
             self.id = data.details.id
@@ -125,7 +127,6 @@ export default {
     getUserPresences(id) {
       const self = this
       userPresenceService.getUserPresencesByCleaningEvent(id).then(function (data) {
-        console.log(data)
         self.users_presences = data.data
       }).catch(function (error) {
         if (error) {

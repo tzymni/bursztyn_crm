@@ -52,6 +52,7 @@
 import {userPresenceService} from "@/_services/user_presence.service";
 import {userService} from "@/_services/user.service";
 import {eventsService} from "@/_services/events.service";
+import {config} from "@/config";
 
 export default {
   name: "UserPresenceForm",
@@ -145,7 +146,7 @@ export default {
     getUserPresenceById(id) {
 
       const self = this
-      userPresenceService.getUserPresenceEvent(id).then(function (data) {
+      eventsService.getEvent(id, config.event.userPresencesType).then(function (data) {
             self.user_id = data.details.user_id
             self.date_from = data.event.date_from
             self.date_to = data.event.date_to

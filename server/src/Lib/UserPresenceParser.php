@@ -39,7 +39,7 @@ class UserPresenceParser implements EventParser
 
         $data['type'] = UserPresences::EVENT_TYPE;
         $data['title'] = $this->generateTitle($data);
-        $dateTo = substr($data['date_to'], 0, 10)." 23:59:59"; ;
+        $dateTo = substr($data['date_to'], 0, 10)." 20:59:59"; ;
         $data['date_to'] = strtotime($dateTo . ' UTC');
         $data['date_from'] = strtotime($data['date_from'] . ' UTC');
         $data['is_active'] = true;
@@ -63,9 +63,9 @@ class UserPresenceParser implements EventParser
         $extraInfo = $data['extra_info'];
 
         if($extraInfo) {
-            $title = sprintf("%s. (%s - %s) (%s).", $user->getFirstName(), $data['date_from'], $data['date_to'], $data['extra_info']);
+            $title = sprintf("%s (%s - %s) (%s).", $user->getFirstName(), $data['date_from'], $data['date_to'], $data['extra_info']);
         } else {
-            $title = sprintf("%s. (%s - %s).", $user->getFirstName(), $data['date_from'], $data['date_to'],);
+            $title = sprintf("%s (%s - %s).", $user->getFirstName(), $data['date_from'], $data['date_to'],);
         }
 
         return $title;
