@@ -19,7 +19,7 @@
     
     - configure DATATABSE_URL
         - This is example of how my .env config entry looks: DATABASE_URL=mysql://root:password@127.0.0.1:3306/bursztyn-crm 
-    - copy and fill from api.copy to api.yaml and jst.copy to jst.yaml in config directory;
+    - copy and fill from api.copy to api.yaml, jst.copy to jst.yaml and smtp.copy to smtp.yaml in config directory;
     - go to project directory and run following commands to create database using Doctrine:
         - php bin/console doctrine:database:create (to create database called `bursztyn-crm`, it will figure out db name based on your DATABASE_URL config)		
         - php bin/console doctrine:schema:update --force (executes queries to create/update all Entities in the database in accordance to latest code)

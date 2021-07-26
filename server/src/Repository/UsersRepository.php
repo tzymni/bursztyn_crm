@@ -31,9 +31,27 @@ class UsersRepository extends ServiceEntityRepository
     public function findAllActiveUsers(): array
     {
         $qb = $this->createQueryBuilder('p')
-            ->select('p.id, p.email, p.first_name, p.last_name, p.is_active')
+            ->select('p.id, p.email, p.first_name, p.last_name, p.days_before_notification, p.is_active')
             ->andWhere('p.is_active = :active')
             ->setParameter('active', true)
+            ->getQuery();
+
+        return $qb->execute();
+    }
+
+    /**
+     * Get all users with enabled email cleaning notifications.
+     *
+     * @return array
+     */
+    public function findUsersWithEnabledNotifications(): array
+    {
+        $qb = $this->createQueryBuilder('p')
+            ->select('p.id, p.email, p.days_before_notification, p.is_active, p.first_name')
+            ->andWhere('p.is_active = :active')
+            ->andWhere('p.days_before_notification > :disabled_notifications')
+            ->setParameter('active', true)
+            ->setParameter('disabled_notifications', 0)
             ->getQuery();
 
         return $qb->execute();

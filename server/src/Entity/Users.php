@@ -50,6 +50,11 @@ class Users
      */
     private $events;
 
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $days_before_notification;
+
     public function __construct()
     {
         $this->events = new ArrayCollection();
@@ -176,6 +181,18 @@ class Users
     public function setEvents(ArrayCollection $events): void
     {
         $this->events = $events;
+    }
+
+    public function getDaysBeforeNotification(): ?int
+    {
+        return $this->days_before_notification;
+    }
+
+    public function setDaysBeforeNotification(int $days_before_notification): self
+    {
+        $this->days_before_notification = $days_before_notification;
+
+        return $this;
     }
 
 

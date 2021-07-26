@@ -114,4 +114,8 @@ class CottagesCleaningEventsRepository extends ServiceEntityRepository
         }
 
     }
+
+    public function getCleaningEventByStartDate($startDate) {
+
+    }
 }

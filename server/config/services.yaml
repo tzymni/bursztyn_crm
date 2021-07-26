@@ -9,6 +9,7 @@ parameters:
 imports:
     - { resource: 'api.yaml' }
     - { resource: 'jst.yaml' }
+    - { resource: 'smtp.yaml' }
 services:
     # default configuration for services in *this* file
     _defaults:

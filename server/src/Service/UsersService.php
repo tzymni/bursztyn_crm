@@ -86,9 +86,10 @@ class UsersService
         $email = $data['email'];
         $plainPassword = $data['password'];
         /** @var TYPE_NAME $isActive */
-        $isActive = isset($data['is_active']) ? $data['is_active'] : true;
-        $firstName = isset($data['first_name']) ? $data['first_name'] : '';
-        $lastName = isset($data['last_name']) ? $data['last_name'] : '';
+        $isActive = $data['is_active'] ?? true;
+        $firstName = $data['first_name'] ?? '';
+        $lastName = $data['last_name'] ?? '';
+        $daysBeforeNotification = $data['days_before_notification'] ?? 0;
 
         $user = new Users();
         $user->setEmail($email);
@@ -97,6 +98,7 @@ class UsersService
         $user->setIsActive($isActive);
         $user->setFirstName($firstName);
         $user->setLastName($lastName);
+        $user->setDaysBeforeNotification($daysBeforeNotification);
 
         try {
             $this->em->persist($user);
@@ -131,6 +133,10 @@ class UsersService
             if (isset($data['password']) && !empty($data['password'])) {
                 $encoded = password_hash($data['password'], PASSWORD_DEFAULT);
                 $user->setPassword($encoded);
+            }
+
+            if (isset($data['days_before_notification'])) {
+                $user->setDaysBeforeNotification($data['days_before_notification']);
             }
 
             $this->em->persist($user);
@@ -175,6 +181,24 @@ class UsersService
         $users = null;
         if ($userRepository instanceof UsersRepository) {
             $users = $userRepository->findAllActiveUsers();
+        } else {
+            $users = array();
+        }
+
+        return $users;
+    }
+    /**
+     * Find all active users with enabled cleaning notifications.
+     *
+     * @return array
+     */
+    public function getUsersWithEnabledCleaningNotifications(): array
+    {
+
+        $userRepository = $this->em->getRepository(Users::class);
+        $users = null;
+        if ($userRepository instanceof UsersRepository) {
+            $users = $userRepository->findUsersWithEnabledNotifications();
         } else {
             $users = array();
         }

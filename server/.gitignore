@@ -26,3 +26,4 @@ yarn-error.log
 /.web-server-pid
 ###< symfony/web-server-bundle ###
 /config/jst.yaml
+/config/smtp.yaml

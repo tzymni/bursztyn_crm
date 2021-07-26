@@ -137,10 +137,15 @@ class UserPresencesController extends AbstractController implements TokenAuthent
 
             $data = array();
             $x = 0;
-            foreach ($presenceEvents as $presenceEvent) {
-                $data[$x]['id'] = $presenceEvent->getId();
-                $data[$x]['title'] = $presenceEvent->getTitle();
-                $x++;
+
+            if (!empty($presenceEvents)) {
+
+                foreach ($presenceEvents as $presenceEvent) {
+                    $data[$x]['id'] = $presenceEvent->getId();
+                    $data[$x]['title'] = $presenceEvent->getTitle();
+                    $x++;
+                }
+
             }
             $responseData['data'] = $data;
             $responseData['status'] = 'OK';

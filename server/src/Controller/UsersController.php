@@ -116,7 +116,8 @@ class UsersController extends AbstractController implements TokenAuthenticatedCo
                     'email' => $result->getEmail(),
                     'first_name' => $result->getFirstName(),
                     'last_name' => $result->getLastName(),
-                    'password' => $result->getPassword()
+                    'password' => $result->getPassword(),
+                    'days_before_notification' => $result->getDaysBeforeNotification()
                 ];
             } else {
                 $status = JsonResponse::HTTP_BAD_REQUEST;

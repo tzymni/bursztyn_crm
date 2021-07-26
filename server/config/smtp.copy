@@ -1,0 +1,5 @@
+parameters:
+  smtp_port: 587
+  smtp_host: "smtp-relay.sendinblue.com"
+  smtp_login: ""
+  smtp_password: ""

@@ -52,6 +52,10 @@
             <p class="hide">{{ data.field.last_name }}</p>
             <p>Nazwisko</p>
           </template>
+          <template v-slot:head(days_before_notification)="data">
+            <p class="hide">{{ data.field.days_before_notification }}</p>
+            <p>Wyślij maila X dni przed rezerwacja</p>
+          </template>
           <template v-slot:head(is_active)="data">
             <p class="hide">{{ data.field.is_active }}</p>
             <p>Opcje</p>

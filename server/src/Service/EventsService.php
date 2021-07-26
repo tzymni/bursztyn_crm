@@ -160,6 +160,25 @@ class EventsService implements DecorateEventInterface
      * @param null $type
      * @return object[]
      */
+    public function getActiveEventsByStartDate($startDate, $type):? array
+    {
+
+        $events = null;
+        $repository = $this->em->getRepository('App:Events');
+
+        if ($repository instanceof EventsRepository) {
+            $events = $repository->findActiveEventByStartDate($type, $startDate);
+        }
+
+        return $events;
+    }
+
+    /**
+     * Get list of all active events by type.
+     *
+     * @param null $type
+     * @return object[]
+     */
     public function getActiveEventsBetweenDate($type, $date):? array
     {
 

@@ -120,6 +120,33 @@ class EventsRepository extends ServiceEntityRepository
      * @param $date
      * @return int|mixed|string|null
      */
+    public function findActiveEventByStartDate($type, $startDate)
+    {
+
+        $query = $this->createQueryBuilder('e')
+            ->select(array())
+            ->where('e.is_active = :isActive')
+            ->andWhere('e.type = :type')
+            ->andWhere('e.date_from LIKE :date')
+            ->orderBy('e.date_from ', 'ASC')
+            ->setParameter('isActive', true)
+            ->setParameter('type', $type)
+            ->setParameter('date', $startDate.'%');
+
+        $events = $query->getQuery()->getResult();
+
+        if (isset($events) && isset($events[0])) {
+            return $events;
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * @param $type
+     * @param $date
+     * @return int|mixed|string|null
+     */
     public function findActiveEventsBetweenDate($type, $date)
     {
 

@@ -22,9 +22,11 @@
       </div>
       <div class="form-group">
         <label htmlFor="repeat_password">Potwierdź hasło</label>
-        <input id="repeat_password" type="password" v-model="repeat_password" name="repeat_password" class="form-control"
+        <input id="repeat_password" type="password" v-model="repeat_password" name="repeat_password"
+               class="form-control"
                :class="{ 'is-invalid': submitted && repeat_password!=password }"/>
-        <div v-show="submitted && repeat_password!=password" class="invalid-feedback">Potwierdzone hasło jest nieprawidłowe
+        <div v-show="submitted && repeat_password!=password" class="invalid-feedback">Potwierdzone hasło jest
+          nieprawidłowe
         </div>
       </div>
       <div class="form-group">
@@ -37,6 +39,13 @@
         <label htmlFor="last_name">Nazwisko</label>
         <input type="last_name" v-model="last_name" name="last_name" class="form-control"
                :class="{ 'is-invalid': submitted && !last_name }"/>
+      </div>
+      <div class="form-group">
+        <label htmlFor="days_before_notification">Wyślij maila z informacją o rezerwacji X dni przed (0 nie
+          wysyłaj)</label>
+        <input type="number" min="0" max="14" v-model="days_before_notification" name="days_before_notification"
+               class="form-control"
+               :class="{ 'is-invalid': submitted && !days_before_notification }"/>
       </div>
       <div class="form-group">
         <button class="btn btn-primary" :disabled="loading">Zapisz</button>
@@ -62,6 +71,7 @@ export default {
       repeat_password: "",
       first_name: "",
       last_name: "",
+      days_before_notification: 0,
       submitted: false,
       returnUrl: "",
       errorNotify: "",
@@ -83,22 +93,22 @@ export default {
     handleSubmit() {
       this.submitted = true
       let id = this.id
-      const {email, password, repeat_password, first_name, last_name} = this
+      const {email, password, repeat_password, first_name, last_name, days_before_notification} = this
 
       // stop here if form is invalid
       if (!(email && password) && !id) {
         return
-      } else if (!this.reg.test(email)) {
+      } else if (!this.reg.test(email) && !id) {
         this.errorNotify = "Podaj prawidłowy email."
         return
-      } else if (!this.reg_p.test(password)) {
+      } else if (!this.reg_p.test(password) && !id) {
         this.errorNotify = "Hasło musi mieć minimum 6 znaków."
         return
-      } else if (password != repeat_password) {
+      } else if (password != repeat_password && !id) {
         this.errorNotify = "Hasła muszą być takie same."
         return
       }
-      const data = {email, password, repeat_password, first_name, last_name, id}
+      const data = {email, password, repeat_password, first_name, last_name, id, days_before_notification}
       const self = this;
 
       userService.saveUser(data).then(function () {
@@ -120,6 +130,7 @@ export default {
             self.last_name = data.last_name
             self.email = data.email
             self.id = data.id
+            self.days_before_notification = data.days_before_notification
             self.disabledEmailField = true
           }
       )
