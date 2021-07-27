@@ -41,8 +41,7 @@
                :class="{ 'is-invalid': submitted && !last_name }"/>
       </div>
       <div class="form-group">
-        <label htmlFor="days_before_notification">Wyślij maila z informacją o rezerwacji X dni przed (0 nie
-          wysyłaj)</label>
+        <label htmlFor="days_before_notification">Wyślij maila X dni przed zmianami (0 nie wysyłaj)</label>
         <input type="number" min="0" max="14" v-model="days_before_notification" name="days_before_notification"
                class="form-control"
                :class="{ 'is-invalid': submitted && !days_before_notification }"/>
