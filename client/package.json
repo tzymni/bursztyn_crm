@@ -20,7 +20,7 @@
     "gantt-schedule-timeline-calendar": "^3.6.6",
     "jquery": "^3.5.1",
     "jqwidgets-scripts": "^9.0.0",
-    "moment": "^2.24.0",
+    "moment": "^2.29.2",
     "popper.js": "^1.16.1",
     "vue": "^2.6.11",
     "vue-color": "^2.7.1",
